@@ -1,0 +1,201 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="./assets/css/style.css"/>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.css" />
+
+    <title>HELPTIMIZE</title>
+  </head>
+  <body>
+    <div class="container-fluid">
+        <header>
+            <div class="row align-header">
+                <div class="col-sm-2 col-md-2 col-lg-2 col-xl-2">
+                    <img src="./assets/images/helptimize.png"/>
+                </div>
+                <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
+                    <nav class="nav">
+                    <a class="nav-link active" href="#">Dashboard</a>
+                    <a class="nav-link" href="#">Payments</a>
+                    <a class="nav-link" href="#">Settings</a>
+                    </nav>
+                </div>
+                <div class="col-sm-3 col-md-3 col-lg-3 col-xl-3">
+                    <div class="switch-btn">
+                    <span><input type="radio" id="requester" name="switch"/><label for="requester">Requester</label></span>
+                    <span><input type="radio" id="provider" name="switch" checked/><label for="provider">Provider</label></span>
+                    </div>
+                </div>
+                <div class="col-sm-1 col-md-1 col-lg-1 col-xl-1 text-right">
+                    <div class="btn-group" role="group">
+                        <button id="btnGroupDrop1" type="button" class="btn btn-secondary dropdown-toggle profile" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-user"></i>
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                            <a class="dropdown-item" href="#">link1</a>
+                            <a class="dropdown-item" href="#">link2</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        
+        <section class="wrapper">
+            <aside class="layout">
+                <div class="card-header tab-card-header">
+                    <ul class="nav nav-tabs card-header-tabs" id="myTab" role="tablist">
+                        <li class="nav-item">
+                            <a class="nav-link active" id="one-tab" data-toggle="tab" href="#one" role="tab" aria-controls="One" aria-selected="true">Detail</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="two-tab" data-toggle="tab" href="#two" role="tab" aria-controls="Two" aria-selected="false">Bids</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" id="three-tab" data-toggle="tab" href="#three" role="tab" aria-controls="Three" aria-selected="false">Shortlisted</a>
+                        </li>
+                        <li class="nav-item">
+                                <a class="nav-link" id="three-tab" data-toggle="tab" href="#four" role="tab" aria-controls="four" aria-selected="false">Contact</a>
+                        </li>
+                        <li class="nav-item">
+                                <a class="nav-link" id="three-tab" data-toggle="tab" href="#five" role="tab" aria-controls="five" aria-selected="false">Communication</a>
+                        </li>
+                    </ul>
+                    <div class="search">
+                        <input type="text"/>
+                        <button><i class="fas fa-search"></i></button>
+                    </div>
+                </div>
+
+                <div class="tab-content" id="myTabContent">
+                    <div class="tab-pane fade show active p-3" id="one" role="tabpanel" aria-labelledby="one-tab">
+                        <p class="MRGT20PX"><b>Description</b></p>
+                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                        <p class="MRGT20PX"><b>Particulars</b></p>  
+                        <div class="row">
+                            <div class="col-sm-4 col-md-4 col-lg-4">
+                                <div><i class="far fa-clock"></i> 10.00 AM</div>
+                                <div><i class="far fa-calendar-alt"></i> 12/05/2019 - 12/07/2019</div>
+                            </div>
+                            <div class="col-sm-8 col-md-8 col-lg-8">
+                                <div><i class="fas fa-map-marker-alt"></i> Address</div> 
+                            </div>
+                        </div>  
+                        <p class="MRGT20PX"><b>Amount</b></p>
+                        <p>Fixed, 120 $</p> 
+                        <button class="button-secondary">Edit Bid</button>
+                                
+                    </div>
+                    <div class="tab-pane fade p-3" id="two" role="tabpanel" aria-labelledby="two-tab">
+                        <h5 class="card-title">Tab Card Two</h5>
+                        <div class="row">
+                            <div class="col-md-3 col-lg-3 col-sm-3">
+                                <aside class="users-list">
+                                    <div class="flex-layout">
+                                        <div><span><i class="fas fa-user"></i></span></div>
+                                        <div>
+                                            <div>Steve McMohan</div>
+                                            <small>05:16 pm 12.06.2019</small>
+                                        </div>
+                                        <div><i class="fas fa-user"></i></div>
+                                    </div>
+                                    <div class="flex-layout">
+                                            <div><span><i class="fas fa-user"></i></span></div>
+                                            <div>
+                                                <div>Steve MCMohan</div>
+                                                <small>05:16 pm 12.06.2019</small>
+                                            </div>
+                                            <div><i class="fas fa-user"></i></div>
+                                        </div>
+                                </aside>
+                            </div>
+                            <div class="col-md-9 col-lg-9 col-sm-9">
+                                <div class="user-details">
+                                    <div class="flex-layout blue">
+                                        <div>
+                                            <div class="user-image">
+                                                <img src="./assets/images/user.jpg"/>
+                                            </div>
+                                        </div>
+                                        <div class="flex-layout">
+                                            <div>Blue Member</div>
+                                            <div class="user-diomand">
+                                                <i class="fas fa-user"></i>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="flex-layout user-name">
+                                        <div class="text-center">
+                                            Steve McMohan<br/>
+                                            <small>Software Engineer</small>
+                                        </div>
+                                        <div>
+                                            <div class="user-details-tab">
+                                                <ul class="nav nav-tabs card-header-tabs" id="myTab" role="tablist">
+                                                    <li class="nav-item">
+                                                        <a class="nav-link active" id="bid-details-tab" data-toggle="tab" href="#bid" role="tab" aria-controls="One" aria-selected="true">Bid Detail</a>
+                                                    </li>
+                                                    <li class="nav-item">
+                                                        <a class="nav-link" id="profile-tab" data-toggle="tab" href="#profile" role="tab" aria-controls="Two" aria-selected="false">Profile</a>
+                                                    </li>
+                                                    <li class="nav-item">
+                                                        <a class="nav-link" id="feedback-tab" data-toggle="tab" href="#feedback" role="tab" aria-controls="Three" aria-selected="false">Feedback</a>
+                                                    </li>
+                                                </ul>
+                                            </div>
+                                            
+                                        </div>
+                                    </div>
+                                    <div class="tab-content">
+                                        <div class="tab-pane fade show active p-3" id="bid" role="tabpanel" aria-labelledby="one-tab">
+                                            <p><b>Comment</b></p>
+                                            <textarea></textarea>
+                                            <p class="MRGT20PX"><b>Bid Details</b></p>
+                                            <div class="form-group MRGT10PX">
+                                                <label class="form-label" for="first">Amount</label>
+                                                <input id="first" class="form-input" type="text" />
+                                            </div>
+                                            <div class="form-group MRGT10PX">
+                                                <label class="form-label" for="date">Duration</label>
+                                                <input id="date" class="form-input" type="text" />
+                                            </div>
+                                            <div class="MRGT20PX">
+                                                <button class="orange-btn">Hire Now!</button>
+                                                <button class="button-secondary">Shortlist</button>
+                                            </div>
+                                        </div>
+                                        <div class="tab-pane fade p-3" id="profile" role="tabpanel" aria-labelledby="one-tab">
+                                            Profile Details here
+                                        </div>
+                                        <div class="tab-pane fade p-3" id="feedback" role="tabpanel" aria-labelledby="one-tab">
+                                                Feedback Details here
+                                            </div>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="tab-pane fade p-3" id="three" role="tabpanel" aria-labelledby="three-tab">
+                        <h5 class="card-title">Tab Card Three</h5>
+                        <p class="card-text">Some quick example text to build on the card title and make up the bulk of the card's content.</p>
+                        <a href="#" class="btn btn-primary">Go somewhere</a>              
+                    </div>
+                </div>
+            </aside>
+        </section>
+    </div>
+    
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+
+    <script src="assets/js/app.js"></script>
+  </body>
+</html>

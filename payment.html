@@ -1,0 +1,180 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <!-- Bootstrap CSS -->
+    <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
+    <link rel="stylesheet" href="./assets/css/style.css"/>
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.css" />
+
+    <title>HELPTIMIZE</title>
+  </head>
+  <body>
+      <input type="text" id="start-date">
+      <input type="text" id="end-date">
+    <div class="container-fluid">
+        <header>
+            <div class="row align-header">
+                <div class="col-sm-2 col-md-2 col-lg-2 col-xl-2">
+                    <img src="./assets/images/helptimize.png"/>
+                </div>
+                <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
+                    <nav class="nav">
+                    <a class="nav-link active" href="#">Dashboard</a>
+                    <a class="nav-link" href="#">Payments</a>
+                    <a class="nav-link" href="#">Settings</a>
+                    </nav>
+                </div>
+                <div class="col-sm-3 col-md-3 col-lg-3 col-xl-3">
+                    <div class="switch-btn">
+                    <span><input type="radio" id="requester" name="switch"/><label for="requester">Requester</label></span>
+                    <span><input type="radio" id="provider" name="switch" checked/><label for="provider">Provider</label></span>
+                    </div>
+                </div>
+                <div class="col-sm-1 col-md-1 col-lg-1 col-xl-1 text-right">
+                    <div class="btn-group" role="group">
+                        <button id="btnGroupDrop1" type="button" class="btn btn-secondary dropdown-toggle profile" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                            <i class="fas fa-user"></i>
+                        </button>
+                        <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                            <a class="dropdown-item" href="#">link1</a>
+                            <a class="dropdown-item" href="#">link2</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </header>
+        
+        <section class="wrapper">
+            <aside class="super-widget-tab">
+                <div><input type="radio" id="location" name="location" checked/><label for="location">1.Location</label></div>
+                <div><input type="radio" id="jobdetails" name="jobdetails" disabled/><label for="jobdetails">2.Job Details</label></div>
+                <div><input type="radio" id="payment" name="payment" disabled/><label for="payment">3.Payment</label></div>
+                <div><input type="radio" id="review" name="review" disabled/><label for="review">4.Review</label></div>
+                <div><input type="radio" id="finish" name="finish" disabled/><label for="finish">5.Finish!</label></div>
+            </aside>
+            <aside class="super-widget-tab-info">
+              <summary class="location WDTH90 MRGCenter">
+                <h2><b>Where do you need the help?</b></h2>
+                <div class="flex-layout">
+                    <input type="text"/>
+                    <i class="fas fa-crosshairs location-icon"></i>
+                </div>
+              </summary>
+              <summary class="jobdetails WDTH90 MRGCenter" style="display: none">
+                  <h2><b>Describe What you need</b></h2>
+                  <textarea></textarea>
+                  <h2><b>Category</b></h2>
+                  <input type="radio" id="washing" name="service"/><label class="service" for="washing">Washing</label>
+                  <input type="radio" id="deyclean" name="service"/><label class="service" for="dryclean">Dry Cleaning</label>
+                  <input type="radio" id="laundry" name="service"/><label class="service" for="laundry">Laundry Services</label>
+                  <div class="row">
+                      <div class="col-sm-6 col-md-6 col-lg-6">
+                          <h2><b>When do you need it?</b></h2>
+                      </div>
+                      <div class="col-sm-6 col-md-6 col-lg-6 text-right">
+                        <!-- <label>Recurring?</label>
+                        <select class="custom-drop-down" id="recurring">
+                          <option value="One Time">One Time</option>
+                          <option value="Weekly">Weekly</option>
+                          <option value="Twice Monthly">Twice Monthly</option>
+                          <option value="Monthly">Monthly</option>
+                          <option value="Every other month">Every other month</option>
+                        </select> -->
+                      </div>
+                  </div>
+                  <iframe src="calendar.html" class="calendar-view"></iframe>
+              </summary>
+              <summary class="payment WDTH90 MRGCenter" style="display: none">
+                  <h2><b>How do you like to Pay?</b></h2>
+                  <input type="radio" id="fairMarket" name="pay"/><label for="fairMarket">Fair Market</label>
+                  <input type="radio" checked id="fixed" name="pay"/><label for="fixed">Fixed</label>
+                  <input type="radio" id="hourly" name="pay"/><label for="hourly">Hourly</label>
+                  <div class="row WDTH300PX actHourly">
+                      <div class="col-sm-6 col-md-6 col-lg-6">
+                        <div class="form-group MRGT10PX">
+                          <label class="form-label" for="rateHour">Rate/Hour</label>
+                          <input id="rateHour" class="form-input" type="number" />
+                        </div>
+                      </div>
+                      <div class="col-sm-6 col-md-6 col-lg-6">
+                        <div class="form-group MRGT10PX">
+                            <label class="form-label" for="tHour">Total Hours</label>
+                            <input id="tHour" class="form-input" type="number" />
+                        </div>
+                      </div>
+                  </div>
+                  <div class="form-group MRGT10PX WDTH300PX ramount" style="display:none">
+                      <label class="form-label" for="ramount">Recurrence Amount</label>
+                      <input id="ramount" class="form-input" type="text" />
+                    </div>
+                  <div class="form-group MRGT10PX WDTH300PX amount">
+                    <label class="form-label" for="amount">Amount</label>
+                    <input id="amount" class="form-input" type="text" />
+                  </div>
+
+                  <div class="form-group MRGT10PX notes">
+                    <label class="form-label" for="notes">Notes</label>
+                    <textarea id="notes" class="form-input"></textarea>
+                    </div>
+
+                <div class="row">
+                    <div class="col-sm-4 col-md-4 col-lg-4">
+                        <h2><b>Payment Method</b></h2>
+                    </div>
+                    <div class="col-sm-8 col-md-8 col-lg-8">
+                        <button class="button-secondary MRG10PX">+ New Method</button>
+                    </div>
+                </div>
+                  <div class="account-details">
+                  <input type="radio"/> <label>My Bank Account</label><br/>
+                  <input type="radio"/> <label>My Bank Account</label>
+                </div>
+
+              </summary>
+              <summary class="review WDTH90 MRGCenter" style="display: none">
+                  <h2><b>Review your request</b></h2>
+                  <p><b>Description</b></p>
+                  <p>Lorem Ipsum content here</p>
+                  <p class="MRGT20PX"><b>Particulars</b></p>
+                  <div class="row">
+                      <div class="col-sm-4 col-md-4 col-lg-4">
+                        <div><i class="far fa-clock"></i> 10.00 AM</div>
+                        <div><i class="far fa-calendar-alt"></i> 12/05/2019 - 12/07/2019</div>
+                      </div>
+                      <div class="col-sm-8 col-md-8 col-lg-8">
+                         <div><i class="fas fa-map-marker-alt"></i> Address</div> 
+                    </div>
+                  </div>
+                  <p class="MRGT20PX"><b>Amount</b></p>
+                  <label>Fixed, 120 $</label>
+              </summary>
+              <summary class="finish WDTH90 MRGCenter" style="display: none">
+                  <h2><b>Congratulations!</b></h2>
+                  <p class="MRGT20PX">Tour help requested has been posted. Sit back and relax.</p>
+                  <a href="#">Go to Dashboard</a>
+              </summary>
+              <div class="flex-layout actions WDTH90 MRGCenter MRGT20PX">
+                <button onclick="prev()" id="prev" class="button-secondary" style="visibility: hidden;">BACK</button>
+                <button onclick="next()" id="next" class="button-primary">NEXT</button>
+            </div>
+            </aside>
+        </section>
+    </div>
+    <div id="ex1" class="modal">
+        <p>Thanks for clicking. That felt good.</p>
+        <a href="#" rel="modal:close">Close</a>
+      </div>
+    <!-- Optional JavaScript -->
+    <!-- jQuery first, then Popper.js, then Bootstrap JS -->
+    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
+    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.js"></script>
+
+    <script src="assets/js/app.js"></script>
+  </body>
+</html>

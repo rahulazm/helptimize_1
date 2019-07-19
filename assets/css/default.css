@@ -223,8 +223,9 @@ body {
     position: absolute;
     left: 0;
     right: 0;
-    bottom: -250px;
-    top: 100px;
+    /*bottom: -250px;*/
+    bottom: 0;
+    top: 99px;
     /* left: 0;
     right: 0;
     bottom: 5px;

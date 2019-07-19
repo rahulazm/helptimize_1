@@ -73,7 +73,36 @@
             $.session.set('startMin', startMin);
             $.session.set('endMin', endMin);
             $.session.set('dbStartDate', dbStartDate);
-            $.session.set('dbEndDate', dbEndDate);
+            $.session.set('dbEndDate', dbEndDate);           
+            localStorage.setItem('startDate', e.start._date);
+            localStorage.setItem('endDate', e.end._date);
+            var diD = _getDateDiff(e.start._date, e.end._date);
+            localStorage.setItem('noofdays', diD);
+            alert(diD);
+            if(diD < 7) {
+                $('#recurring option').prop('disabled', true)
+                $('#recurring option[value="One Time"]').prop('disabled', false)
+            } else if(diD < 14) {
+                $('#recurring option').prop('disabled', true);
+                $('#recurring option[value="One Time"]').prop('disabled', false);
+                $('#recurring option[value="Weekly"]').prop('disabled', false);
+            } else if(diD < 30) {
+                $('#recurring option').prop('disabled', true);
+                $('#recurring option[value="Weekly"]').prop('disabled', false);
+                $('#recurring option[value="One Time"]').prop('disabled', false);
+                $('#recurring option[value="Twice Monthly"]').prop('disabled', false);
+
+            }else if(diD < 59) {
+                $('#recurring option').prop('disabled', true);
+                $('#recurring option[value="Weekly"]').prop('disabled', false);
+                $('#recurring option[value="One Time"]').prop('disabled', false);
+                $('#recurring option[value="Twice Monthly"]').prop('disabled', false);
+                $('#recurring option[value="Monthly"]').prop('disabled', false);
+            }else{
+                $('#recurring option').prop('disabled', false);
+            }
+            // $('#start-date').val(e.start._date);
+            // $('#end-date').val(e.end._date);
             saveNewSchedule(e);
         },
         'beforeUpdateSchedule': function(e) {
@@ -82,6 +111,10 @@
             e.schedule.end = e.end;
             $('#start-date').val(JSON.stringify(e.start._date));
             $('#end-date').val(JSON.stringify(e.end._date));
+            localStorage.setItem('startDate', e.start._date);
+            localStorage.setItem('endDate', e.end._date);
+            // $('#start-date').val(e.start._date);
+            // $('#end-date').val(e.end._date);
             cal.updateSchedule(e.schedule.id, e.schedule.calendarId, e.schedule);
         },
         'beforeDeleteSchedule': function(e) {
@@ -384,7 +417,7 @@
             var span = input.nextElementSibling;
             span.style.backgroundColor = input.checked ? span.style.borderColor : 'transparent';
         });
-
+        
         $('#start-date').val("ere");
     }
 
