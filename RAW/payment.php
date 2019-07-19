@@ -243,7 +243,7 @@ $cur=reset($categs);
                    </div>
                 <!-- Replace the value of the key parameter with your own API key. -->
                 <script async defer
-                src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC7Y4opceNAVG8qp53FvFNV3IG7aUHU2GU&libraries=places&callback=initAutocomplete">
+                src="https://maps.googleapis.com/maps/api/js?key=KEY&libraries=places&callback=initAutocomplete">
                 </script>
 
               </summary>
