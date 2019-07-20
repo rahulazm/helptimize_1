@@ -75,7 +75,9 @@
             $.session.set('dbStartDate', dbStartDate);
             $.session.set('dbEndDate', dbEndDate);           
             localStorage.setItem('startDate', e.start._date);
-            localStorage.setItem('endDate', e.end._date);
+            localStorage.setItem('endDate', e.end._date);            
+            sessionStorage.setItem('startDate', e.start._date);
+            sessionStorage.setItem('endDate', e.end._date);
             var diD = _getDateDiff(e.start._date, e.end._date);
             localStorage.setItem('noofdays', diD);
             alert(diD);
@@ -109,10 +111,8 @@
             console.log('beforeUpdateSchedule', e);
             e.schedule.start = e.start;
             e.schedule.end = e.end;
-            $('#start-date').val(JSON.stringify(e.start._date));
-            $('#end-date').val(JSON.stringify(e.end._date));
-            localStorage.setItem('startDate', e.start._date);
-            localStorage.setItem('endDate', e.end._date);
+            sessionStorage.setItem('startDate', e.start._date);
+            sessionStorage.setItem('endDate', e.end._date);
             // $('#start-date').val(e.start._date);
             // $('#end-date').val(e.end._date);
             cal.updateSchedule(e.schedule.id, e.schedule.calendarId, e.schedule);
@@ -417,7 +417,8 @@
             var span = input.nextElementSibling;
             span.style.backgroundColor = input.checked ? span.style.borderColor : 'transparent';
         });
-        
+
+                
         $('#start-date').val("ere");
     }
 

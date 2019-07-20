@@ -66,6 +66,7 @@ nav a, nav a:hover   { color: #000000; }
 .tui-full-calendar-popup-container .tui-full-calendar-section-private,
 .tui-full-calendar-popup-container .tui-full-calendar-popup-section-item.tui-full-calendar-section-allday,
 .tui-full-calendar-popup-section.tui-full-calendar-dropdown.tui-full-calendar-close.tui-full-calendar-section-state { display: none; }
+.img-thumbnail { width: 200px; }
 /* .row { align-items: baseline; } */
 .custom-drop-down { border: 1px solid #bbb; padding: 5px; height: 30px; font-size: 12px; }
 .card-header { background: transparent; border: 1px solid rgba(0,0,0,.125); box-shadow: 0 0px 20px rgba(50,50,93,.1), 0 2px 3px rgba(0,0,0,.07); display: flex; justify-content: space-between; align-items: center; padding: 0 1.25rem; }
@@ -161,6 +162,8 @@ nav a, nav a:hover   { color: #000000; }
     }
   }
   
-  /* .form-input.filled {
-    box-shadow: 0 2px 0 0 lightgreen;
-  } */
+  
+/*  Grid table*/
+.grid { border: 1px solid #dee2e6; }
+.grid .row { padding: 6px; border-bottom: 1px solid #dee2e6; margin: 0;}
+.grid .row:nth-child(odd) { background: #f1f5f8; }

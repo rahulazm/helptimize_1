@@ -1,3 +1,4 @@
+localStorage.removeItem('recurring');
 
 function next() {
   $('#amount, #ramount').val('')
@@ -126,7 +127,7 @@ if(getId=='finish'){
 
 }
 
-
+    
     $('.super-widget-tab input[type="radio"]:checked').last().parent().next().children('input').prop('checked', true);
     $('.super-widget-tab-info summary').hide();
     $('.'+getId).show();
@@ -137,6 +138,7 @@ if(getId=='finish'){
     }
 
     if(getId == "payment"){
+      alert('test: '+ localStorage.getItem('recurring'))
       payTypeSetting();
     }
 }
@@ -159,7 +161,8 @@ function payTypeSetting(){
 
   recurringType = localStorage.getItem('recurring');
   noOfDays = localStorage.getItem('noofdays');
-alert("tab change recurring: "+recurringType);
+
+  alert("tab change recurring: "+recurringType);
   switch (recurringType) {
     case 'One Time':
       $('#amount').prop('readonly', false);
@@ -192,7 +195,6 @@ $('input, textarea').focus(function(){
       $(this).addClass('filled');
     }
   })  
-
   function addAddress(){
     $('#pac-input').val("");
     $('#addAddressDetails').show();
@@ -228,7 +230,7 @@ $('input, textarea').focus(function(){
       //   $('#amount').prop('readonly', false)
       //   $('#ramount').prop('readonly', true)
       // }
-      localStorage.removeItem('recurring');
+
       localStorage.setItem('recurring', val.target.value);
       alert("Session value: "+localStorage.getItem('recurring'));
       _recurring(val);
@@ -299,3 +301,7 @@ alert(rval);
       var amt = $('#rateHour').val() * $('#tHour').val();
       $('#amount').val(amt)
     })
+
+    function getUserDetails(obj) {
+      alert(obj)
+    }
