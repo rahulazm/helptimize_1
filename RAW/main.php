@@ -148,7 +148,7 @@ $resReqtrAllJobs=$_sqlObj->query($sqlReqtrAllJobs);
               <div class="flex-layout" style="width: 1070px;">
                   <div><h1>All Jobs</h1></div>
                   <div>
-                      <button class="btn-orange" onclick="addSR();">Post New Job</button>
+                      <button class="btn-orange" onclick="addSR();">+ Post New Job</button>
                       <div class="btn-group dropdown-btn" role="group">
                           <button id="btnGroupDrop1" type="button" class="btn btn-secondary dropdown-toggle" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                               All Jobs

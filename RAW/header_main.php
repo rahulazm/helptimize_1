@@ -73,7 +73,7 @@ $db_count_unread_messages->close();
                 </div>
                 <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
                     <nav class="nav">
-                    <a class="nav-link active" href="#">Dashboard</a>
+                    <a class="nav-link active" href="main.php">Dashboard</a>
                     <a class="nav-link" href="#">Payments</a>
                     <a class="nav-link" href="#">Settings</a>
                     </nav>
