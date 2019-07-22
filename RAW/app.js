@@ -1,5 +1,5 @@
 localStorage.removeItem('recurring');
-
+ 
 function next() {
   $('#amount, #ramount').val('')
     var getId = $('.super-widget-tab input[type="radio"]:checked').last().parent().next().children('input').attr('id');
@@ -24,12 +24,7 @@ function next() {
     //alert(schedule_note);
 
 
-    if($('#description').length){var math = Math.floor(difDate/7)
-
-
-
-
-
+    if($('#description').length){
        $('#description').text(desc);
     }
     if($('#amnt').length){
