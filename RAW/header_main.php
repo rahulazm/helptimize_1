@@ -46,7 +46,7 @@ $db_count_unread_messages->close();
     <script src="js/dataTables.bootstrap.js"></script>
     <script src="js/sweetalert.min.js"></script>
     <script src="js/googleMap.js"></script>
-    <script src="js/custom.js"></script>
+    <!--<script src="js/custom.js"></script>-->
     <script src="assets/js/jquerysession.js"></script>
     <script src="js/moment.min.js"></script>
     <link href="css/sweetalert.css" rel="stylesheet">
