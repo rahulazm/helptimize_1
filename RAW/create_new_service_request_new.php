@@ -41,7 +41,7 @@ $cur=reset($categs);
                             curaddr = results[0].formatted_address;
                             console.log( results[0].formatted_address );
                             $('#pac-input').val(curaddr);
-                            infoWindow.setContent(curaddr);
+                            infoWindow.setContent("You are here!");
                         }
                     }
                 );
