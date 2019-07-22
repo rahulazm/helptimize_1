@@ -90,8 +90,7 @@ $db_count_unread_messages->close();
                             <i class="fas fa-user"></i>
                         </button>
                         <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
-                            <a class="dropdown-item" href="#">link1</a>
-                            <a class="dropdown-item" href="#">link2</a>
+                            <a class="dropdown-item" href="logout.php">Logout</a>
                         </div>
                     </div>
                 </div>
