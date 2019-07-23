@@ -1,5 +1,7 @@
 <?php
 include("header_main.php");
+
+
 //print_r($_SESSION);
 $id= $_SESSION['id'];
 if($id==''){
@@ -22,19 +24,27 @@ $dateToArr = explode(" ", $dateTo);
 $timeTo = $dateToArr[1];
 $dtTo = $dateToArr[0];
 
-echo "<pre>";
+//echo "<pre>";
 //print_r($res);
 //print_r($dateToArr);
 //$jobs = $res[0]['jobs'];
 ///////////////////////////////BIDS section///////////////////////////////////
 
 $sqlBids="SELECT bids.title,bids.ownerid , bids.summ,bids.descr,bids.payType,bids.payAmt,bids.dateTimeTo,bids.dateTimeFrom, bids.create_dateTime,users.username,users.firstName,users.midName FROM `bids`, users WHERE bids.`srId` = '$servID' and users.id=bids.ownerId ORDER by bids.create_dateTime desc";
-echo $sqlBids;
+//echo $sqlBids;
 
 $resBids=$_sqlObj->query($sqlBids);
 $rowBids=reset($resBids);
-print_r($rowBids);
-echo "</pre>";
+
+##########Get total number of bids in this SR
+$count=($_sqlObj->query('select count(id) as totbid from view_bids where srId='.$servID.';'));
+$totalbid_count=$count[0]["totbid"];
+
+##########Get avg of bids in this SR
+$bidInfo=reset($_sqlObj->query('select count(id) as bidNum, (select avg(payAmt) from view_bids where srId='.$servID.' and payType="fixed") as avgFix, (select avg(payAmt) from view_bids where srId='.$servID.' and payType="hourly") as avgHr from view_bids where srId='.$servID));
+
+//print_r($rowBids);
+//echo "</pre>";
 
 ?>        
         <section class="wrapper">
@@ -45,7 +55,7 @@ echo "</pre>";
                             <a class="nav-link active" id="one-tab" data-toggle="tab" href="#one" role="tab" aria-controls="One" aria-selected="true">Detail</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" id="two-tab" data-toggle="tab" href="#two" role="tab" aria-controls="Two" aria-selected="false">Bids</a>
+                            <a class="nav-link" id="two-tab" data-toggle="tab" href="#two" role="tab" aria-controls="Two" aria-selected="false" onclick="getUserDetails(<?php echo $rowBids['ownerid']." ,".$servID;?>)">Bids</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" id="three-tab" data-toggle="tab" href="#three" role="tab" aria-controls="Three" aria-selected="false">Shortlisted</a>
@@ -120,7 +130,7 @@ echo "</pre>";
                                     <div class="flex-layout user-name">
                                         <div class="text-center">
                                             <p id="full_name"></p>
-                                            <small id="catg">Software Engineer</small>
+                                            <small id="catg"></small>
                                         </div>
                                         <div>
                                             <div class="user-details-tab">
@@ -189,8 +199,8 @@ echo "</pre>";
                                                     <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
                                                             <b>Name</b>
                                                     </div>
-                                                    <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6" id="full_name">
-                                                        ---
+                                                    <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6" id="full_name1">
+                                                        
                                                     </div>
                                                 </div>
                                                 <div class="row">
@@ -198,7 +208,7 @@ echo "</pre>";
                                                             <b>Star Rating</b>
                                                     </div>
                                                     <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6" id="starr">
-                                                        87.5%
+                                                       
                                                     </div>
                                                 </div>
                                                 <div class="row">
@@ -206,44 +216,44 @@ echo "</pre>";
                                                             <b>Diamond Rating</b>
                                                     </div>
                                                     <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6" id="diamndr">
-                                                        ***
+                                                        
                                                     </div>
                                                 </div>
                                                 <div class="row">
-                                                    <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6" id="bidscnt">
+                                                    <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
                                                             <b>Number of bids</b>
                                                     </div>
-                                                    <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
-                                                        1  
+                                                    <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6" id="">
+                                                        <?php echo $bidInfo['bidNum'];?>
                                                     </div>
                                                 </div>
                                                 <div class="row">
                                                     <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
                                                             <b>Average fix cost amount</b>
                                                     </div>
-                                                    <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6" id="avgfixcostamnt">
-                                                        ---
+                                                    <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6" id="">
+                                                        <?php echo $bidInfo['avgFix'];?>
                                                     </div>
                                                 </div>
                                                 <div class="row">
                                                     <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
                                                         <b>Average hourly cost amount</b>
                                                     </div>
-                                                    <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6" id="avghrlycostamnt">
-                                                        0.000
+                                                    <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6" id="">
+                                                        <?php echo $bidInfo['avgHr'];?>
                                                     </div>
                                                 </div>
                                                 <div class="row">
                                                     <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
                                                         <b>Category</b>
                                                     </div>
-                                                    <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6" id="catg">
-                                                        Pets
+                                                    <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6" id="catg1">
+                                                        
                                                     </div>
                                                 </div>
                                             </div>
                                             <p class="MRGT20PX"><b>Proposed Agreement Detail Description</b></p>
-                                            <textarea id="agreedesc">Content should be here</textarea>
+                                            <textarea id="agreedesc"></textarea>
                                         </div>
                                         <div class="tab-pane fade p-3" id="bid-feedback" role="tabpanel" aria-labelledby="one-tab">
                                             <h2><b>Blue Star Rating</b></h2>
@@ -259,6 +269,7 @@ echo "</pre>";
                                                         <b>Comments</b>
                                                     </div>
                                                 </div>
+
                                                 <div class="row">
                                                     <div class="col-sm-4 col-md-4 col-lg-4 col-xl-4">
                                                         Test
@@ -288,7 +299,7 @@ echo "</pre>";
                             </div>
                         </div>
                     </div>
-                    <div class="tab-pane fade p-3" id="three" role="tabpanel" aria-labelledby="three-tab">
+                    <!--<div class="tab-pane fade p-3" id="three" role="tabpanel" aria-labelledby="three-tab">
                         <div class="row">
                             <div class="col-md-3 col-lg-3 col-sm-3">
                                 <aside class="users-list">
@@ -365,7 +376,7 @@ echo "</pre>";
                                                 <button class="button-secondary">Shortlist</button>
                                             </div>
                                         </div>
-                                        <div class="tab-pane fade p-3" id="bid-profile" role="tabpanel" aria-labelledby="one-tab">
+                                        <!--<div class="tab-pane fade p-3" id="bid-profile" role="tabpanel" aria-labelledby="one-tab">
                                             <div class="row">
                                                 <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
                                                     <button class="orange-btn">View Original Service Request</button>
@@ -375,7 +386,7 @@ echo "</pre>";
                                                     <button class="button-secondary"><i class="fas fa-user-check"></i> Award Bid</button>
                                                 </div>
                                             </div>
-                                            <h2><b>Revised Proposed Agreement: Pants(98)</b></h2>
+                                            <h2><b>Revised Proposed Agreement: Pants(98)2</b></h2>
                                             <div class="grid">
                                                 <div class="row">
                                                     <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
@@ -490,12 +501,13 @@ echo "</pre>";
                                                     </div>
                                                 </div>
                                             </div>
-                                        </div>
+                                        </div>-->
+
                                     </div>
                                 </div>
                             </div>
                         </div>
-                    </div>
+                </div>
                     <div class="tab-pane fade p-3" id="four" role="tabpanel" aria-labelledby="four-tab">
                         <div class="user-details">
                             <div class="flex-layout blue">
@@ -551,7 +563,7 @@ echo "</pre>";
                                         <button class="button-secondary">Shortlist</button>
                                     </div>
                                 </div>
-                                <div class="tab-pane fade p-3" id="agreement-profile" role="tabpanel" aria-labelledby="one-tab">
+                                <!--<div class="tab-pane fade p-3" id="agreement-profile" role="tabpanel" aria-labelledby="one-tab">
                                     <div class="row">
                                         <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
                                             <button class="orange-btn">View Original Service Request</button>
@@ -561,7 +573,7 @@ echo "</pre>";
                                             <button class="button-secondary"><i class="fas fa-user-check"></i> Award Bid</button>
                                         </div>
                                     </div>
-                                    <h2><b>Revised Proposed Agreement: Pants(98)</b></h2>
+                                    <h2><b>Revised Proposed Agreement: Pants(98)3</b></h2>
                                     <div class="grid">
                                         <div class="row">
                                             <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
@@ -676,7 +688,7 @@ echo "</pre>";
                                             </div>
                                         </div>
                                     </div>
-                                </div>
+                                </div>-->
                             </div>
                         </div>
                     </div>

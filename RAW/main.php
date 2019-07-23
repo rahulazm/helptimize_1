@@ -33,6 +33,7 @@ $( document ).ready(function() {
     requester1.style.display="none";
     seller.style.display="block";
 });
+
   function getDetails(obj){
     //alert(obj);
     var seller = document.getElementById("seller");
@@ -41,7 +42,7 @@ $( document ).ready(function() {
 		 //alert("inseller-"+obj);
          requester1.style.display="none";
 		 seller.style.display="block";
-       
+
     }
     if(obj=='requester1'){
 		// alert("inrequester1-"+obj);
@@ -49,6 +50,7 @@ $( document ).ready(function() {
 		 seller.style.display="none";
        
     }
+  
 	return;
   }
 

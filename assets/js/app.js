@@ -1,5 +1,5 @@
 localStorage.removeItem('recurring');
-
+ 
 function next() {
   $('#amount, #ramount').val('')
     var getId = $('.super-widget-tab input[type="radio"]:checked').last().parent().next().children('input').attr('id');
@@ -45,13 +45,14 @@ if(recurringtype!='One Time'){
   $('#recamnt').show();
 }
 
-var startDate = $.session.get('startDate') ; 
-var endDate = $.session.get('endDate') ; 
-var startMin = $.session.get('startMin') ; 
-var endMin = $.session.get('endMin') ; 
-var dbStartDate = $.session.get('dbStartDate') ; 
-var dbEndDate = $.session.get('dbEndDate') ; 
-
+if(getId=='finish'){
+  var startDate = $.session.get('startDate') ; 
+  var endDate = $.session.get('endDate') ; 
+  var startMin = $.session.get('startMin') ; 
+  var endMin = $.session.get('endMin') ; 
+  var dbStartDate = $.session.get('dbStartDate') ; 
+  var dbEndDate = $.session.get('dbEndDate') ; 
+}
 //alert(startDate);   
 
 
@@ -251,8 +252,8 @@ $('input, textarea').focus(function(){
 
       var difDate = _getDateDiff(localStorage.getItem('startDate'), localStorage.getItem('endDate'))
       var rval = localStorage.getItem('recurring');
-alert(difDate);
-alert(rval);
+      alert(difDate);
+      alert(rval);
       if(rval === 'Weekly') {
         var math = Math.floor(difDate/7)
         var amnt = math*val.target.value;
@@ -302,6 +303,51 @@ alert(rval);
       $('#amount').val(amt)
     })
 
-    function getUserDetails(obj) {
-      alert(obj)
+    function getUserDetails(obj,srid) {
+      //alert(obj);
+      //var currentUrl = window.location.href + "&srid="+obj;
+      //location.href=currentUrl;
+      
+        $.post("get_details.php",
+        {
+          srid : srid,
+          ownerid:obj,
+          service:"bids"
+        },
+        function(data,status){
+          //alert("Data: " + data + "\nStatus: " + status);
+          var jsonData = JSON.parse(data);   
+          var hrlypay; 
+          var fixedpay;
+
+          if(jsonData.paytype=='hourly'){
+            hrlypay = jsonData.payAmt;
+          }
+          if(jsonData.paytype=='fixed'){
+            fixedpay = jsonData.payAmt;
+          }
+
+          $('#bid_comment').val(jsonData.summ);
+          $('#bid_amnt').val(jsonData.payAmt);
+          $('#bid_duration').val(jsonData.dtFrm+" "+jsonData.timeFrm+" - "+ jsonData.dtTo+" "+jsonData.timeTo);
+          $('#full_name').text(jsonData.firstName+" "+jsonData.midName);
+          $('#full_name1').text(jsonData.firstName+" "+jsonData.midName);
+          $('#catg').text(jsonData.name);
+          $('#catg1').text(jsonData.name);
+          $('#uname').text(jsonData.username);
+          $('#bidscnt').text("1");
+          $('#avgfixcostamnt').text(fixedpay);
+          $('#avghrlycostamnt').text(hrlypay);
+          $('#agreedesc').text(jsonData.desc);
+          $('#starr').text(jsonData.bluestar_Percentage);
+          $('#diamndr').html(jsonData.diamondrtng);
+          console.log(jsonData);
+        });
+          
+      
     }
+
+    function addSR(){
+      window.location.href='create_new_service_request_new.php';
+    }
+
