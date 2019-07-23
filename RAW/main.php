@@ -14,7 +14,8 @@ $sqlJobs="SELECT COUNT(*) as jobs FROM `view_bids` WHERE `ownerId`='$id' or srOw
 $res=$_sqlObj->query($sqlJobs);
 $jobs = $res[0]['jobs'];
 
-$sqlList="select * from view_bids where srOwnerId='$id' and srBidAwardId is null and shortlist = 'yes' and buttonstatus is null and bidstatus != 'cancel' order by last_updated desc";
+//$sqlList="select * from view_bids where srOwnerId='$id' and srBidAwardId is null and shortlist = 'yes' and buttonstatus is null and bidstatus != 'cancel' order by last_updated desc";
+$sqlList = "select * from view_bids where srOwnerId='$id' order by last_updated desc";
 $resList=$_sqlObj->query($sqlList);
 
 $sqlRecm="select * from view_serviceRequests where ownerId='$id' and bidAwardId is not null and buttonstatus != 'cancel'  order by last_updated desc";
@@ -24,6 +25,14 @@ $sqlReqtrAllJobs="select * from view_bids where srOwnerId='$id' and srBidAwardId
 $resReqtrAllJobs=$_sqlObj->query($sqlReqtrAllJobs);
 ?>
 <script>
+  // A $( document ).ready() block.
+$( document ).ready(function() {
+    //console.log( "ready!" );
+    var seller = document.getElementById("seller");
+    var requester1 = document.getElementById("requester1");
+    requester1.style.display="none";
+    seller.style.display="block";
+});
   function getDetails(obj){
     //alert(obj);
     var seller = document.getElementById("seller");
@@ -183,6 +192,7 @@ $resReqtrAllJobs=$_sqlObj->query($sqlReqtrAllJobs);
                   </div>
                 <?php } ?>
             </div>
+      <!--
           <aside class="WDTH80 MRGT20PX">
             <div class="flex-layout" style="width: 1070px;">
               <h1>Shortlisted Jobs</h1>
@@ -199,12 +209,13 @@ $resReqtrAllJobs=$_sqlObj->query($sqlReqtrAllJobs);
                           <label class="post-date">Posted: <?php echo $resRecm[$i]['create_dateTime']?></label>
                           <p class="card-info"><?php echo $resRecm[$i]['descr']?> </p>
                           <!-- <div class="text-right"><a href="#">View Details</a></div> -->
+                <!--          
                       </div>
                     </div>
                   </div>
                 <?php } ?>
             </div>
-          </aside>
+          </aside>-->
 
        
      </div>
