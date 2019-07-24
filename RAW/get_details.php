@@ -34,6 +34,10 @@ if($_POST['service']=='bids'){
 	//echo $dispBlue;
 	$bdrdetails[0]['bluedetls']=$dispBlue;
 
+	#########GOLD STAR rating details
+	require_once("goldstardetails_new.php");
+	$bdrdetails[0]['goldstarresp']=$goldstarresp;
+
 
 	echo json_encode($bdrdetails[0]);
 	exit();

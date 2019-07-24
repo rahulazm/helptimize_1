@@ -8,7 +8,7 @@ $username = $configs["username"];
 $password = $configs["password"];
 $host = $configs["host"];
 $db_name = $configs["db_name"];
-$userid = $_REQUEST["userid"];
+$userid = $_REQUEST["ownerid"];
 $today = date("Y-m-d H:i:s"); 
 
 
@@ -16,10 +16,10 @@ $today = date("Y-m-d H:i:s");
 $sql_rating = "SELECT * FROM ratings WHERE toUserId='".$userid."' ";
 $rating=$_sqlObj->query($sql_rating); 
 $dispBlue="";  
-$row=reset($rating);
+$row=@reset($rating);
     while($row)
     {
-      $srArr=reset($_sqlObj->query('select * from view_serviceRequests where id='.$row["srId"].';'));
+      $srArr=@reset($_sqlObj->query('select * from view_serviceRequests where id='.$row["srId"].';'));
     
       $dispBlue.='<div class="row">
         <div class="col-sm-4 col-md-4 col-lg-4 col-xl-4">
@@ -29,12 +29,12 @@ $row=reset($rating);
            '.$row["rating"].'
         </div>
         <div class="col-sm-4 col-md-4 col-lg-4 col-xl-4">
-            Lorem Ipsum '.$row["comment"].'
+            '.$row["comment"].'
         </div>
      </div>';
      $row=next($rating);
     }
-     
-echo json_encode($dispBlue);
+ 
+//$dispBlue = array('dispBlue'=>$dispBlue);
 
 ?>

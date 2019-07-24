@@ -315,7 +315,7 @@ $('input, textarea').focus(function(){
           service:"bids"
         },
         function(data,status){
-          //alert("Data: " + data + "\nStatus: " + status);
+         // alert("Data: " + data + "\nStatus: " + status);
           var jsonData = JSON.parse(data);   
           var hrlypay; 
           var fixedpay;
@@ -341,6 +341,10 @@ $('input, textarea').focus(function(){
           $('#agreedesc').text(jsonData.desc);
           $('#starr').text(jsonData.bluestar_Percentage);
           $('#diamndr').html(jsonData.diamondrtng);
+          $('#diamndr1').html(jsonData.diamondrtng);
+          $('#diamndr2').html(jsonData.diamondrtng);
+          $('#bluestrdetails').html(jsonData.bluedetls);
+          $('#goldstarresp').html(jsonData.goldstarresp);
           console.log(jsonData);
         });
           
