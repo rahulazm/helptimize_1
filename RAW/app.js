@@ -1,9 +1,9 @@
 localStorage.removeItem('recurring');
- 
+
 function next() {
   $('#amount, #ramount').val('')
     var getId = $('.super-widget-tab input[type="radio"]:checked').last().parent().next().children('input').attr('id');
-     var address = $('#getaddr').val();
+      var address = $('#getaddr').val();
     var desc  = $('#desc').val();
     var serv  = $('input:radio[name=serv]:checked').val();
     var pay  = $('input:radio[name=pay]:checked').val();
@@ -129,6 +129,7 @@ if(getId=='finish'){
 }
 
     
+
     $('.super-widget-tab input[type="radio"]:checked').last().parent().next().children('input').prop('checked', true);
     $('.super-widget-tab-info summary').hide();
     $('.'+getId).show();
@@ -196,6 +197,7 @@ $('input, textarea').focus(function(){
       $(this).addClass('filled');
     }
   })  
+
   function addAddress(){
     $('#pac-input').val("");
     $('#addAddressDetails').show();
@@ -218,6 +220,9 @@ $('input, textarea').focus(function(){
     }
   }
 
+  function addSR(){
+      window.location.href='create_new_service_request_new.php';
+  }
 
     if(localStorage.getItem('recurring') == undefined){
       localStorage.setItem('recurring', "One Time");
@@ -303,7 +308,7 @@ $('input, textarea').focus(function(){
       $('#amount').val(amt)
     })
 
-    function getUserDetails(obj,srid) {
+   function getUserDetails(obj,srid) {
       //alert(obj);
       //var currentUrl = window.location.href + "&srid="+obj;
       //location.href=currentUrl;
@@ -315,12 +320,11 @@ $('input, textarea').focus(function(){
           service:"bids"
         },
         function(data,status){
-          //alert("Data: " + data + "\nStatus: " + status);
+         // alert("Data: " + data + "\nStatus: " + status);
           var jsonData = JSON.parse(data);   
           var hrlypay; 
           var fixedpay;
 
-          //console.log(jsonData.summ)
           if(jsonData.paytype=='hourly'){
             hrlypay = jsonData.payAmt;
           }
@@ -332,17 +336,131 @@ $('input, textarea').focus(function(){
           $('#bid_amnt').val(jsonData.payAmt);
           $('#bid_duration').val(jsonData.dtFrm+" "+jsonData.timeFrm+" - "+ jsonData.dtTo+" "+jsonData.timeTo);
           $('#full_name').text(jsonData.firstName+" "+jsonData.midName);
+          $('#full_name1').text(jsonData.firstName+" "+jsonData.midName);
           $('#catg').text(jsonData.name);
+          $('#catg1').text(jsonData.name);
           $('#uname').text(jsonData.username);
           $('#bidscnt').text("1");
           $('#avgfixcostamnt').text(fixedpay);
           $('#avghrlycostamnt').text(hrlypay);
+          $('#agreedesc').text(jsonData.desc);
+          $('#starr').text(jsonData.bluestar_Percentage);
+          $('#diamndr').html(jsonData.diamondrtng);
+          $('#diamndr1').html(jsonData.diamondrtng);
+          $('#diamndr2').html(jsonData.diamondrtng);
+          $('#bluestrdetails').html(jsonData.bluedetls);
+          $('#goldstarresp').html(jsonData.goldstarresp);
           console.log(jsonData);
         });
-          
+  }          
       
+
+    
+    let noA = 1, countA = 1, cardLnthA;
+    let noB = 1, countB = 1, cardLnthB;
+    let noC = 1, countC = 1, cardLnthC;
+
+    function prevPagerA(id, cls) {
+      cardLnthA = Math.ceil($('.'+cls+' .card').length/6);
+      if(cardLnthA > countA) {
+        --noA;
+        countA = noA;
+        if(countA == 1) {
+          $('#'+id+' li:eq(0)').addClass('disabled');
+          $('#'+id+' li:eq(1)').removeClass('disabled');
+        }
+        _initCard(countA, cls) 
+      }
     }
 
-    function addSR(){
-      window.location.href='create_new_service_request_new.php';
+    function nextPageA(id, cls) {
+      cardLnthA = Math.ceil($('.'+cls+' .card').length/6);
+      if(cardLnthA > countA) {
+        noA++;
+        countA = noA;
+        if(cardLnthA == countA) {
+          $('#'+id+' li:eq(1)').addClass('disabled');
+        }
+        else {
+          $('#'+id+' li:eq(0)').removeClass('disabled');
+        }
+        _initCard(countA, cls) 
+      }
     }
+
+    function prevPagerB(id, cls) {
+      cardLnthB = Math.ceil($('.'+cls+' .card').length/6);
+      if(cardLnthB > countB) {
+        --noB;
+        countB = noB;
+        if(countB == 1) {
+          $('#'+id+' li:eq(0)').addClass('disabled');
+          $('#'+id+' li:eq(1)').removeClass('disabled');
+        }
+        _initCard(countB, cls) 
+      }
+    }
+
+    function nextPageB(id, cls) {
+      cardLnthB = Math.ceil($('.'+cls+' .card').length/6);
+      if(cardLnthB > countB) {
+        noB++;
+        countB = noB;
+        if(cardLnthB == countB) {
+          $('#'+id+' li:eq(1)').addClass('disabled');
+        }
+        else {
+          $('#'+id+' li:eq(0)').removeClass('disabled');
+        }
+        _initCard(countB, cls) 
+      }
+    }
+
+    function prevPagerC(id, cls) {
+      cardLnthC = Math.ceil($('.'+cls+' .card').length/6);
+      if(cardLnthC > countC) {
+        --noC;
+        countC = noC;
+        if(countC == 1) {
+          $('#'+id+' li:eq(0)').addClass('disabled');
+          $('#'+id+' li:eq(1)').removeClass('disabled');
+        }
+        _initCard(countC, cls) 
+      }
+    }
+
+    function nextPageC(id, cls) {
+      cardLnthC = Math.ceil($('.'+cls+' .card').length/6);
+      if(cardLnthC > countC) {
+        noC++;
+        countC = noC;
+        if(cardLnthC == countC) {
+          $('#'+id+' li:eq(1)').addClass('disabled');
+        }
+        else {
+          $('#'+id+' li:eq(0)').removeClass('disabled');
+        }
+        _initCard(countC, cls) 
+      }
+    }
+
+    function _initCard(pageNo, block) {
+      var i = null, noOfRec = pageNo * 6, start = 6 * (pageNo-1), eleIndex;
+      i = start;
+      $('.'+block+' .card').hide();
+      while (i < noOfRec) {
+        eleIndex = $('.'+block+' .card').eq(i);
+        (eleIndex.length != 0)? eleIndex.show() : '';        
+        i++;
+      }
+    }
+
+   
+
+  $(document).ready(function() {
+
+    _initCard(1, 'jobRequests');
+    _initCard(1, 'recommended');
+    _initCard(1, 'jobRequests2');
+  });
+    

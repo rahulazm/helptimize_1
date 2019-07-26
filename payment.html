@@ -18,23 +18,23 @@
     <div class="container-fluid">
         <header>
             <div class="row align-header">
-                <div class="col-sm-2 col-md-2 col-lg-2 col-xl-2">
+                <div class="col-sm-2 col-md-6 col-lg-2 col-xl-2 col-12">
                     <img src="./assets/images/helptimize.png"/>
                 </div>
-                <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
+                <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6 col-12">
                     <nav class="nav">
                     <a class="nav-link active" href="#">Dashboard</a>
                     <a class="nav-link" href="#">Payments</a>
                     <a class="nav-link" href="#">Settings</a>
                     </nav>
                 </div>
-                <div class="col-sm-3 col-md-3 col-lg-3 col-xl-3">
+                <div class="col-sm-3 col-md-6 col-lg-3 col-xl-3 col-12">
                     <div class="switch-btn">
                     <span><input type="radio" id="requester" name="switch"/><label for="requester">Requester</label></span>
                     <span><input type="radio" id="provider" name="switch" checked/><label for="provider">Provider</label></span>
                     </div>
                 </div>
-                <div class="col-sm-1 col-md-1 col-lg-1 col-xl-1 text-right">
+                <div class="col-sm-1 col-md-6 col-lg-1 col-xl-1 text-right">
                     <div class="btn-group" role="group">
                         <button id="btnGroupDrop1" type="button" class="btn btn-secondary dropdown-toggle profile" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <i class="fas fa-user"></i>
@@ -58,6 +58,7 @@
             </aside>
             <aside class="super-widget-tab-info">
               <summary class="location WDTH90 MRGCenter">
+                <h1><b>1.Location</b></h1>
                 <h2><b>Where do you need the help?</b></h2>
                 <div class="flex-layout">
                     <input type="text"/>
@@ -65,6 +66,7 @@
                 </div>
               </summary>
               <summary class="jobdetails WDTH90 MRGCenter" style="display: none">
+                  <h1><b>2.Job Details</b></h1>
                   <h2><b>Describe What you need</b></h2>
                   <textarea></textarea>
                   <h2><b>Category</b></h2>
@@ -89,10 +91,14 @@
                   <iframe src="calendar.html" class="calendar-view"></iframe>
               </summary>
               <summary class="payment WDTH90 MRGCenter" style="display: none">
+                  <h1><b>3. Payment</b></h1>
+
                   <h2><b>How do you like to Pay?</b></h2>
-                  <input type="radio" id="fairMarket" name="pay"/><label for="fairMarket">Fair Market</label>
-                  <input type="radio" checked id="fixed" name="pay"/><label for="fixed">Fixed</label>
-                  <input type="radio" id="hourly" name="pay"/><label for="hourly">Hourly</label>
+                  <div class="flex-layout">
+                    <input type="radio" id="fairMarket" name="pay"/><label for="fairMarket">Fair Market</label>
+                    <input type="radio" checked id="fixed" name="pay"/><label for="fixed">Fixed</label>
+                    <input type="radio" id="hourly" name="pay"/><label for="hourly">Hourly</label>
+                  </div>
                   <div class="row WDTH300PX actHourly">
                       <div class="col-sm-6 col-md-6 col-lg-6">
                         <div class="form-group MRGT10PX">
@@ -136,6 +142,8 @@
 
               </summary>
               <summary class="review WDTH90 MRGCenter" style="display: none">
+                  <h1><b>4. Review</b></h1>
+
                   <h2><b>Review your request</b></h2>
                   <p><b>Description</b></p>
                   <p>Lorem Ipsum content here</p>
@@ -153,7 +161,10 @@
                   <label>Fixed, 120 $</label>
               </summary>
               <summary class="finish WDTH90 MRGCenter" style="display: none">
+                  <h1><b>5. Finish!</b></h1>
+
                   <h2><b>Congratulations!</b></h2>
+
                   <p class="MRGT20PX">Tour help requested has been posted. Sit back and relax.</p>
                   <a href="#">Go to Dashboard</a>
               </summary>
@@ -170,7 +181,7 @@
       </div>
     <!-- Optional JavaScript -->
     <!-- jQuery first, then Popper.js, then Bootstrap JS -->
-    <script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/jquery-modal/0.9.1/jquery.modal.min.js"></script>

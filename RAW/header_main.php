@@ -34,7 +34,7 @@ $db_count_unread_messages->close();
     <!-- Bootstrap CSS -->
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" href="./assets/css/style.css"/>
-    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" integrity="sha384-lZN37f5QGtY3VHgisS14W3ExzMWZxybE1SJSEsQp9S+oqd12jhcu+A56Ebc1zFSJ" crossorigin="anonymous">
+    <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" crossorigin="anonymous">
     <script src="js/jquery-3.4.1.js"></script>
     <script src="js/bootstrap.min.js"></script>
     <script src="./js/formValidation.min.js"></script>
@@ -68,23 +68,23 @@ $db_count_unread_messages->close();
     <div class="container-fluid">
         <header>
             <div class="row align-header">
-                <div class="col-sm-2 col-md-2 col-lg-2 col-xl-2">
+                <div class="col-sm-2 col-md-6 col-lg-2 col-xl-2 col-12">
                     <img src="./assets/images/helptimize.png"/>
                 </div>
-                <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
+                <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6 col-12">
                     <nav class="nav">
                     <a class="nav-link active" href="main.php">Dashboard</a>
                     <a class="nav-link" href="#">Payments</a>
                     <a class="nav-link" href="#">Settings</a>
                     </nav>
                 </div>
-                <div class="col-sm-3 col-md-3 col-lg-3 col-xl-3">
+                <div class="col-sm-3 col-md-6 col-lg-3 col-xl-3 col-12">
                     <div class="switch-btn">
                     <span><input type="radio" id="requester" name="switch" onclick="getDetails('requester1');" /><label for="requester">Requester</label></span>
                     <span><input type="radio" id="provider" name="switch" onclick="getDetails('seller');" checked/><label for="provider">Provider</label></span>
                     </div>
                 </div>
-                <div class="col-sm-1 col-md-1 col-lg-1 col-xl-1 text-right">
+                <div class="col-sm-1 col-md-6 col-lg-1 col-xl-1 text-right">
                     <div class="btn-group" role="group">
                         <button id="btnGroupDrop1" type="button" class="btn btn-secondary dropdown-toggle profile" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <i class="fas fa-user"></i>
