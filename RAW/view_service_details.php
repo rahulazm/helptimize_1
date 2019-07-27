@@ -34,16 +34,16 @@ $sqlBids="SELECT bids.title,bids.ownerid , bids.summ,bids.descr,bids.payType,bid
 //echo $sqlBids;
 
 $resBids=$_sqlObj->query($sqlBids);
-$rowBids=reset($resBids);
+$rowBids=@reset($resBids);
 
 ##########Get total number of bids in this SR
 $count=($_sqlObj->query('select count(id) as totbid from view_bids where srId='.$servID.';'));
 $totalbid_count=$count[0]["totbid"];
 
 ##########Get avg of bids in this SR
-$bidInfo=reset($_sqlObj->query('select count(id) as bidNum, (select avg(payAmt) from view_bids where srId='.$servID.' and payType="fixed") as avgFix, (select avg(payAmt) from view_bids where srId='.$servID.' and payType="hourly") as avgHr from view_bids where srId='.$servID));
+$bidInfo=@reset($_sqlObj->query('select id,count(id) as bidNum, (select avg(payAmt) from view_bids where srId='.$servID.' and payType="fixed") as avgFix, (select avg(payAmt) from view_bids where srId='.$servID.' and payType="hourly") as avgHr from view_bids where srId='.$servID));
 
-//print_r($rowBids);
+//print_r($bidInfo);
 //echo "</pre>";
 
 ?>        
@@ -163,8 +163,9 @@ $bidInfo=reset($_sqlObj->query('select count(id) as bidNum, (select avg(payAmt) 
                                                 <input id="bid_duration" class="form-input" type="text" />
                                             </div>
                                             <div class="MRGT20PX">
-                                                <button class="orange-btn">Hire Now!</button>
-                                                <button class="button-secondary">Shortlist</button>
+                                                <button class="orange-btn" id="hire"
+                                                onclick="hire(<?php echo $bidInfo['id'].",".$servID;?>);">Hire Now!</button>
+                                                <button class="button-secondary" id="shortlist" onclick="shortlist(<?php echo $bidInfo['id'];?>);">Shortlist</button>
                                             </div>
                                         </div>
                                         <div class="tab-pane fade p-3" id="bid-profile" role="tabpanel" aria-labelledby="one-tab">
@@ -172,10 +173,10 @@ $bidInfo=reset($_sqlObj->query('select count(id) as bidNum, (select avg(payAmt) 
                                                 <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
                                                     <button class="orange-btn">View Original Service Request</button>
                                                 </div>
-                                                <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6 text-right">
+                                                <!--<div class="col-sm-6 col-md-6 col-lg-6 col-xl-6 text-right">
                                                     <button class="button-secondary">+ Add to Shortlist</button>
                                                     <button class="button-secondary"><i class="fas fa-user-check"></i> Award Bid</button>
-                                                </div>
+                                                </div>-->
                                             </div>
                                             <h2><b>Revised Proposed Agreement: Pants(98)</b></h2>
                                             <div class="grid">

@@ -464,3 +464,63 @@ $('input, textarea').focus(function(){
     _initCard(1, 'jobRequests2');
   });
     
+
+function shortlist(id) {
+      var bidid = id;
+      $.post("addshortlist_new.php",
+        {
+          bidid : bidid
+        },
+        function(data,status){
+         
+         //alert("Data: " + data + "\nStatus: " + status);
+         if(status=="success"){
+            swal({
+                title: "Success",
+                text: "Bid shortlisted successfully",
+                type: "success",
+                showCancelButton: false,
+                confirmButtonColor: "#5CB85C",
+                confirmButtonText: "OK",
+                closeOnConfirm: true
+              },
+              function(){
+                //location.href = "service_request_saved_list.php";
+              });
+             //console.log(jsonData);
+         }
+      });
+    }      
+
+function hire(bid_id,serv_id) {
+
+
+      //var bidid = id;
+      $.get("bid_award_new.php",
+        {
+          bidId : bid_id,
+          srId:serv_id
+        },
+        function(data,status){
+         
+         //alert("Data: " + data + "\nStatus: " + status);
+         var obj= JSON.parse(data);
+         //if(status=="success"){
+            swal({
+                title: "Status",
+                text: obj.msg,
+                //type: "success",
+                showCancelButton: false,
+                confirmButtonColor: "#5CB85C",
+                confirmButtonText: "OK",
+                closeOnConfirm: true
+              },
+              function(){
+                //location.href = "service_request_saved_list.php";
+              });
+             //console.log(jsonData);
+         //}
+      });
+    }      
+      
+
