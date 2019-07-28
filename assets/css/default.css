@@ -45,8 +45,12 @@ body {
 }
 
 .dropdown-menu > li > a {
-  padding: 9px 12px;
+/*  padding: 9px 12px;
+  cursor: pointer;*/
+  width: 100%;
+  padding: 2px 7px;
   cursor: pointer;
+  display: block;
 }
 
 .dropdown-menu > li > a:hover {

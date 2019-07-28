@@ -7,11 +7,11 @@ function next() {
     var desc  = $('#desc').val();
     var serv  = $('input:radio[name=serv]:checked').val();
     var pay  = $('input:radio[name=pay]:checked').val();
-    var first  = $('#first').val();
+    var amount  = $('#amount').val();
     var bank  = $('input:radio[name=bank]:checked').val();
     var mapaddress = $('#pac-input').val();
     var newaddress = $('#newaddress').val();
-    var recurringtype = $('#recurring').find(":selected").text();
+    var recurringtype = localStorage.getItem('recurring');
     var lat=$('#lat').val();
     var lng=$('#lng').val();
 
@@ -27,8 +27,10 @@ function next() {
     if($('#description').length){
        $('#description').text(desc);
     }
+    alert($('#amnt').length);
+    alert(pay+", "+ amount+" $");
     if($('#amnt').length){
-      var newtext = pay+", "+ first+" $";
+      var newtext = pay+", "+ amount+" $";
       $('#amnt').text(newtext);
     }
 
@@ -105,8 +107,8 @@ if(getId=='finish'){
       dateTimeTo : dbEndDate,
       set_schedule : recurringtype,
       schedule_note : schedule_note,
-      schedule_amount : first,
-      payAmt : first,
+      schedule_amount : ramount,
+      payAmt : amount,
       payType : pay,
       totalhours : totalhours,
       rateperhour : rateperhour,
@@ -140,7 +142,7 @@ if(getId=='finish'){
     }
 
     if(getId == "payment"){
-      alert('test: '+ localStorage.getItem('recurring'))
+      //alert('test: '+ localStorage.getItem('recurring'))
       payTypeSetting();
     }
 }
@@ -164,7 +166,7 @@ function payTypeSetting(){
   recurringType = localStorage.getItem('recurring');
   noOfDays = localStorage.getItem('noofdays');
 
-  alert("tab change recurring: "+recurringType);
+  //alert("tab change recurring: "+recurringType);
   switch (recurringType) {
     case 'One Time':
       $('#amount').prop('readonly', false);
@@ -175,7 +177,7 @@ function payTypeSetting(){
     case 'Twice Weekly':
     case 'Monthly':
     case 'Every other month':
-    alert("dsfsdF");
+      //alert("dsfsdF");
       $('#amount').prop('readonly', true);
       $('.ramount').css('display','block');
       $('#ramount').prop('readonly', false);
@@ -238,7 +240,7 @@ $('input, textarea').focus(function(){
       // }
 
       localStorage.setItem('recurring', val.target.value);
-      alert("Session value: "+localStorage.getItem('recurring'));
+      //alert("Session value: "+localStorage.getItem('recurring'));
       _recurring(val);
           //alert(val.target.value);
           
@@ -257,8 +259,8 @@ $('input, textarea').focus(function(){
 
       var difDate = _getDateDiff(localStorage.getItem('startDate'), localStorage.getItem('endDate'))
       var rval = localStorage.getItem('recurring');
-      alert(difDate);
-      alert(rval);
+      //alert(difDate);
+      //alert(rval);
       if(rval === 'Weekly') {
         var math = Math.floor(difDate/7)
         var amnt = math*val.target.value;
@@ -287,7 +289,7 @@ $('input, textarea').focus(function(){
         $('.amount').show();
         $('.actHourly').hide();
         // $('#ramount').prop('readonly', true);
-        alert(localStorage.getItem('recurring'));
+        //alert(localStorage.getItem('recurring'));
         if(localStorage.getItem('recurring') != 'One Time'){
           $('.ramount').show();
           $('#ramount').prop('readonly', false);
@@ -463,7 +465,8 @@ $('input, textarea').focus(function(){
     _initCard(1, 'recommended');
     _initCard(1, 'jobRequests2');
   });
-    
+
+      
 
 function shortlist(id) {
       var bidid = id;
@@ -524,3 +527,4 @@ function hire(bid_id,serv_id) {
     }      
       
 
+    

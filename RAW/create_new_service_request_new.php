@@ -224,6 +224,7 @@ $cur=reset($categs);
             </aside>
             <aside class="super-widget-tab-info">
               <summary class="location WDTH90 MRGCenter">
+                <h1><b>1.Location</b></h1>
                 <h2><b>Where do you need the help?</b></h2>
                 <!--<div class="flex-layout">
                     <input type="text" id="getaddr" name="getaddr"/>
@@ -248,6 +249,7 @@ $cur=reset($categs);
 
               </summary>
               <summary class="jobdetails WDTH90 MRGCenter" style="display: none">
+                  <h1><b>2.Job Details</b></h1>
                   <h2><b>Describe What you need</b></h2>
                   <textarea id="desc"></textarea>
                   <h2><b>Category</b></h2>
@@ -260,13 +262,13 @@ $cur=reset($categs);
                           <h2><b>When do you need it?</b></h2>
                       </div>
                       <div class="col-sm-6 col-md-6 col-lg-6 text-right">
-                        Recurring? <select class="custom-drop-down" id="recurring">
+                        <!-- Recurring? <select class="custom-drop-down" id="recurring">
                           <option>One Time</option>
                           <option>Weekly</option>
                           <option>Twice Monthly</option>
                           <option>Monthly</option>
                           <option>Every Other Month</option>
-                        </select>
+                        </select> -->
                         <!-- <input type="radio" class="recurring" id="recurring"/> <label for="recurring"><small>Recurring?</small></label> -->
                       </div>
                   </div>
@@ -276,18 +278,49 @@ $cur=reset($categs);
 
               </summary>
               <summary class="payment WDTH90 MRGCenter" style="display: none">
+                  <h1><b>3. Payment</b></h1>
+
                   <h2><b>How do you like to Pay?</b></h2>
-                  <input type="radio" checked id="fixed" name="pay" value="fixed" /><label for="fixed">Fixed</label>
-                  <input type="radio" id="hourly" name="pay" value="hourly" /><label for="hourly">Hourly</label>
-                  <div class="form-group MRGT10PX">
+                  <div style="font-weight: normal;">
+                    <input type="radio" id="fairMarket" name="pay"/><label for="fairMarket">Fair Market</label>
+                    <input type="radio" checked id="fixed" name="pay" value="fixed" /><label for="fixed">Fixed</label>
+                    <input type="radio" id="hourly" name="pay" value="hourly" /><label for="hourly">Hourly</label>
+                  </div>
+                  <div class="row WDTH300PX actHourly">
+                      <div class="col-sm-6 col-md-6 col-lg-6">
+                        <div class="form-group MRGT10PX">
+                          <label class="form-label" for="rateHour">Rate/Hour</label>
+                          <input id="rateHour" class="form-input" type="number" />
+                        </div>
+                      </div>
+                      <div class="col-sm-6 col-md-6 col-lg-6">
+                        <div class="form-group MRGT10PX">
+                            <label class="form-label" for="tHour">Total Hours</label>
+                            <input id="tHour" class="form-input" type="number" />
+                        </div>
+                      </div>
+                  </div>
+                  <div class="form-group MRGT10PX WDTH300PX ramount" id="recamnt" style="display:none">
+                      <label class="form-label" for="ramount">Recurrence Amount</label>
+                      <input id="ramount" class="form-input" type="text" />
+                   </div>       
+                  <div class="form-group MRGT10PX WDTH300PX amount">
+                    <label class="form-label" for="amount">Amount</label>
+                    <input id="amount" class="form-input" type="text" />
+                  </div>           
+                  <!-- <div class="form-group MRGT10PX">
                     <label class="form-label" for="first">Amount</label>
                     <input id="first" class="form-input" type="text" />
-                  </div>
-                  <div class="form-group MRGT10PX" id="recamnt" style="display:none;">
+                  </div> -->
+                  <!-- <div class="form-group MRGT10PX" id="recamnt" style="display:none;">
                     <label>Total Amount</label>
                     <input id="totalamnt" class="form-input" type="text" readonly="true" value="$100" />
-                  </div>
-                  <textarea class="MRGT10PX" id="schedule_note"></textarea>
+                  </div> -->
+                  <div class="form-group MRGT10PX notes">
+                    <label class="form-label" for="notes">Notes</label>
+                    <textarea class="form-input" id="schedule_note"></textarea>
+                    </div>
+                  
                 <div class="row">
                     <div class="col-sm-4 col-md-4 col-lg-4">
                         <h2><b>Payment Method</b></h2>
@@ -303,6 +336,7 @@ $cur=reset($categs);
 
               </summary>
               <summary class="review WDTH90 MRGCenter" style="display: none">
+                  <h1><b>4. Review</b></h1>
                   <h2><b>Review your request</b></h2>
                   <p><b>Description</b></p>
                   <span id="description"></span>
@@ -323,6 +357,7 @@ $cur=reset($categs);
                   </label>
               </summary>
               <summary class="finish WDTH90 MRGCenter" style="display: none">
+                  <h1><b>5. Finish!</b></h1>
                   <h2><b>Congratulations!</b></h2>
                   <p class="MRGT20PX">Tour help requested has been posted. Sit back and relax.</p>
                   <a href="#">Go to Dashboard</a>
