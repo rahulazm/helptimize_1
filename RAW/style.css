@@ -85,7 +85,7 @@ nav a, nav a:hover   { color: #000000; }
 .super-widget-tab-info { background: #fff; padding: 20px; box-shadow: 0 0 3px #00000059; width: 60%; margin-top: 10px; position: relative; }
 
 /* Common class */
-.service        { border-radius: 100px; padding: 10px 10px; background: #fff; border: 1px solid #afafaf; margin-right: 10px; font-weight: normal;}
+.service        { border-radius: 100px; padding: 15px 15px; background: #fff; border: 1px solid #afafaf; margin-right: 10px; }
 .jobdetails input[type="radio"]:checked+label { background: #FA9A0A; color: #fff; }
 .jobdetails input[type="radio"] { display: none; margin-right: 10px; }
 .jobdetails input[type="radio"].recurring { display: inline-block; }
@@ -185,4 +185,10 @@ nav a, nav a:hover   { color: #000000; }
   
   .payment input[type="radio"]+label { padding: 4px 16px; }
 
+}
+
+.ellipsis{
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
 }
