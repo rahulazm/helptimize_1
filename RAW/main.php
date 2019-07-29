@@ -1,4 +1,4 @@
-<?php 
+<?php
 include("header_main.php");
 //print_r($_SESSION);
 $id= $_SESSION['id'];
@@ -114,16 +114,16 @@ $( document ).ready(function() {
                       <div class="card-body">
                         <p class="card-text"><?php //echo $resReqtrAllJobs[$i]['id']?></p>
                           <div class="card-title">
-                              <h5 class="ellipsis" title="<?php echo $resReqtrAllJobs[$i]['sr_title']?>"><?php echo $resReqtrAllJobs[$i]['sr_title']?></h5>
+                              <h5><?php echo $resReqtrAllJobs[$i]['sr_title']?></h5>
                               <!-- <div>
                                   <span class="ongoing"><?php echo $resReqtrAllJobs[$i]['status']?></span>
                                   <span class="badge badge-secondary"><?php echo $resReqtrAllJobs[$i]['srid']?> 5</span>
                               </div> -->
                           </div>
-                          <label class="post-date">Posted: <?php echo $resReqtrAllJobs[$i]['create_dateTime']?></label>
+                          <label class="post-date">Posted: <?php echo date("d/m/Y",strtotime($resReqtrAllJobs[$i]['create_dateTime']));?></label>
                           <p class="card-info">Bidder: <?php echo $resReqtrAllJobs[$i]['srOwnerName']?> </p>
                            <p class="card-info">Price: <?php echo $resReqtrAllJobs[$i]['payAmt']." ".$resReqtrAllJobs[$i]['payType']?> </p>
-                           <div class="text-right"><a href="#">View Details</a></div>
+                           <div class="text-right"><a href="view_service_details.php?id=<?php echo $resReqtrAllJobs[$i]['id'];?>">View Details</a></div>
                       </div>
                     </div>
                   </div>
@@ -152,9 +152,9 @@ $( document ).ready(function() {
                       <div class="card-body">
                         
                           <div class="card-title">
-                              <h5 class="ellipsis" title="<?php echo $resRecm[$i]['title']?>"><?php echo $resRecm[$i]['title']?></h5>
+                              <h5><?php echo $resRecm[$i]['title']?></h5>
                           </div>
-                          <label class="post-date">Posted: <?php echo $resRecm[$i]['create_dateTime']?></label>
+                          <label class="post-date">Posted: <?php echo date("d/m/Y", strtotime($resRecm[$i]['create_dateTime']))?></label>
                           <p class="card-info"><?php echo $resRecm[$i]['descr']?> </p>
                           <!-- <div class="text-right"><a href="#">View Details</a></div> -->
                       </div>
@@ -201,13 +201,13 @@ $( document ).ready(function() {
                       <div class="card-body">
                         <p class="card-text"><?php echo $resList[$i]['srExternId']?>;</p>
                           <div class="card-title">
-                              <h5 class="ellipsis" title="<?php echo $resList[$i]['sr_title']?>"><?php echo $resList[$i]['sr_title']?></h5>
+                              <h5><?php echo $resList[$i]['sr_title']?></h5>
                               <div>
                                   <span class="ongoing"><?php echo $resList[$i]['status']?></span>
                                   <span class="badge badge-secondary"><?php echo $resList[$i]['srid']?> 5</span>
                               </div>
                           </div>
-                          <label class="post-date">Posted: <?php echo $resList[$i]['create_dateTime']?></label>
+                          <label class="post-date">Posted: <?php echo date("d/m/Y",strtotime($resList[$i]['create_dateTime']))?></label>
                           <p class="card-info"><?php echo $resList[$i]['descr']?> </p>
                           <div class="text-right"><a href="view_service_details.php?id=<?php echo $resList[$i]['id'];?>">View Details</a></div>
                       </div>

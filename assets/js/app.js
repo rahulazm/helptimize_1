@@ -1,7 +1,7 @@
 localStorage.removeItem('recurring');
 
 function next() {
-  $('#amount, #ramount').val('')
+  //$('#amount, #ramount').val('')
     var getId = $('.super-widget-tab input[type="radio"]:checked').last().parent().next().children('input').attr('id');
       var address = $('#getaddr').val();
     var desc  = $('#desc').val();
@@ -27,8 +27,13 @@ function next() {
     if($('#description').length){
        $('#description').text(desc);
     }
-    alert($('#amnt').length);
-    alert(pay+", "+ amount+" $");
+    //alert($('#amnt').length);
+    //alert(pay+", "+ amount+" $");
+
+    //alert("startDate1" + localStorage.getItem('startDate1'));
+    //alert("endDate1" + localStorage.getItem('endDate1'));  
+
+
     if($('#amnt').length){
       var newtext = pay+", "+ amount+" $";
       $('#amnt').text(newtext);
@@ -48,35 +53,31 @@ if(recurringtype!='One Time'){
 }
 
 if(getId=='finish'){
-  var startDate = $.session.get('startDate') ; 
-  var endDate = $.session.get('endDate') ; 
-  var startMin = $.session.get('startMin') ; 
-  var endMin = $.session.get('endMin') ; 
-  var dbStartDate = $.session.get('dbStartDate') ; 
-  var dbEndDate = $.session.get('dbEndDate') ; 
+  var startDate1 = localStorage.getItem('startDate1') ; 
+  var endDate1   = localStorage.getItem('endDate1') ; 
+  var startMin  = localStorage.getItem('startMin') ; 
+  var endMin    = localStorage.getItem('endMin') ; 
+  var dbStartDate = localStorage.getItem('dbStartDate') ; 
+  var dbEndDate   =localStorage.getItem('dbEndDate') ; 
+ 
 }
-//alert(startDate);   
-
-
-if(startDate!=""){
-      $('#startdate').text(startDate);
-    }
+ 
+if(startDate1!=""){
+      $('#startdate').text(localStorage.getItem('startDate1'));
+  }
 if(startMin!=""){
-  $('#startMin').text(startMin);
+  $('#startMin').text(localStorage.getItem('startMin'));
 }
-if(endDate!=""){
-      $('#enddate').text(endDate);
+if(endDate1!=""){
+      $('#enddate').text(localStorage.getItem('endDate1'));
     }
 if(endMin!=""){
-  $('#endMin').text(endMin);
+  $('#endMin').text(localStorage.getItem('endMin'));
 }
+
 
 //alert(lat+"----"+lng);
 //alert(address);
-//alert("Start date--" + startDate);
-//alert("endDate date--" + endDate);
-//alert("startMin---"+startMin);
-//alert("endMin--"+endMin);
 /*if($('#start-date').length){
   alert($('#start-date').val());
 }*/

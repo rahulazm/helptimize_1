@@ -63,21 +63,21 @@
             var dbStartDate = utcStartDate.format('YYYY-MM-DD HH:mm:ss');
             var dbEndDate = utcEndDate.format('YYYY-MM-DD HH:mm:ss');
 
-            //alert("UTCEND: " + utcEndDate.format('DD/MM/YYYY HH:mm'));
             utcStartDate = utcStartDate.format('DD/MM/YYYY');
             utcEndDate = utcEndDate.format('DD/MM/YYYY');
+            //alert("utcStartDate: " + utcStartDate);
 
             //alert(moment.utc(e.start._date));
-            $.session.set('startDate', utcStartDate);
-            $.session.set('endDate', utcEndDate);
-            $.session.set('startMin', startMin);
-            $.session.set('endMin', endMin);
-            $.session.set('dbStartDate', dbStartDate);
-            $.session.set('dbEndDate', dbEndDate);           
-            localStorage.setItem('startDate', e.start._date);
-            localStorage.setItem('endDate', e.end._date);            
-            sessionStorage.setItem('startDate', e.start._date);
-            sessionStorage.setItem('endDate', e.end._date);
+            localStorage.setItem('startDate1', utcStartDate);
+            localStorage.setItem('endDate1', utcEndDate);
+            localStorage.setItem('startMin', startMin);
+            localStorage.setItem('endMin', endMin);
+            localStorage.setItem('dbStartDate', dbStartDate);
+            localStorage.setItem('dbEndDate', dbEndDate);           
+            //localStorage.setItem('startDate', e.start._date);
+            //localStorage.setItem('endDate', e.end._date);            
+            //localStorage.setItem('startDate', e.start._date);
+            //localStorage.setItem('endDate', e.end._date);
             var diD = _getDateDiff(e.start._date, e.end._date);
             localStorage.setItem('noofdays', diD);
             //alert(diD);

@@ -1,18 +1,28 @@
 <?php
 include("header_main.php");
+require_once("/etc/helptimize/conf.php");
 $categs=$_sqlObj->query("select * from categ where parent_id='' or parent_id is null");
 $cur=reset($categs);
-//print_r($cur);
+
+//fetch all address lat,lon
+$addMrkr=$_sqlObj->query("select posLong,posLat from address");
+$addMrkrRes=@reset($addMrkr);
+$new = array();
+$i=0;
+while($addMrkrRes){
+  $new[$i]['lat'] = $addMrkrRes['posLong'];
+  $new[$i]['lon'] = $addMrkrRes['posLat'];
+  $addMrkrRes=next($addMrkr);
+  $i++;
+}
+$addMrkrRes = json_encode($new);
+//echo "<pre>";
+//print_r($_SERVER);
+//echo "</pre>";
+
 ?>
 <script type="text/javascript">
- // This example adds a search box to a map, using the Google Place Autocomplete
-      // feature. People can enter geographical searches. The search box will return a
-      // pick list containing a mix of places and predicted search terms.
-
-      // This example requires the Places library. Include the libraries=places
-      // parameter when you first load the API. For example:
-      // <script src="https://maps.googleapis.com/maps/api/js?key=YOUR_API_KEY&libraries=places">
-
+ 
       function initAutocomplete() {
         var map = new google.maps.Map(document.getElementById('map'), {
           center: {lat: 47.6062, lng: -122.3321},
@@ -46,7 +56,24 @@ $cur=reset($categs);
                     }
                 );
 
-            
+        //to print multilocation address marker
+            var tmp1 = <?php echo $addMrkrRes;?>;
+            for (var i = 0; i < tmp1.length; i++) {
+                 console.log(tmp1[i]['lat']);
+                 console.log(tmp1[i]['lon']);
+                 //if($.isNumeric(tmp1[i]['lat'])&& $.isNumeric(tmp1[i]['lon'])){
+                    var newpos = {lat: parseFloat(tmp1[i]['lat']),lng: parseFloat(tmp1[i]['lon'])};
+                    var marker = new google.maps.Marker({
+                    position: newpos,
+                    map: map,
+                    title: ''
+                    });
+                  //}
+                
+            }
+
+           
+
             infoWindow.setPosition(pos);
             infoWindow.open(map);
             map.setCenter(pos);
@@ -59,6 +86,8 @@ $cur=reset($categs);
           // Browser doesn't support Geolocation
           handleLocationError(false, infoWindow, map.getCenter());
         }
+
+        
         // Create the search box and link it to the UI element.
         var input = document.getElementById('pac-input');
         var searchBox = new google.maps.places.SearchBox(input);
@@ -244,7 +273,7 @@ $cur=reset($categs);
                    </div>
                 <!-- Replace the value of the key parameter with your own API key. -->
                 <script async defer
-                src="https://maps.googleapis.com/maps/api/js?key=AIzaSyC7Y4opceNAVG8qp53FvFNV3IG7aUHU2GU&libraries=places&callback=initAutocomplete">
+                src="https://maps.googleapis.com/maps/api/js?key=<?php echo $_configs['google_map_api_new'];?>&libraries=places&callback=initAutocomplete">
                 </script>
 
               </summary>
@@ -268,7 +297,7 @@ $cur=reset($categs);
                           <option>Twice Monthly</option>
                           <option>Monthly</option>
                           <option>Every Other Month</option>
-                        </select> -->
+                        </select>
                         <!-- <input type="radio" class="recurring" id="recurring"/> <label for="recurring"><small>Recurring?</small></label> -->
                       </div>
                   </div>
