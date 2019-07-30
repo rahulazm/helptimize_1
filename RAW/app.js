@@ -14,6 +14,7 @@ function next() {
     var recurringtype = localStorage.getItem('recurring');
     var lat=$('#lat').val();
     var lng=$('#lng').val();
+    var ramount=$('#ramount').val();
 
     //var time = '10:15 AM';
     //var startdate = '10/10/2018';
@@ -76,7 +77,7 @@ if(endMin!=""){
 }
 
 
-//alert(lat+"----"+lng);
+//alert("desc----"+desc);
 //alert(address);
 /*if($('#start-date').length){
   alert($('#start-date').val());
@@ -97,6 +98,35 @@ var imgs=[];
   });
 
 if(getId=='finish'){
+  /*
+  var tmp= {title : desc,
+      descr : desc,
+      summ : desc,
+      bidDate : bid_bool,
+      dateTimeBool: time,
+      dateTimeFrom : dbStartDate,
+      dateTimeTo : dbEndDate,
+      set_schedule : recurringtype,
+      schedule_note : schedule_note,
+      schedule_amount : ramount,
+      payAmt : amount,
+      payType : pay,
+      totalhours : totalhours,
+      rateperhour : rateperhour,
+      category : serv,
+      is18 : is18,
+      provider_type : provider_type,
+      reqstedBidId : selected_provider,
+      imgs : imgs,
+      addr : address,
+      buttonstatus : buttonstatus,
+      current : "11",
+      sr_number : "108",
+      posLong:lng,
+      posLat:lat};
+      console.log(tmp);
+  */
+
   $.post("service_request_submit_new.php",
     {
       title : desc,
@@ -126,7 +156,7 @@ if(getId=='finish'){
       posLat:lat
     },
     function(data,status){
-      alert("Data: " + data + "\nStatus: " + status);
+      //alert("Data: " + data + "\nStatus: " + status);
     });
 
 }
@@ -162,6 +192,32 @@ function prev() {
     }
 }
 
+
+function getDetails(obj){
+    //alert(obj);
+    var seller = $("#seller").length;
+    var requester1 = $("#requester1").length;
+
+    if(seller>0 && requester1>0 ){
+      //alert(requester1);
+      if(obj=='seller'){
+       //alert("inseller-"+obj);
+           document.getElementById("requester1").style.display="none";
+           document.getElementById("seller").style.display="block";
+
+      }
+      if(obj=='requester1'){
+      // alert("inrequester1-"+obj);
+       document.getElementById("requester1").style.display="block";
+       document.getElementById("seller").style.display="none";
+         
+      }
+    }
+  localStorage.setItem('utype',obj) ; 
+  return;
+  }
+
+
 function payTypeSetting(){
 
   recurringType = localStorage.getItem('recurring');
@@ -192,13 +248,17 @@ $('input, textarea').focus(function(){
   });
   
   $('input, textarea').blur(function(){
-    var inputValue = $(this).val();
-    if ( inputValue == "" ) {
-      $(this).removeClass('filled');
-      $(this).parents('.form-group').removeClass('focused');  
-    } else {
-      $(this).addClass('filled');
-    }
+    //if($('#desc').length){
+      //var inputValue = $('#desc').val();
+      var inputValue = $(this).val();
+      //alert(inputValue);
+      if ( inputValue == "" ) {
+        $(this).removeClass('filled');
+        $(this).parents('.form-group').removeClass('focused');  
+      } else {
+        $(this).addClass('filled');
+      }
+    //}
   })  
 
   function addAddress(){

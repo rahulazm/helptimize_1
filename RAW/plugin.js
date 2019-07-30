@@ -63,8 +63,8 @@
             var dbStartDate = utcStartDate.format('YYYY-MM-DD HH:mm:ss');
             var dbEndDate = utcEndDate.format('YYYY-MM-DD HH:mm:ss');
 
-            utcStartDate = utcStartDate.format('DD/MM/YYYY');
-            utcEndDate = utcEndDate.format('DD/MM/YYYY');
+            utcStartDate = utcStartDate.format('MM/DD/YYYY');
+            utcEndDate = utcEndDate.format('MM/DD/YYYY');
             //alert("utcStartDate: " + utcStartDate);
 
             //alert(moment.utc(e.start._date));
@@ -73,7 +73,9 @@
             localStorage.setItem('startMin', startMin);
             localStorage.setItem('endMin', endMin);
             localStorage.setItem('dbStartDate', dbStartDate);
-            localStorage.setItem('dbEndDate', dbEndDate);           
+            localStorage.setItem('dbEndDate', dbEndDate);  
+            console.log(localStorage);
+
             //localStorage.setItem('startDate', e.start._date);
             //localStorage.setItem('endDate', e.end._date);            
             //localStorage.setItem('startDate', e.start._date);

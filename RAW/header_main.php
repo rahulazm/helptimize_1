@@ -61,7 +61,7 @@ $db_count_unread_messages->close();
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">-->
     <script src="https://use.fontawesome.com/a91275e4b2.js"></script>
     <script src="https://js.pusher.com/4.0/pusher.min.js"></script> 
-
+    
     <title>HELPTIMIZE</title>
   </head>
   <body>
@@ -81,7 +81,7 @@ $db_count_unread_messages->close();
                 <div class="col-sm-3 col-md-6 col-lg-3 col-xl-3 col-12">
                     <div class="switch-btn">
                     <span><input type="radio" id="requester" name="switch" onclick="getDetails('requester1');" /><label for="requester">Requester</label></span>
-                    <span><input type="radio" id="provider" name="switch" onclick="getDetails('seller');" checked/><label for="provider">Provider</label></span>
+                    <span><input type="radio" id="provider" name="switch" onclick="getDetails('seller');"/><label for="provider">Provider</label></span>
                     </div>
                 </div>
                 <div class="col-sm-1 col-md-6 col-lg-1 col-xl-1 text-right">

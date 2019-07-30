@@ -34,25 +34,7 @@ $( document ).ready(function() {
     seller.style.display="block";
 });
 
-  function getDetails(obj){
-    //alert(obj);
-    var seller = document.getElementById("seller");
-    var requester1 = document.getElementById("requester1");
-    if(obj=='seller'){
-		 //alert("inseller-"+obj);
-         requester1.style.display="none";
-		 seller.style.display="block";
-
-    }
-    if(obj=='requester1'){
-		// alert("inrequester1-"+obj);
-         requester1.style.display="block";
-		 seller.style.display="none";
-       
-    }
   
-	return;
-  }
 
 </script>
 
@@ -201,9 +183,12 @@ $( document ).ready(function() {
                       <div class="card-body">
                         <p class="card-text"><?php echo $resList[$i]['srExternId']?>;</p>
                           <div class="card-title">
-                              <h5><?php echo $resList[$i]['sr_title']?></h5>
+                              <h5><?php echo $resList[$i]['sr_title'];
+                              $clr =($resList[$i]['status']=='pending')? "orange":"#00982e";
+                              $clr =($resList[$i]['status']=='cancelled')? "red":$clr;
+                              ?></h5>
                               <div>
-                                  <span class="ongoing"><?php echo $resList[$i]['status']?></span>
+                                  <span class="ongoing" style="background-color:<?php echo $clr;?>"><?php echo $resList[$i]['status']?></span>
                                   <span class="badge badge-secondary"><?php echo $resList[$i]['srid']?> 5</span>
                               </div>
                           </div>

@@ -49,7 +49,7 @@ $addMrkrRes = json_encode($new);
                     function( results, status ) {
                         if ( status == google.maps.GeocoderStatus.OK && results[0] ) {
                             curaddr = results[0].formatted_address;
-                            console.log( results[0].formatted_address );
+                            //console.log( results[0].formatted_address );
                             $('#pac-input').val(curaddr);
                             infoWindow.setContent("You are here!");
                         }
@@ -59,8 +59,8 @@ $addMrkrRes = json_encode($new);
         //to print multilocation address marker
             var tmp1 = <?php echo $addMrkrRes;?>;
             for (var i = 0; i < tmp1.length; i++) {
-                 console.log(tmp1[i]['lat']);
-                 console.log(tmp1[i]['lon']);
+                 //console.log(tmp1[i]['lat']);
+                 //console.log(tmp1[i]['lon']);
                  //if($.isNumeric(tmp1[i]['lat'])&& $.isNumeric(tmp1[i]['lon'])){
                     var newpos = {lat: parseFloat(tmp1[i]['lat']),lng: parseFloat(tmp1[i]['lon'])};
                     var marker = new google.maps.Marker({
