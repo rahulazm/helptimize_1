@@ -36,9 +36,9 @@ $db_count_unread_messages->close();
     <link rel="stylesheet" href="./assets/css/style.css"/>
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" crossorigin="anonymous">
     <script src="js/jquery-3.4.1.js"></script>
-    <script src="js/bootstrap.min.js"></script>
+    <!-- <script src="js/bootstrap.min.js"></script> -->
     <script src="./js/formValidation.min.js"></script>
-    <script src="./js/framework/bootstrap.min.js"></script>  
+    <!-- <script src="./js/framework/bootstrap.min.js"></script> -->  
     <link rel="stylesheet" href="./css/formValidation.min.css">
 
     <script src="js/helptimize.js"></script>
