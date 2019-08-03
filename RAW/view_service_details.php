@@ -542,7 +542,15 @@ $rowbidInfoShlstd['ownerId'] = ($cntShrtltd > 0 ) ? $rowbidInfoShlstd['ownerId']
                                  <img  src="img/chat.png" width="50px"  >
                                 </a> <a href="javascript:void()" class="democlick" >View Chat Demo</a>
                         </label>-->
-                        <?php include_once("view_bid_new.php");?>
+                         <div class="col-md-9 col-lg-9 col-sm-9">
+                            <div class="user-details" id="cnt_stl">
+                                 <div class="tab-content">
+                                    <div class="tab-pane fade show active p-3" id="bid-detail" role="tabpanel" aria-labelledby="one-tab">
+                                        <?php include_once("view_bid_new.php");?>
+                                    </div>
+                                </div>
+                            </div>
+                         </div>   
                     </div>
                 </div>
             </aside>
