@@ -372,7 +372,12 @@ $('input, textarea').focus(function(){
     })
 
    function getUserDetails(obj,srid) {
-      //alert(obj);
+      
+      if(obj==0){
+        //alert("test");
+          $('#three').html("No records found");
+        return;
+      }
       //var currentUrl = window.location.href + "&srid="+obj;
       //location.href=currentUrl;
       

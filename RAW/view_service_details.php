@@ -42,10 +42,14 @@ $totalbid_count=$count[0]["totbid"];
 
 ##########Get avg of bids in this SR
 $bidInfo=@reset($_sqlObj->query('select id,count(id) as bidNum, (select avg(payAmt) from view_bids where srId='.$servID.' and payType="fixed") as avgFix, (select avg(payAmt) from view_bids where srId='.$servID.' and payType="hourly") as avgHr from view_bids where srId='.$servID));
-
+$cntBids = count($bidInfo);
+$rowBids['ownerid'] = ($cntBids > 0 ) ? $rowBids['ownerid'] : 0;
 ##############Get shortlisted bids info
 $bidInfoShlstd=$_sqlObj->query('select * from view_bids where srId='.$servID.' and srBidAwardId is null and shortlist = "yes" and buttonstatus is null  and bidstatus != "cancel" order by last_updated desc');
 $rowbidInfoShlstd=@reset($bidInfoShlstd);
+$cntShrtltd = count($bidInfoShlstd);
+$rowbidInfoShlstd['ownerId'] = ($cntShrtltd > 0 ) ? $rowbidInfoShlstd['ownerId'] : 0;
+//echo $cntShrtltd;
 //echo 'select * from view_bids where srId='.$servID.' and srBidAwardId is null and shortlist = "yes" and buttonstatus is null  and bidstatus != "cancel" order by last_updated desc';
 
 //print_r($bidInfo);
@@ -66,7 +70,7 @@ $rowbidInfoShlstd=@reset($bidInfoShlstd);
                             <a class="nav-link" id="three-tab" data-toggle="tab" href="#three" role="tab" aria-controls="Three" aria-selected="false" onclick="getUserDetails(<?php echo $rowbidInfoShlstd['ownerId']." ,".$servID;?>)">Shortlisted</a>
                         </li>
                         <li class="nav-item">
-                                <a class="nav-link" id="three-tab" data-toggle="tab" href="#four" role="tab" aria-controls="four" aria-selected="false">Agreement</a>
+                                <a class="nav-link" id="four-tab" data-toggle="tab" href="#four" role="tab" aria-controls="Four" aria-selected="false">Agreement</a>
                         </li>
                         <li class="nav-item">
                                 <a class="nav-link" id="five-tab" data-toggle="tab" href="#five" role="tab" aria-controls="Five" aria-selected="false">Communication</a>
@@ -312,7 +316,7 @@ $rowbidInfoShlstd=@reset($bidInfoShlstd);
                     </div>
                 </div>
                     <div class="tab-pane fade p-3" id="three" role="tabpanel" aria-labelledby="three-tab">
-                        <div class="row">
+                        <div class="row" id="row">
                             <div class="col-md-3 col-lg-3 col-sm-3">
                                 <aside class="users-list">
                                 <?php while($rowbidInfoShlstd) {?>
@@ -324,12 +328,12 @@ $rowbidInfoShlstd=@reset($bidInfoShlstd);
                                         </div>
                                         <div id="diamndr1"></div>
                                     </div>
-                                <?php $rowbidInfoShlstd=next($bidInfoShlstd); } ?>
+                                <?php $rowbidInfoShlstd=@next($bidInfoShlstd); } ?>
                                     
                                 </aside>
                             </div>
                             <div class="col-md-9 col-lg-9 col-sm-9">
-                                <div class="user-details">
+                                <div class="user-details" id="cnt_stl">
                                     <div class="flex-layout blue">
                                         <div>
                                             <div class="user-image">
@@ -516,184 +520,29 @@ $rowbidInfoShlstd=@reset($bidInfoShlstd);
 
                                               </div>                                            
                                         </p>
-                                     </div>
-                                </div>      
-                                </div>
-                                </div>    
-                    </div>
-                    <div class="tab-pane fade p-3" id="four" role="tabpanel" aria-labelledby="four-tab">
-                        <div class="user-details">
-                            <div class="flex-layout blue">
-                                <div>
-                                    <div class="user-image">
-                                        <img src="./assets/images/user.jpg"/>
-                                    </div>
-                                </div>
-                                <div class="flex-layout">
-                                    <div>Blue Member</div>
-                                    <div class="user-diomand">
-                                        <i class="fas fa-user"></i>
-                                    </div>
-                                </div>
-                            </div>
-                            <div class="flex-layout user-name">
-                                <div class="text-center">
-                                    Steve McMohan4<br/>
-                                    <small>Software Engineer</small>
-                                </div>
-                                <div>
-                                    <div class="user-details-tab">
-                                        <ul class="nav nav-tabs card-header-tabs" id="myTab" role="tablist">
-                                            <li class="nav-item">
-                                                <a class="nav-link active" id="agreement-bid-details-tab" data-toggle="tab" href="#agreement-bid" role="tab" aria-controls="One" aria-selected="true">Bid Detail</a>
-                                            </li>
-                                            <li class="nav-item">
-                                                <a class="nav-link" id="agreement-profile-tab" data-toggle="tab" href="#agreement-profile" role="tab" aria-controls="Two" aria-selected="false">Profile</a>
-                                            </li>
-                                            <li class="nav-item">
-                                                <a class="nav-link" id="agreement-feedback-tab" data-toggle="tab" href="#agreement-feedback" role="tab" aria-controls="Three" aria-selected="false">Feedback</a>
-                                            </li>
-                                        </ul>
-                                    </div>
-                                    
-                                </div>
-                            </div>
-                            <div class="tab-content">
-                                <div class="tab-pane fade show active p-3" id="agreement-bid" role="tabpanel" aria-labelledby="one-tab">
-                                    <p><b>Comment</b></p>
-                                    <textarea></textarea>
-                                    <p class="MRGT20PX"><b>Bid Details</b></p>
-                                    <div class="form-group MRGT10PX">
-                                        <label class="form-label" for="first">Amount</label>
-                                        <input id="first" class="form-input" type="text" />
-                                    </div>
-                                    <div class="form-group MRGT10PX">
-                                        <label class="form-label" for="date">Duration</label>
-                                        <input id="date" class="form-input" type="text" />
-                                    </div>
-                                    <div class="MRGT20PX">
-                                        <button class="orange-btn">Edit Agreement!</button>
-                                    </div>
-                                </div>
-                                <div class="tab-pane fade p-3" id="agreement-profile" role="tabpanel" aria-labelledby="one-tab">
-                                    <div class="row">
-                                        <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
-                                            <button class="orange-btn">View Original Service Request</button>
-                                        </div>
-                                    </div>
-                                    <h2><b>Revised Proposed Agreement: Pants(98)</b></h2>
-                                    <div class="grid">
-                                        <div class="row">
-                                            <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
-                                                <b>Username</b>
-                                            </div>
-                                            <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
-                                                Buyer1
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
-                                                    <b>Name</b>
-                                            </div>
-                                            <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
-                                                ---
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
-                                                    <b>Star Rating</b>
-                                            </div>
-                                            <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
-                                                87.5%
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
-                                                    <b>Diamond Rating</b>
-                                            </div>
-                                            <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
-                                                ***
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
-                                                    <b>Number of bids</b>
-                                            </div>
-                                            <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
-                                                1  
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
-                                                    <b>Average fix cost amount</b>
-                                            </div>
-                                            <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
-                                                ---
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
-                                                <b>Average hourly cost amount</b>
-                                            </div>
-                                            <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
-                                                0.000
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
-                                                <b>Category</b>
-                                            </div>
-                                            <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
-                                                Pets
-                                            </div>
-                                        </div>
-                                    </div>
-                                    <p class="MRGT20PX"><b>Proposed Agreement Detail Description</b></p>
-                                    <textarea>Content should be here</textarea>
-                                </div>
-                                <div class="tab-pane fade p-3" id="agreement-feedback" role="tabpanel" aria-labelledby="one-tab">
-                                    <h2><b>Blue Star Rating</b></h2>
-                                    <div class="grid">
-                                        <div class="row">
-                                            <div class="col-sm-4 col-md-4 col-lg-4 col-xl-4">
-                                                <b>SR</b>
-                                            </div>
-                                            <div class="col-sm-4 col-md-4 col-lg-4 col-xl-4">
-                                                <b>Rating</b>
-                                            </div>
-                                            <div class="col-sm-4 col-md-4 col-lg-4 col-xl-4">
-                                                <b>Comments</b>
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-sm-4 col-md-4 col-lg-4 col-xl-4">
-                                                Test
-                                            </div>
-                                            <div class="col-sm-4 col-md-4 col-lg-4 col-xl-4">
-                                                5.00
-                                            </div>
-                                            <div class="col-sm-4 col-md-4 col-lg-4 col-xl-4">
-                                                Lorem Ipsum 
-                                            </div>
-                                        </div>
-                                        <div class="row">
-                                            <div class="col-sm-4 col-md-4 col-lg-4 col-xl-4">
-                                                Test
-                                            </div>
-                                            <div class="col-sm-4 col-md-4 col-lg-4 col-xl-4">
-                                                5.00
-                                            </div>
-                                            <div class="col-sm-4 col-md-4 col-lg-4 col-xl-4">
-                                                Lorem Ipsum 
-                                            </div>
-                                        </div>
-                                    </div>
+                                      </div>
                                 </div>
                             </div>
                         </div>
                     </div>
+                </div>
+                    <div class="tab-pane fade p-3" id="four" role="tabpanel" aria-labelledby="four-tab">
+                        
+                            
+                           Agreement section ... 
+                            
+                     
+                    </div>
                     <div class="tab-pane fade p-3" id="five" role="tabpanel" aria-labelledby="five-tab">
-                        Chat console will come here
+                        <!--<label for="requesterBox">
+                                <b>Communicate:</b>
+                        </label>
+                        <label class="SRRequesterName" for="requesterBoxB">
+                                <a href="javascript:void()" class="videoclick" data-from="seller" data-user="'.$bidArr['srOwnerName'].'">
+                                 <img  src="img/chat.png" width="50px"  >
+                                </a> <a href="javascript:void()" class="democlick" >View Chat Demo</a>
+                        </label>-->
+                        <?php include_once("view_bid_new.php");?>
                     </div>
                 </div>
             </aside>
