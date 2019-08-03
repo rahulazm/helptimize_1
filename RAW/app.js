@@ -396,23 +396,33 @@ $('input, textarea').focus(function(){
           }
 
           $('#bid_comment').val(jsonData.summ);
+          $('#bid_comment_stl').val(jsonData.summ);
           $('#bid_amnt').val(jsonData.payAmt);
+          $('#bid_amnt_stl').val(jsonData.payAmt);
           $('#bid_duration').val(jsonData.dtFrm+" "+jsonData.timeFrm+" - "+ jsonData.dtTo+" "+jsonData.timeTo);
+          $('#bid_duration_stl').val(jsonData.dtFrm+" "+jsonData.timeFrm+" - "+ jsonData.dtTo+" "+jsonData.timeTo);
           $('#full_name').text(jsonData.firstName+" "+jsonData.midName);
           $('#full_name1').text(jsonData.firstName+" "+jsonData.midName);
+          $('#full_name_stl').text(jsonData.firstName+" "+jsonData.midName);
           $('#catg').text(jsonData.name);
           $('#catg1').text(jsonData.name);
+          $('#catg_stl').text(jsonData.name);
           $('#uname').text(jsonData.username);
+          $('#uname_stl').text(jsonData.username);
           $('#bidscnt').text("1");
           $('#avgfixcostamnt').text(fixedpay);
           $('#avghrlycostamnt').text(hrlypay);
           $('#agreedesc').text(jsonData.desc);
           $('#starr').text(jsonData.bluestar_Percentage);
+          $('#starr_stl').text(jsonData.bluestar_Percentage);
           $('#diamndr').html(jsonData.diamondrtng);
           $('#diamndr1').html(jsonData.diamondrtng);
           $('#diamndr2').html(jsonData.diamondrtng);
+          $('#diamndr_stl').html(jsonData.diamondrtng);
           $('#bluestrdetails').html(jsonData.bluedetls);
+          $('#bluestrdetails_stl').html(jsonData.bluedetls);
           $('#goldstarresp').html(jsonData.goldstarresp);
+
           console.log(jsonData);
         });
   }          

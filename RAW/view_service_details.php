@@ -43,6 +43,11 @@ $totalbid_count=$count[0]["totbid"];
 ##########Get avg of bids in this SR
 $bidInfo=@reset($_sqlObj->query('select id,count(id) as bidNum, (select avg(payAmt) from view_bids where srId='.$servID.' and payType="fixed") as avgFix, (select avg(payAmt) from view_bids where srId='.$servID.' and payType="hourly") as avgHr from view_bids where srId='.$servID));
 
+##############Get shortlisted bids info
+$bidInfoShlstd=$_sqlObj->query('select * from view_bids where srId='.$servID.' and srBidAwardId is null and shortlist = "yes" and buttonstatus is null  and bidstatus != "cancel" order by last_updated desc');
+$rowbidInfoShlstd=@reset($bidInfoShlstd);
+//echo 'select * from view_bids where srId='.$servID.' and srBidAwardId is null and shortlist = "yes" and buttonstatus is null  and bidstatus != "cancel" order by last_updated desc';
+
 //print_r($bidInfo);
 //echo "</pre>";
 
@@ -58,7 +63,7 @@ $bidInfo=@reset($_sqlObj->query('select id,count(id) as bidNum, (select avg(payA
                             <a class="nav-link" id="two-tab" data-toggle="tab" href="#two" role="tab" aria-controls="Two" aria-selected="false" onclick="getUserDetails(<?php echo $rowBids['ownerid']." ,".$servID;?>)">Bids</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" id="three-tab" data-toggle="tab" href="#three" role="tab" aria-controls="Three" aria-selected="false">Shortlisted</a>
+                            <a class="nav-link" id="three-tab" data-toggle="tab" href="#three" role="tab" aria-controls="Three" aria-selected="false" onclick="getUserDetails(<?php echo $rowbidInfoShlstd['ownerId']." ,".$servID;?>)">Shortlisted</a>
                         </li>
                         <li class="nav-item">
                                 <a class="nav-link" id="three-tab" data-toggle="tab" href="#four" role="tab" aria-controls="four" aria-selected="false">Agreement</a>
@@ -310,16 +315,16 @@ $bidInfo=@reset($_sqlObj->query('select id,count(id) as bidNum, (select avg(payA
                         <div class="row">
                             <div class="col-md-3 col-lg-3 col-sm-3">
                                 <aside class="users-list">
-                                <?php while($rowBids) {?>
-                                    <div class="flex-layout" onclick="getUserDetails(<?php echo $rowBids['ownerid']." ,".$servID;?>)">
+                                <?php while($rowbidInfoShlstd) {?>
+                                    <div class="flex-layout" onclick="getUserDetails(<?php echo $rowbidInfoShlstd['ownerId']." ,".$servID;?>)">
                                         <div><span><i class="fas fa-user"></i></span></div>
                                         <div>
-                                            <div><?php echo $rowBids['username'];?></div>
-                                            <small><?php echo $rowBids['create_dateTime'];?></small>
+                                            <div><?php echo $rowbidInfoShlstd['ownerName'];?></div>
+                                            <small><?php echo date("m/d/Y H:i A",strtotime($rowbidInfoShlstd['create_dateTime']));?></small>
                                         </div>
                                         <div id="diamndr1"></div>
                                     </div>
-                                <?php $rowBids=next($resBids); } ?>
+                                <?php $rowbidInfoShlstd=next($bidInfoShlstd); } ?>
                                     
                                 </aside>
                             </div>
@@ -332,28 +337,28 @@ $bidInfo=@reset($_sqlObj->query('select id,count(id) as bidNum, (select avg(payA
                                             </div>
                                         </div>
                                         <div class="flex-layout">
-                                            <div>Blue Member</div>
-                                            <div class="user-diomand">
-                                                <i class="fas fa-user"></i>
+                                            <div></div>
+                                            <div class="">
+                                                <p id="diamndr2_stl"></p>
                                             </div>
                                         </div>
                                     </div>
                                     <div class="flex-layout user-name">
                                         <div class="text-center">
-                                            Steve McMohan3<br/>
-                                            <small>Software Engineer</small>
+                                            <p id="full_name_stl"></p>
+                                            <small id="catg_stl"></small>
                                         </div>
                                         <div>
                                             <div class="user-details-tab">
                                                 <ul class="nav nav-tabs card-header-tabs" id="myTab" role="tablist">
                                                     <li class="nav-item">
-                                                        <a class="nav-link active" id="shortlist-bid-details-tab" data-toggle="tab" href="#shortlist-bid" role="tab" aria-controls="One" aria-selected="true">Bid Detail</a>
+                                                        <a class="nav-link active" id="bid-details-tab" data-toggle="tab" href="#bid-detail" role="tab" aria-controls="One" aria-selected="true">Bid Details</a>
                                                     </li>
                                                     <li class="nav-item">
-                                                        <a class="nav-link" id="shortlist-profile-tab" data-toggle="tab" href="#shortlist-profile" role="tab" aria-controls="Two" aria-selected="false">Profile</a>
+                                                        <a class="nav-link" id="bid-profile-tab" data-toggle="tab" href="#bid-profile-stl" role="tab" aria-controls="Two" aria-selected="false">Profile</a>
                                                     </li>
                                                     <li class="nav-item">
-                                                        <a class="nav-link" id="shortlist-feedback-tab" data-toggle="tab" href="#shortlist-feedback" role="tab" aria-controls="Three" aria-selected="false">Feedback</a>
+                                                        <a class="nav-link" id="bid-feedback-tab" data-toggle="tab" href="#bid-feedback-stl" role="tab" aria-controls="Three" aria-selected="false">Feedback</a>
                                                     </li>
                                                 </ul>
                                             </div>
@@ -361,39 +366,42 @@ $bidInfo=@reset($_sqlObj->query('select id,count(id) as bidNum, (select avg(payA
                                         </div>
                                     </div>
                                     <div class="tab-content">
-                                        <div class="tab-pane fade show active p-3" id="shortlist-bid" role="tabpanel" aria-labelledby="one-tab">
+                                        <div class="tab-pane fade show active p-3" id="bid-detail" role="tabpanel" aria-labelledby="one-tab">
                                             <p><b>Comment</b></p>
-                                            <textarea></textarea>
+                                            <textarea id="bid_comment_stl"></textarea>
                                             <p class="MRGT20PX"><b>Bid Details</b></p>
                                             <div class="form-group MRGT10PX">
                                                 <label class="form-label" for="first">Amount</label>
-                                                <input id="first" class="form-input" type="text" />
+                                                <input id="bid_amnt_stl" class="form-input" type="text" value=""/>
                                             </div>
                                             <div class="form-group MRGT10PX">
                                                 <label class="form-label" for="date">Duration</label>
-                                                <input id="date" class="form-input" type="text" />
+                                                <input id="bid_duration_stl" class="form-input" type="text" />
                                             </div>
                                             <div class="MRGT20PX">
-                                                <button class="orange-btn">Hire Now!</button>
+                                                <button class="orange-btn" id="hire"
+                                                onclick="hire(<?php echo $bidInfo['id'].",".$servID;?>);">Hire Now!</button>
+                                                <button class="button-secondary" id="shortlist" onclick="shortlist(<?php echo $bidInfo['id'];?>);">Shortlist</button>
                                             </div>
                                         </div>
-                                        <div class="tab-pane fade p-3" id="shortlist-profile" role="tabpanel" aria-labelledby="one-tab">
+                                        <div class="tab-pane fade p-3" id="bid-profile-stl" role="tabpanel" aria-labelledby="one-tab">
                                             <div class="row">
                                                 <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
                                                     <button class="orange-btn">View Original Service Request</button>
                                                 </div>
-                                                <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6 text-right">
+                                                <!--<div class="col-sm-6 col-md-6 col-lg-6 col-xl-6 text-right">
+                                                    <button class="button-secondary">+ Add to Shortlist</button>
                                                     <button class="button-secondary"><i class="fas fa-user-check"></i> Award Bid</button>
-                                                </div>
+                                                </div>-->
                                             </div>
-                                            <h2><b>Revised Proposed Agreement: Pants(98)</b></h2>
+                                            <h2><b>Revised Proposed Agreement:</b></h2>
                                             <div class="grid">
                                                 <div class="row">
                                                     <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
                                                         <b>Username</b>
                                                     </div>
                                                     <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6" id="uname">
-                                                        Buyer1
+                                                        
                                                     </div>
                                                 </div>
                                                 <div class="row">
@@ -408,63 +416,63 @@ $bidInfo=@reset($_sqlObj->query('select id,count(id) as bidNum, (select avg(payA
                                                     <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
                                                             <b>Name</b>
                                                     </div>
-                                                    <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6" id="full_name">
-                                                        ---
+                                                    <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6" id="full_name_stl">
+                                                        
                                                     </div>
                                                 </div>
                                                 <div class="row">
                                                     <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
                                                             <b>Star Rating</b>
                                                     </div>
-                                                    <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
-                                                        87.5%
+                                                    <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6" id="starr_stl">
+                                                       
                                                     </div>
                                                 </div>
                                                 <div class="row">
                                                     <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
                                                             <b>Diamond Rating</b>
                                                     </div>
-                                                    <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
-                                                        ***
+                                                    <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6" id="diamndr-stl">
+                                                        
                                                     </div>
                                                 </div>
                                                 <div class="row">
                                                     <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
                                                             <b>Number of bids</b>
                                                     </div>
-                                                    <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6" id="bidscnt">
-                                                        1  
+                                                    <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6" id="">
+                                                        <?php echo $bidInfo['bidNum'];?>
                                                     </div>
                                                 </div>
                                                 <div class="row">
                                                     <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
                                                             <b>Average fix cost amount</b>
                                                     </div>
-                                                    <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
-                                                        ---
+                                                    <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6" id="">
+                                                        <?php echo $bidInfo['avgFix'];?>
                                                     </div>
                                                 </div>
                                                 <div class="row">
                                                     <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
                                                         <b>Average hourly cost amount</b>
                                                     </div>
-                                                    <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
-                                                        0.000
+                                                    <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6" id="">
+                                                        <?php echo $bidInfo['avgHr'];?>
                                                     </div>
                                                 </div>
                                                 <div class="row">
                                                     <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
                                                         <b>Category</b>
                                                     </div>
-                                                    <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6">
-                                                        Pets
+                                                    <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6" id="catg_stl">
+                                                        
                                                     </div>
                                                 </div>
                                             </div>
                                             <p class="MRGT20PX"><b>Proposed Agreement Detail Description</b></p>
-                                            <textarea>Content should be here</textarea>
+                                            <textarea id="agreedesc"></textarea>
                                         </div>
-                                        <div class="tab-pane fade p-3" id="shortlist-feedback" role="tabpanel" aria-labelledby="one-tab">
+                                        <div class="tab-pane fade p-3" id="bid-feedback-stl" role="tabpanel" aria-labelledby="one-tab">
                                             <h2><b>Blue Star Rating</b></h2>
                                             <div class="grid">
                                                 <div class="row">
@@ -478,32 +486,38 @@ $bidInfo=@reset($_sqlObj->query('select id,count(id) as bidNum, (select avg(payA
                                                         <b>Comments</b>
                                                     </div>
                                                 </div>
-                                                <div class="row">
-                                                    <div class="col-sm-4 col-md-4 col-lg-4 col-xl-4">
-                                                        Test
-                                                    </div>
-                                                    <div class="col-sm-4 col-md-4 col-lg-4 col-xl-4">
-                                                        5.00
-                                                    </div>
-                                                    <div class="col-sm-4 col-md-4 col-lg-4 col-xl-4">
-                                                        Lorem Ipsum 
-                                                    </div>
-                                                </div>
-                                                <div class="row">
-                                                    <div class="col-sm-4 col-md-4 col-lg-4 col-xl-4">
-                                                        Test
-                                                    </div>
-                                                    <div class="col-sm-4 col-md-4 col-lg-4 col-xl-4">
-                                                        5.00
-                                                    </div>
-                                                    <div class="col-sm-4 col-md-4 col-lg-4 col-xl-4">
-                                                        Lorem Ipsum 
-                                                    </div>
-                                                </div>
+
+                                                <div id="bluestrdetails_stl"></div>
+                                             
                                             </div>
-                                        </div>
-                                    </div>
-                                </div>        
+                                         <p>
+                                            <h2><b>Silver Star Rating</b></h2>
+                                            <div class="grid">
+                                                <div class="row">
+                                                    <div class="col-sm-4 col-md-4 col-lg-4 col-xl-4">
+                                                        <b>SR</b>
+                                                    </div>
+                                                    <div class="col-sm-4 col-md-4 col-lg-4 col-xl-4">
+                                                        <b>Name</b>
+                                                    </div>
+                                                    <div class="col-sm-4 col-md-4 col-lg-4 col-xl-4">
+                                                        <b>View</b>
+                                                    </div>
+                                                </div>
+
+                                                <div id="slvrstrdetails"></div>
+                                             
+                                            </div>
+                                        </p>
+                                        <p>
+                                            <h2><b>Gold Star Rating</b></h2>
+                                             <div class="grid">
+                                                <div id="goldstarresp"></div>
+
+                                              </div>                                            
+                                        </p>
+                                     </div>
+                                </div>      
                                 </div>
                                 </div>    
                     </div>
