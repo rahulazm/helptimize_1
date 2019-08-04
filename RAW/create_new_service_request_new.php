@@ -103,9 +103,9 @@ var gLng=-122.3321;
 <!-- <script src="js/googleMap.js"></script> -->
 
 <style>
-      .collapse:not(.show){
+      /*.collapse:not(.show){
         display: block !important;
-      }
+      }*/
       /* Always set the map height explicitly to define the size of the div
        * element that contains the map. */
       #map {
@@ -346,7 +346,6 @@ var gLng=-122.3321;
             </div>
             </aside>
         </section>
-    </div>
 
 <?php
 include("footer.php");

@@ -118,7 +118,7 @@ $( document ).ready(function() {
                           <p class="card-text">#AG<?php echo $bidList[$i]['srId']?>SR-<?php echo $bidList[$i]['id']?></p>
                         <?php } ?>
                           <div class="card-title">
-                              <h5><?php echo $bidList[$i]['sr_title']?></h5>
+                              <h5 class="ellipsis" title="<?php echo $bidList[$i]['sr_title']?>"><?php echo $bidList[$i]['sr_title']?></h5>
                               <div>
                                   <span class="ongoing"><?php echo $bidList[$i]['status']?></span>
                                   <span class="badge badge-secondary"><?php echo $bidList[$i]['srid']?> 5</span>
@@ -162,7 +162,7 @@ $( document ).ready(function() {
 
                           <p class="card-text">#JR<?php echo $resReqtrAllJobs[$i]['id']?>SR-000</p>
                           <div class="card-title">
-                              <h5><?php echo $resReqtrAllJobs[$i]['title']?></h5>
+                              <h5 class="ellipsis" title="<?php echo $resReqtrAllJobs[$i]['title']?>"><?php echo $resReqtrAllJobs[$i]['title']?></h5>
                           </div>
                           <label class="post-date">Posted: <?php echo date("d/m/Y", strtotime($resReqtrAllJobs[$i]['create_dateTime']))?></label>
                           <p class="card-info"><?php 

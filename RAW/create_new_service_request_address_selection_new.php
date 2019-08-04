@@ -243,7 +243,10 @@ a[href^="https://maps.google.com/maps"]{display:none !important}
         height: 20px;
         margin-bottom: 2px;
       }
-      
+.collapse.in {
+    display: block !important;
+    height: auto !important;
+}
       
       .panel {
     margin: 0 !important; 
@@ -275,7 +278,7 @@ a[href^="https://maps.google.com/maps"]{display:none !important}
 
 
 
-    <div style="margin:10px">
+<div style="margin:10px">
     
     <?php 
     
@@ -283,9 +286,9 @@ a[href^="https://maps.google.com/maps"]{display:none !important}
     ?>
     
     <div class="panel panel-default text_input_radius">
-  <div class="panel-body">
- <?php echo NO_SR_LOCATION?></div>
-</div>
+      <div class="panel-body">
+        <?php echo NO_SR_LOCATION?></div>
+    </div>
     
     <?php
     }
@@ -294,7 +297,7 @@ a[href^="https://maps.google.com/maps"]{display:none !important}
     
    <br>
     
-    <div class="panel-group" id="accordion">
+<div class="panel-group" id="accordion">
   <div class="panel panel-default">
     <div class="panel-heading">
       <h6 class="panel-title">
@@ -305,40 +308,40 @@ a[href^="https://maps.google.com/maps"]{display:none !important}
       
       </h6>
     </div>
-    <div id="collapseOne" class="panel-collapse collapse show">
+    <div id="collapseOne" class="panel-collapse collapse">
       <div class="panel-body">
     
     
-    <label><?php echo MY_CURRENT_LOCATION?></label>
+       <label><?php echo MY_CURRENT_LOCATION?></label>
     
  
   
-  <p id ='mapdiv' name='mapdiv'></p>
+        <p id ='mapdiv' name='mapdiv'></p>
+        
+        <br>
+        <div class="form-group">
+          <label for="usr"><?php echo CURRENT_ADDRESS?></label>
+          <input type="text" class="form-control text_input_radius" id="curent_address"  name="curent_address">
+        </div>
+        
+        
+        <div class="form-group">
+          <label for="usr"><?php echo ENTER_PROJECT_ADDRESS_NAME?></label>
+          <input type="text" class="form-control text_input_radius" id="current_address_name"  name="current_address_name"  value="<?php echo $location_count+1; ?>">
+        </div>
   
-  <br>
-  <div class="form-group">
-  <label for="usr"><?php echo CURRENT_ADDRESS?></label>
-  <input type="text" class="form-control text_input_radius" id="curent_address"  name="curent_address">
-  </div>
   
+        <div class="form-group">
+          <label for="comment"><?php echo ENTER_PROJECT_ADDRESS_DESCRIPTION?></label>
+          <textarea placeholder="<?php echo ADRESS_DESCRIPTION;?>" class="form-control text_input_radius" rows="2" id="current_address_description" name="current_address_description"></textarea>
+        </div>
   
-   <div class="form-group">
-  <label for="usr"><?php echo ENTER_PROJECT_ADDRESS_NAME?></label>
-  <input type="text" class="form-control text_input_radius" id="current_address_name"  name="current_address_name"  value="<?php echo $location_count+1; ?>">
-</div>
+        <center>
+          <button class="btn btn-primary general_orange_button_border_radius general_orange_button_size general_orange_button_background general_orange_button_no_border" type="button" onclick="add_current_address()"><?php echo ADD_ADDRESS;?></button>
+        </center>
   
-  
-   <div class="form-group">
-  <label for="comment"><?php echo ENTER_PROJECT_ADDRESS_DESCRIPTION?></label>
-  <textarea placeholder="<?php echo ADRESS_DESCRIPTION;?>" class="form-control text_input_radius" rows="2" id="current_address_description" name="current_address_description"></textarea>
-</div>
-  
-  <center>
-<button class="btn btn-primary general_orange_button_border_radius general_orange_button_size general_orange_button_background general_orange_button_no_border" type="button" onclick="add_current_address()"><?php echo ADD_ADDRESS;?></button>
-  </center>
-  
-  </div>
-   </div>
+      </div>
+    </div>
     </div>
     </div>
     
@@ -352,7 +355,7 @@ a[href^="https://maps.google.com/maps"]{display:none !important}
           <?php echo SELECT_NEW_LOCATION?>
       </h6>
     </div>
-    <div id="collapseThree" class="panel-collapse collapse out">
+    <div id="collapseThree" class="panel-collapse collapse">
       <div class="panel-body">
     
 		<div class="form-group">
@@ -392,7 +395,7 @@ a[href^="https://maps.google.com/maps"]{display:none !important}
         
       </h6>
     </div>
-    <div id="collapseTwo" class="panel-collapse collapse out">
+    <div id="collapseTwo" class="panel-collapse collapse">
       <div class="panel-body">
     
     
@@ -2304,6 +2307,8 @@ $(document).ready(function() {
             "infoFiltered": filtered
         }
     } );
+
+
 } );
 
 
