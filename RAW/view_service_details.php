@@ -1,4 +1,8 @@
 <?php
+
+//ini_set('display_errors', 1);
+//ini_set('display_startup_errors', 1);
+//error_reporting(E_ALL);
 include("header_main.php");
 
 
@@ -42,12 +46,14 @@ $totalbid_count=$count[0]["totbid"];
 
 ##########Get avg of bids in this SR
 $bidInfo=@reset($_sqlObj->query('select id,count(id) as bidNum, (select avg(payAmt) from view_bids where srId='.$servID.' and payType="fixed") as avgFix, (select avg(payAmt) from view_bids where srId='.$servID.' and payType="hourly") as avgHr from view_bids where srId='.$servID));
+$rowBids['ownerid']=0;
 $cntBids = count($bidInfo);
 $rowBids['ownerid'] = ($cntBids > 0 ) ? $rowBids['ownerid'] : 0;
 ##############Get shortlisted bids info
 $bidInfoShlstd=$_sqlObj->query('select * from view_bids where srId='.$servID.' and srBidAwardId is null and shortlist = "yes" and buttonstatus is null  and bidstatus != "cancel" order by last_updated desc');
 $rowbidInfoShlstd=@reset($bidInfoShlstd);
-$cntShrtltd = count($bidInfoShlstd);
+$cntShrtltd = @count($bidInfoShlstd);
+$rowbidInfoShlstd['ownerId']=0;
 $rowbidInfoShlstd['ownerId'] = ($cntShrtltd > 0 ) ? $rowbidInfoShlstd['ownerId'] : 0;
 //echo $cntShrtltd;
 //echo 'select * from view_bids where srId='.$servID.' and srBidAwardId is null and shortlist = "yes" and buttonstatus is null  and bidstatus != "cancel" order by last_updated desc';

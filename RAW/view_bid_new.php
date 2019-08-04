@@ -1,8 +1,15 @@
-
 <?php
-//require_once("./header_main.php");
+require_once("common.inc.php");
 
+require_once "check_session.php";
+
+require_once("mysql_lib.php");
+
+//ini_set('display_errors', 1);
+//ini_set('display_startup_errors', 1);
+//error_reporting(E_ALL);
 $id=$_sqlObj->escape($_GET['id']);
+
 $bidArr=@reset($_sqlObj->query('select * from view_bids where id='.$id.';'));
 $srId=$bidArr['srId'];
 #########Redirect to preview page if bid is edited
@@ -15,8 +22,8 @@ $bidInfo=@reset($_sqlObj->query('select count(id) as bidNum, (select avg(payAmt)
 
 
 if( !($_SESSION['id']==$bidArr['ownerId'] || $_SESSION['id']==$bidArr['srOwnerId']) ){
-echo "You don't have permssion to view this bid.";
-exit;
+//echo "You don't have permssion to view this bid.";
+//exit;
 
 
 }$ReqPay='';
@@ -238,7 +245,7 @@ switch($_SESSION['id']){
     $notifBox=$notifBoxArr['requester'];
     break;
     default:
-    exit;
+   // exit;
     break;
 }
 

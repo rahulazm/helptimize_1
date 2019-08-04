@@ -338,7 +338,7 @@ var gLng=-122.3321;
                   <h1><b>5. Finish!</b></h1>
                   <h2><b>Congratulations!</b></h2>
                   <p class="MRGT20PX">Tour help requested has been posted. Sit back and relax.</p>
-                  <a href="#">Go to Dashboard</a>
+                  <a href="main.php">Go to Dashboard</a>
               </summary>
               <div class="flex-layout actions WDTH90 MRGCenter MRGT20PX">
                 <button onclick="prev()" id="prev" class="button-secondary" style="visibility: hidden;">BACK</button>
