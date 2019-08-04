@@ -46,15 +46,16 @@ $totalbid_count=$count[0]["totbid"];
 
 ##########Get avg of bids in this SR
 $bidInfo=@reset($_sqlObj->query('select id,count(id) as bidNum, (select avg(payAmt) from view_bids where srId='.$servID.' and payType="fixed") as avgFix, (select avg(payAmt) from view_bids where srId='.$servID.' and payType="hourly") as avgHr from view_bids where srId='.$servID));
-$rowBids['ownerid']=0;
-$cntBids = count($bidInfo);
-$rowBids['ownerid'] = ($cntBids > 0 ) ? $rowBids['ownerid'] : 0;
+//$rowBids['ownerid']=0;
+//$cntBids = count($bidInfo);
+//echo $cntBids;
+//$rowBids['ownerid'] = ($cntBids > 0 ) ? $rowBids['ownerid'] : 0;
 ##############Get shortlisted bids info
 $bidInfoShlstd=$_sqlObj->query('select * from view_bids where srId='.$servID.' and srBidAwardId is null and shortlist = "yes" and buttonstatus is null  and bidstatus != "cancel" order by last_updated desc');
 $rowbidInfoShlstd=@reset($bidInfoShlstd);
-$cntShrtltd = @count($bidInfoShlstd);
-$rowbidInfoShlstd['ownerId']=0;
-$rowbidInfoShlstd['ownerId'] = ($cntShrtltd > 0 ) ? $rowbidInfoShlstd['ownerId'] : 0;
+//$cntShrtltd = @count($bidInfoShlstd);
+//$rowbidInfoShlstd['ownerId']=0;
+//$rowbidInfoShlstd['ownerId'] = ($cntShrtltd > 0 ) ? $rowbidInfoShlstd['ownerId'] : 0;
 //echo $cntShrtltd;
 //echo 'select * from view_bids where srId='.$servID.' and srBidAwardId is null and shortlist = "yes" and buttonstatus is null  and bidstatus != "cancel" order by last_updated desc';
 
@@ -70,10 +71,10 @@ $rowbidInfoShlstd['ownerId'] = ($cntShrtltd > 0 ) ? $rowbidInfoShlstd['ownerId']
                             <a class="nav-link active" id="one-tab" data-toggle="tab" href="#one" role="tab" aria-controls="One" aria-selected="true">Detail</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" id="two-tab" data-toggle="tab" href="#two" role="tab" aria-controls="Two" aria-selected="false" onclick="getUserDetails(<?php echo $rowBids['ownerid']." ,".$servID;?>)">Bids</a>
+                            <a class="nav-link" id="two-tab" data-toggle="tab" href="#two" role="tab" aria-controls="Two" aria-selected="false" onclick="getUserDetails(<?php $rowBids['ownerid']=(isset($rowBids['ownerid']))?$rowBids['ownerid']:0;echo $rowBids['ownerid']." ,".$servID;?>,'bids')">Bids</a>
                         </li>
                         <li class="nav-item">
-                            <a class="nav-link" id="three-tab" data-toggle="tab" href="#three" role="tab" aria-controls="Three" aria-selected="false" onclick="getUserDetails(<?php echo $rowbidInfoShlstd['ownerId']." ,".$servID;?>)">Shortlisted</a>
+                            <a class="nav-link" id="three-tab" data-toggle="tab" href="#three" role="tab" aria-controls="Three" aria-selected="false" onclick="getUserDetails(<?php $rowbidInfoShlstd['ownerId']=isset($rowbidInfoShlstd['ownerId'])?$rowbidInfoShlstd['ownerId']:0;echo $rowbidInfoShlstd['ownerId']." ,".$servID;?>,'stl')">Shortlisted</a>
                         </li>
                         <li class="nav-item">
                                 <a class="nav-link" id="four-tab" data-toggle="tab" href="#four" role="tab" aria-controls="Four" aria-selected="false">Agreement</a>
@@ -552,7 +553,7 @@ $rowbidInfoShlstd['ownerId'] = ($cntShrtltd > 0 ) ? $rowbidInfoShlstd['ownerId']
                             <div class="user-details" id="cnt_stl">
                                  <div class="tab-content">
                                     <div class="tab-pane fade show active p-3" id="bid-detail" role="tabpanel" aria-labelledby="one-tab">
-                                        <?php include_once("view_bid_new.php");?>
+                                        <?php  include_once("view_bid_new.php");?>
                                     </div>
                                 </div>
                             </div>

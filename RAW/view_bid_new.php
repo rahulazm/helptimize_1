@@ -8,10 +8,10 @@ require_once("mysql_lib.php");
 //ini_set('display_errors', 1);
 //ini_set('display_startup_errors', 1);
 //error_reporting(E_ALL);
-$id=$_sqlObj->escape($_GET['id']);
-
-$bidArr=@reset($_sqlObj->query('select * from view_bids where id='.$id.';'));
-$srId=$bidArr['srId'];
+//$id=$_sqlObj->escape($_GET['id']);
+//$bidArr=@reset($_sqlObj->query('select * from view_bids where id='.$id.';'));
+//$srId=$bidArr['srId'];
+$srId=$_GET['id'];
 #########Redirect to preview page if bid is edited
 if($bidArr['bidstatus'] =='editbid')
     header('Location: editbid_preview.php?id='.$id);
@@ -884,6 +884,7 @@ echo $html;
      <link rel="stylesheet" href="./formvalidation/css/formValidation.min.css">
     
 <script type="text/javascript" >
+  /**
 $( document ).ready(function() {
   <?php if($job == "yes"){ ?>
     swal({
@@ -910,7 +911,7 @@ $( document ).ready(function() {
   <?php } ?>
 
 });
-
+**/
 $(".showamount").hide();
 
 $(document).on("click", ".requestpaypopup", function(e) {

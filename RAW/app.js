@@ -372,10 +372,16 @@ $('input, textarea').focus(function(){
       $('#amount').val(amt)
     })
 
-   function getUserDetails(obj,srid) {
-      if(obj==0){
+   function getUserDetails(obj,srid,type) {
+           
+      if(obj==0 && type=='stl'){
         //alert("test");
           $('#three').html("No records found");
+        return;
+      }
+      if(obj==0 && type=='bids'){
+        //alert("test");
+          $('#two').html("No records found");
         return;
       }
       //alert(obj);
@@ -402,7 +408,10 @@ $('input, textarea').focus(function(){
           }
 
           $('#bid_comment_stl').val(jsonData.summ);
+          $('#bid_comment').val(jsonData.summ);
+          $('#bid_amnt').val(jsonData.payAmt);
           $('#bid_amnt_stl').val(jsonData.payAmt);
+          $('#bid_duration').val(jsonData.dtFrm+" "+jsonData.timeFrm+" - "+ jsonData.dtTo+" "+jsonData.timeTo);
           $('#bid_duration_stl').val(jsonData.dtFrm+" "+jsonData.timeFrm+" - "+ jsonData.dtTo+" "+jsonData.timeTo);
           $('#full_name_stl').text(jsonData.firstName+" "+jsonData.midName);
           $('#full_name1').text(jsonData.firstName+" "+jsonData.midName);
