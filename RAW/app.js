@@ -4,6 +4,7 @@ function next() {
   //$('#amount, #ramount').val('')
     var getId = $('.super-widget-tab input[type="radio"]:checked').last().parent().next().children('input').attr('id');
       var address = $('#getaddr').val();
+      var jobtitle = $('#jobtitle').val();
     var desc  = $('#desc').val();
     var serv  = $('input:radio[name=serv]:checked').val();
     var pay  = $('input:radio[name=pay]:checked').val();
@@ -36,7 +37,7 @@ function next() {
 
 
     if($('#amnt').length){
-      var newtext = pay+", "+ amount+" $";
+      var newtext = pay+", $"+ amount;
       $('#amnt').text(newtext);
     }
 
@@ -129,7 +130,7 @@ if(getId=='finish'){
 
   $.post("service_request_submit_new.php",
     {
-      title : desc,
+      title : jobtitle,
       descr : desc,
       summ : desc,
       bidDate : bid_bool,
@@ -372,12 +373,12 @@ $('input, textarea').focus(function(){
     })
 
    function getUserDetails(obj,srid) {
-      
       if(obj==0){
         //alert("test");
           $('#three').html("No records found");
         return;
       }
+      //alert(obj);
       //var currentUrl = window.location.href + "&srid="+obj;
       //location.href=currentUrl;
       
@@ -400,34 +401,25 @@ $('input, textarea').focus(function(){
             fixedpay = jsonData.payAmt;
           }
 
-          $('#bid_comment').val(jsonData.summ);
           $('#bid_comment_stl').val(jsonData.summ);
-          $('#bid_amnt').val(jsonData.payAmt);
           $('#bid_amnt_stl').val(jsonData.payAmt);
-          $('#bid_duration').val(jsonData.dtFrm+" "+jsonData.timeFrm+" - "+ jsonData.dtTo+" "+jsonData.timeTo);
           $('#bid_duration_stl').val(jsonData.dtFrm+" "+jsonData.timeFrm+" - "+ jsonData.dtTo+" "+jsonData.timeTo);
-          $('#full_name').text(jsonData.firstName+" "+jsonData.midName);
-          $('#full_name1').text(jsonData.firstName+" "+jsonData.midName);
           $('#full_name_stl').text(jsonData.firstName+" "+jsonData.midName);
-          $('#catg').text(jsonData.name);
-          $('#catg1').text(jsonData.name);
+          $('#full_name1').text(jsonData.firstName+" "+jsonData.midName);
           $('#catg_stl').text(jsonData.name);
-          $('#uname').text(jsonData.username);
+          $('#catg1').text(jsonData.name);
           $('#uname_stl').text(jsonData.username);
           $('#bidscnt').text("1");
           $('#avgfixcostamnt').text(fixedpay);
           $('#avghrlycostamnt').text(hrlypay);
           $('#agreedesc').text(jsonData.desc);
-          $('#starr').text(jsonData.bluestar_Percentage);
           $('#starr_stl').text(jsonData.bluestar_Percentage);
           $('#diamndr').html(jsonData.diamondrtng);
           $('#diamndr1').html(jsonData.diamondrtng);
           $('#diamndr2').html(jsonData.diamondrtng);
           $('#diamndr_stl').html(jsonData.diamondrtng);
-          $('#bluestrdetails').html(jsonData.bluedetls);
           $('#bluestrdetails_stl').html(jsonData.bluedetls);
           $('#goldstarresp').html(jsonData.goldstarresp);
-
           console.log(jsonData);
         });
   }          

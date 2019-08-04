@@ -95,10 +95,12 @@ if($_SESSION['id']){
 	 $key++;
 	}
 
+	$_sqlObj->query('update pics set srId='.$id.' where srId is null and userId="'.$_SESSION['id'].'";');
+
 
 //echo "INSERT INTO `address` (`id`, `datetime`, `userId`, `srId`, `bidId`, `personal`, `pob`, `orderNum`, `title`, `descr`, `address`, `posLong`, `posLat`, `country`, `notes`) VALUES (NULL, '$today', '$id', '$_SESSION[id]', NULL, NULL, NULL, NULL, NULL, NULL, '$post[addr]', NULL, NULL, NULL, NULL)";
 
-$_sqlObj->query("INSERT INTO `address` (`id`, `datetime`, `userId`, `srId`, `bidId`, `personal`, `pob`, `orderNum`, `title`, `descr`, `address`, `posLong`, `posLat`, `country`, `notes`) VALUES (NULL, '$today','$_SESSION[id]','$id',  NULL, NULL, NULL, NULL, NULL, NULL, '$post[addr]', '$post[posLong]', '$post[posLat]', NULL, NULL)");
+/*$_sqlObj->query("INSERT INTO `address` (`id`, `datetime`, `userId`, `srId`, `bidId`, `personal`, `pob`, `orderNum`, `title`, `descr`, `address`, `posLong`, `posLat`, `country`, `notes`) VALUES (NULL, '$today','$_SESSION[id]','$id',  NULL, NULL, NULL, NULL, NULL, NULL, '$post[addr]', '$post[posLong]', '$post[posLat]', NULL, NULL)");*/
 
 // set srId='.$id.', orderNum="'.$i.'" where id="'.$v.'" and userId="'.$_SESSION['id'].'";');
 
@@ -110,6 +112,8 @@ error_log("====================>> adding addresses to sr: ".print_r($post['addr'
 	 $_sqlObj->query('update address set srId='.$id.', orderNum="'.$i.'" where id="'.$v.'" and userId="'.$_SESSION['id'].'";');
 	}
 */
+	$_sqlObj->query('update address set srId='.$id.' where srId is null and userId="'.$_SESSION['id'].'";');
+
 	if($post['buttonstatus'] == "submit") { //submit SR only push notification send
 	//////After creating service request call pusher notification to other users --- Start
 	require __DIR__ . '/vendor/autoload.php';

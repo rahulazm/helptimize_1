@@ -92,7 +92,7 @@ a[href^="https://maps.google.com/maps"]{display:none !important}
                 <label class="input-group-btn">
                     <span class="btn btn-primary">
                       Take/Select&hellip; 
-                        <input type="file"  name="img[]" id="file" accept="image/*" capture="camera"  style="display: none; " />
+                        <input type="file"  name="img[]" id="file" accept=".heic,image/*" capture="camera"  style="display: none; " />
                                        
                     </span>
                 </label>

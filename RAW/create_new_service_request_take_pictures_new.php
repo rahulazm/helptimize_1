@@ -92,7 +92,7 @@ a[href^="https://maps.google.com/maps"]{display:none !important}
                 <label class="input-group-btn">
                     <span class="btn btn-primary">
                       Take/Select&hellip; 
-                        <input type="file"  name="img[]" id="file" accept="image/*" capture="camera"  style="display: none; " />
+                        <input type="file"  name="img[]" id="file" accept=".heic,image/*,application/octet-stream" capture="camera"  style="display: none; " />
                                        
                     </span>
                 </label>
@@ -216,7 +216,7 @@ function close_big_picture()
     $('#modal_datetime').html("<font size='2'>" + image_date_time + "</font>");
     		
      
-     $('#show_big_image_in_modal').html("<img src='image_upload/" + image_link + "' class='img-rounded' alt='Image'>");
+     $('#show_big_image_in_modal').html("<img src='uploads/" + image_link + "' class='img-rounded' alt='Image'>");
      
      $('#big_picture').modal('show'); 
      
@@ -329,13 +329,6 @@ function delete_image(id)
 
 } 
 
-
-
-
-
-
-
-
 $("#uploadimage").on('submit',(function(e) {
 
 
@@ -343,10 +336,6 @@ $("#uploadimage").on('submit',(function(e) {
     var picture_titel = $("#picture_titel").val();
     
     
-    
-   
-
-
 	function formatFileSize(bytes,decimalPoint) {
    		if(bytes == 0) return '0 Bytes';
    			var k = 1000,
@@ -415,10 +404,10 @@ console.log("3");
    	var porn_upload = '<?php echo FILE_PORN; ?>';
    	var success_upload = '<?php echo FILE_NO_PORN; ?>';
    	var done = '<?php echo DONE; ?>';
-
+//alert(result);
 	result=JSON.parse(result);
-	result=result[0]; //only uploading one at a time
-	console.log(JSON.stringify(result));
+	//result=result[0]; //only uploading one at a time
+	//console.log(JSON.stringify(result));
    			console.log("7");
    	if(result['status'] == 1){
    		console.log("8");
@@ -427,10 +416,7 @@ console.log("3");
         $("#loaderImg").hide();
 	    swal(oops, result['msg'], "error");
 	        	console.log("9");
-	}
-	
-	
-	if(result['status'] == 0){
+	}else{
 		console.log("10");
 	    $("#picture_submit").prop("disabled",false);
    	  $("#picture_submit").css("cursor","pointer");
@@ -460,9 +446,10 @@ console.log("3");
             
             success: function(data)   
               {
+                //alert(data);
                 var result_allpics = data;
                 $("#existing_pics").html(result_allpics);
-                console.log(result_allpics);
+                //console.log(result_allpics);
               }
             })
 				//location.href = "create_new_service_request_take_pictures.php?sr_number=" + sr_number;
@@ -499,3 +486,9 @@ $(document).on('change', ':file', function() {
 
 
 </script>
+<!-- <script src="js/heictojpg/libde265-selector.js"></script>
+<script src="js/heictojpg/heif-api.js"></script>
+<script src="js/heictojpg/heif-extension.js"></script>
+<script src="js/heictojpg/hevc-decoder.js"></script>
+<script src="js/heictojpg/image-provider.js"></script>
+<script src="js/heictojpg/footer.js"></script> -->

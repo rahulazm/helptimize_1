@@ -35,17 +35,23 @@ $db_count_unread_messages->close();
     <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/css/bootstrap.min.css" integrity="sha384-ggOyR0iXCbMQv3Xipma34MD+dH/1fQ784/j6cY/iJTQUOhcWr7x9JvoRxT2MZw1T" crossorigin="anonymous">
     <link rel="stylesheet" href="./assets/css/style.css"/>
     <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.7.0/css/all.css" crossorigin="anonymous">
-    <script src="js/jquery-3.4.1.js"></script>
-    <!-- <script src="js/bootstrap.min.js"></script> -->
+
+    <script src='https://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js'></script>
+    <script src="js/googleMap.js"></script>
+    <!-- <script async defer
+        src="https://maps.googleapis.com/maps/api/js?key=<?php echo $_configs['google_map_api'];?>&libraries=places&callback=initAutocomplete">
+        </script> -->
+    <!-- <script src="js/jquery-3.4.1.js"></script> -->
+    <script src="js/bootstrap.js"></script>
     <script src="./js/formValidation.min.js"></script>
-    <!-- <script src="./js/framework/bootstrap.min.js"></script> -->  
+    <!-- <script src="./js/framework/bootstrap.min.js"></script>   -->
     <link rel="stylesheet" href="./css/formValidation.min.css">
 
     <script src="js/helptimize.js"></script>
     <script src="js/jquery.dataTables.min.js"></script>
     <script src="js/dataTables.bootstrap.js"></script>
     <script src="js/sweetalert.min.js"></script>
-    <script src="js/googleMap.js"></script>
+    
     <!--<script src="js/custom.js"></script>-->
     <script src="assets/js/jquerysession.js"></script>
     <script src="js/moment.min.js"></script>

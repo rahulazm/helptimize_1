@@ -20,147 +20,92 @@ $addMrkrRes = json_encode($new);
 //print_r($_SERVER);
 //echo "</pre>";
 
+$_sqlObj->query('delete from address where userId='.$_SESSION['id'].' and srId is NULL');
+$_sqlObj->query('delete from pics where userId='.$_SESSION['id'].' and srId is NULL');
 ?>
 <script type="text/javascript">
- 
-      function initAutocomplete() {
-        var map = new google.maps.Map(document.getElementById('map'), {
-          center: {lat: 47.6062, lng: -122.3321},
-          zoom: 13,
-          mapTypeId: 'roadmap'
-        });
 
-        var infoWindow = new google.maps.InfoWindow;
-        var curaddr;
-        // Try HTML5 geolocation.
-        if (navigator.geolocation) {
-          navigator.geolocation.getCurrentPosition(function(position) {
-            var pos = {
-              lat: position.coords.latitude,
-              lng: position.coords.longitude
-            };
+      
 
-            var google_map_pos = new google.maps.LatLng( pos.lat, pos.lng );
- 
-                /* Use Geocoder to get address */
-                var google_maps_geocoder = new google.maps.Geocoder();
-                google_maps_geocoder.geocode(
-                    { 'latLng': google_map_pos },
-                    function( results, status ) {
-                        if ( status == google.maps.GeocoderStatus.OK && results[0] ) {
-                            curaddr = results[0].formatted_address;
-                            //console.log( results[0].formatted_address );
-                            $('#pac-input').val(curaddr);
-                            infoWindow.setContent("You are here!");
-                        }
-                    }
-                );
+$( document ).ready(function() {
 
-        //to print multilocation address marker
-            var tmp1 = <?php echo $addMrkrRes;?>;
-            for (var i = 0; i < tmp1.length; i++) {
-                 //console.log(tmp1[i]['lat']);
-                 //console.log(tmp1[i]['lon']);
-                 //if($.isNumeric(tmp1[i]['lat'])&& $.isNumeric(tmp1[i]['lon'])){
-                    var newpos = {lat: parseFloat(tmp1[i]['lat']),lng: parseFloat(tmp1[i]['lon'])};
-                    var marker = new google.maps.Marker({
-                    position: newpos,
-                    map: map,
-                    title: ''
-                    });
-                  //}
-                
-            }
+  initMap();
 
-           
 
-            infoWindow.setPosition(pos);
-            infoWindow.open(map);
-            map.setCenter(pos);
-            //alert(results[0].formatted_address);
-           
-          }, function() {
-            handleLocationError(true, infoWindow, map.getCenter());
-          });
-        } else {
-          // Browser doesn't support Geolocation
-          handleLocationError(false, infoWindow, map.getCenter());
-        }
+  //cId=$("#project_category").val(); //setting the value of the category for the map
+  cId=$('input:radio[name=serv]:checked').val();
+  mapDivW=document.getElementById("googleMap").clientWidth;
+  mapDivH=document.getElementById("googleMap").clientHeight;
 
-        
-        // Create the search box and link it to the UI element.
-        var input = document.getElementById('pac-input');
-        var searchBox = new google.maps.places.SearchBox(input);
-        map.controls[google.maps.ControlPosition.TOP_LEFT].push(input);
 
-        // Bias the SearchBox results towards current map's viewport.
-        map.addListener('bounds_changed', function() {
-          searchBox.setBounds(map.getBounds());
-        });
 
-        var markers = [];
-        // Listen for the event fired when the user selects a prediction and retrieve
-        // more details for that place.
-        searchBox.addListener('places_changed', function() {
-          var places = searchBox.getPlaces();
+  //why not .resize? Simple, it doesn't work on divs
+  //this breaks the "onclick" listener on the markers because populateMap despawns all markers first. Hence, the lister gets deleted ebfore it's 
+  //event is fired. can fix later by makeing delMark smarter.
+  $("#googleMap").mouseup(function(){
+  mapDivW=document.getElementById("googleMap").clientWidth;
+  mapDivH=document.getElementById("googleMap").clientHeight;
+  console.log("#googleMap resized to: "+mapDivW+", "+mapDivH);
+  populateMap();
+  });
 
-          if (places.length == 0) {
-            return;
-          }
+$('input:radio[name=serv]').on("click", function(){
+  cId=$('input:radio[name=serv]:checked').val();
+  initMap();
+  populateMap();
+});
+/*  $("#project_category").change(function(){
+  cId=$("#project_category").val();
+  // repopulate helpers map for this category
+  initMap();
+  populateMap();
+  });*/
 
-          // Clear out the old markers.
-          markers.forEach(function(marker) {
-            marker.setMap(null);
-          });
-          markers = [];
+});
+function geoloc() {
 
-          // For each place, get the icon, name and location.
-          var bounds = new google.maps.LatLngBounds();
-          places.forEach(function(place) {
-            if (!place.geometry) {
-              console.log("Returned place contains no geometry");
-              return;
-            }
-            var icon = {
-              url: place.icon,
-              size: new google.maps.Size(71, 71),
-              origin: new google.maps.Point(0, 0),
-              anchor: new google.maps.Point(17, 34),
-              scaledSize: new google.maps.Size(25, 25)
-            };
 
-            // Create a marker for each place.
-            markers.push(new google.maps.Marker({
-              map: map,
-              icon: icon,
-              title: place.name,
-              position: place.geometry.location
-            }));
+  if (navigator.geolocation) {
+    var optn = {
+    enableHighAccuracy : true,
+    timeout : Infinity,
+    maximumAge : 0
+    };
+    watchId = navigator.geolocation.getCurrentPosition(showPosition, showError, optn);
 
-            //alert(place.geometry.location.lat());
-            //alert(place.geometry.location.lng());
-            $('#lat').val(place.geometry.location.lat());
-            $('#lng').val(place.geometry.location.lng());
+  }
+  else {
+    alert('Geolocation is not supported in your browser');
+  }
+}
 
-            if (place.geometry.viewport) {
-              // Only geocodes have viewport.
-              bounds.union(place.geometry.viewport);
-            } else {
-              bounds.extend(place.geometry.location);
-            }
-          });
-          map.fitBounds(bounds);
-          
-          //alert("position-->"+place.geometry.lat);
-        });
 
-        //alert("lat"+lat+"lng"+lng);
-        $('#lat').val(lat);
-        $('#lng').val(lng);
-      }
+  
 </script>
 
+
+<script>
+var Lat = localStorage.getItem("latitude_address"); 
+var Lng = localStorage.getItem("longitude_address"); 
+
+if(localStorage.getItem("latitude_address"))
+{
+var gLat=Lat;
+var gLng=Lng;
+}
+else
+{
+var gLat=47.6062;
+var gLng=-122.3321;
+}
+//var categId=$("#project_category").val();
+</script>
+<!-- <script src="js/googleMap.js"></script> -->
+
 <style>
+      .collapse:not(.show){
+        display: block !important;
+      }
       /* Always set the map height explicitly to define the size of the div
        * element that contains the map. */
       #map {
@@ -242,7 +187,9 @@ $addMrkrRes = json_encode($new);
         width: 345px;
       }
     </style>
-
+                <script async defer
+                src="https://maps.googleapis.com/maps/api/js?key=<?php echo $_configs['google_map_api'];?>&libraries=places&callback=initAutocomplete">
+                </script>
 <section class="wrapper">
             <aside class="super-widget-tab">
                 <div><input type="radio" id="location" name="location" checked/><label for="location">1.Location</label></div>
@@ -254,27 +201,29 @@ $addMrkrRes = json_encode($new);
             <aside class="super-widget-tab-info">
               <summary class="location WDTH90 MRGCenter">
                 <h1><b>1.Location</b></h1>
+                <h2><b>Job Title</b></h2>
+                <input type="text" id="jobtitle">
                 <h2><b>Where do you need the help?</b></h2>
                 <!--<div class="flex-layout">
                     <input type="text" id="getaddr" name="getaddr"/>
                     <i class="fas fa-crosshairs location-icon"></i>
                 </div>
                  <div id="map"></div>-->
-                  <input id="pac-input" class="controls" type="text" placeholder="Search Box">
-                  <div id="map" style="height: 250px;"></div>
+                  <!-- <input id="pac-input" class="controls" type="text" placeholder="Search Box">
+                  <div id="map" style="height: 250px;"></div> -->
+                  <div id="googleMap" style="height:300px"></div>
                   <p>&nbsp;</p>
                    <button onclick="addAddress();" id="addAddress" class="button-primary">Add Address</button>
                    <div id="addAddressDetails" style="display: none">
-                     <p>&nbsp;</p>
-                     <h2><b>New Address </h2><b>
-                      <textarea id="newaddress"></textarea>
+                     <!-- <p>&nbsp;</p>
+                     <h2><b>New Address </h2><b> -->
+                      <!-- <textarea id="newaddress"></textarea>
                       <input type="hidden" id="lat">
-                      <input type="hidden" id="lng">
+                      <input type="hidden" id="lng"> -->
+                      <?php include('create_new_service_request_address_selection_new.php');?>
                    </div>
                 <!-- Replace the value of the key parameter with your own API key. -->
-                <script async defer
-                src="https://maps.googleapis.com/maps/api/js?key=<?php echo $_configs['google_map_api_new'];?>&libraries=places&callback=initAutocomplete">
-                </script>
+
 
               </summary>
               <summary class="jobdetails WDTH90 MRGCenter" style="display: none">

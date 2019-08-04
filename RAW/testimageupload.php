@@ -32,7 +32,7 @@ if(count($_FILES) > 0){
 <form  method="POST" enctype="multipart/form-data">
 	<span class="btn btn-primary">
       	Take/Select&hellip; 
-        <input type="file"  name="img[]" id="file" accept="image/*" capture="camera" />
+        <input type="file"  name="img[]" id="file" accept=".heic,image/*" capture="camera" />
                        
     </span>
     <input type="submit" value="Upload" />

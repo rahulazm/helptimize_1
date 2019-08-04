@@ -2,11 +2,11 @@
 include("header_main.php");
 //print_r($_SESSION);
 $id= $_SESSION['id'];
-$sqlPaymnt="SELECT sum(payAmt) as totalPayAmnt FROM view_bids WHERE ownerId='$id'";
+$sqlPaymnt="SELECT sum(payAmt) as totalPayAmnt FROM view_bids WHERE srOwnerId='$id' and srBidAwardId != 'NULL'";
 $res=$_sqlObj->query($sqlPaymnt);
 $totalPayAmnt = $res[0]['totalPayAmnt'];
 
-$sqlSpent="SELECT sum(payAmt) as totalSpent FROM view_bids WHERE srOwnerId='$id'";
+$sqlSpent="SELECT sum(payAmt) as totalSpent FROM view_bids WHERE ownerId='$id' and srBidAwardId != 'NULL'";
 $res=$_sqlObj->query($sqlSpent);
 $totalSpent = $res[0]['totalSpent'];
 
@@ -15,13 +15,13 @@ $res=$_sqlObj->query($sqlJobs);
 $jobs = $res[0]['jobs'];
 
 //$sqlList="select * from view_bids where srOwnerId='$id' and srBidAwardId is null and shortlist = 'yes' and buttonstatus is null and bidstatus != 'cancel' order by last_updated desc";
-$sqlList = "select * from view_bids where srOwnerId='$id' order by last_updated desc";
+$sqlList = "select * from view_bids where ownerId='$id' order by last_updated desc";
+$bidList=$_sqlObj->query($sqlList);
+
+$sqlList="select * from view_serviceRequests where ownerId='$id' order by last_updated desc";
 $resList=$_sqlObj->query($sqlList);
 
-$sqlRecm="select * from view_serviceRequests where ownerId='$id' and bidAwardId is not null and buttonstatus != 'cancel'  order by last_updated desc";
-$resRecm=$_sqlObj->query($sqlRecm);
-
-$sqlReqtrAllJobs="select * from view_bids where srOwnerId='$id' and srBidAwardId is null and shortlist is null and buttonstatus is null and bidstatus != 'cancel' order by last_updated desc";
+$sqlReqtrAllJobs="select * from view_serviceRequests where ownerId !='$id' and bidAwardId is null order by last_updated desc";
 $resReqtrAllJobs=$_sqlObj->query($sqlReqtrAllJobs);
 ?>
 <script>
@@ -34,7 +34,25 @@ $( document ).ready(function() {
     seller.style.display="block";
 });
 
+  function getDetails(obj){
+    //alert(obj);
+    var seller = document.getElementById("seller");
+    var requester1 = document.getElementById("requester1");
+    if(obj=='seller'){
+     //alert("inseller-"+obj);
+         requester1.style.display="none";
+     seller.style.display="block";
+
+    }
+    if(obj=='requester1'){
+    // alert("inrequester1-"+obj);
+         requester1.style.display="block";
+     seller.style.display="none";
+       
+    }
   
+  return;
+  }
 
 </script>
 
@@ -70,7 +88,7 @@ $( document ).ready(function() {
 
     
        <section class="wrapper" style="width: 80%;margin: auto;">
-	    <div id="seller" style="/*width: 1070px;*/">    
+      <div id="seller" style="/*width: 1070px;*/">    
             <aside class="">
               <aside class="jobRequests">
               <div class="flex-layout" style="/*width: 1070px;*/">
@@ -90,22 +108,31 @@ $( document ).ready(function() {
               </div>
               
             <div class="row MRGB10PX" style="/*width:1090px*/">
-                <?php for($i=0;$i<count($resReqtrAllJobs);$i++){ ?>
+                <?php for($i=0;$i<count($bidList);$i++){ ?>
                   <div class="col-sm-12 col-md-6 col-lg-4 col-xl-4">
                     <div class="card">
                       <div class="card-body">
-                        <p class="card-text"><?php //echo $resReqtrAllJobs[$i]['id']?></p>
+                        <?php if($bidList[$i]['srBidAwardId'] == NULL){ ?>
+                          <p class="card-text">#JR<?php echo $bidList[$i]['srId']?>SR-<?php echo $bidList[$i]['id']?></p>
+                        <?php }else{?>
+                          <p class="card-text">#AG<?php echo $bidList[$i]['srId']?>SR-<?php echo $bidList[$i]['id']?></p>
+                        <?php } ?>
                           <div class="card-title">
-                              <h5><?php echo $resReqtrAllJobs[$i]['sr_title']?></h5>
-                              <!-- <div>
-                                  <span class="ongoing"><?php echo $resReqtrAllJobs[$i]['status']?></span>
-                                  <span class="badge badge-secondary"><?php echo $resReqtrAllJobs[$i]['srid']?> 5</span>
-                              </div> -->
+                              <h5><?php echo $bidList[$i]['sr_title']?></h5>
+                              <div>
+                                  <span class="ongoing"><?php echo $bidList[$i]['status']?></span>
+                                  <span class="badge badge-secondary"><?php echo $bidList[$i]['srid']?> 5</span>
+                              </div>
                           </div>
-                          <label class="post-date">Posted: <?php echo date("d/m/Y",strtotime($resReqtrAllJobs[$i]['create_dateTime']));?></label>
-                          <p class="card-info">Bidder: <?php echo $resReqtrAllJobs[$i]['srOwnerName']?> </p>
-                           <p class="card-info">Price: <?php echo $resReqtrAllJobs[$i]['payAmt']." ".$resReqtrAllJobs[$i]['payType']?> </p>
-                           <div class="text-right"><a href="view_service_details.php?id=<?php echo $resReqtrAllJobs[$i]['id'];?>">View Details</a></div>
+                          <label class="post-date">Posted: <?php echo date("d/m/Y",strtotime($bidList[$i]['create_dateTime']));?></label>
+                          <!-- <label class="card-info">Requestor: <?php echo $bidList[$i]['srOwnerName']?> </label>
+                          <label class="card-info">Price: $<?php echo $bidList[$i]['payAmt']." ".$bidList[$i]['payType']?> </label> -->
+                          <p class="card-info">
+                          <?php if($bidList[$i]['descr'] != "null"){ 
+                            echo $bidList[$i]['descr'];
+                          } ?>
+                          </p>
+                          <div class="text-right"><a href="view_service_details.php?id=<?php echo $bidList[$i]['srId'];?>">View Details</a></div>
                       </div>
                     </div>
                   </div>
@@ -128,17 +155,21 @@ $( document ).ready(function() {
             </div>
             
             <div class="row MRGB10PX" style="/*width:1090px*/">
-                <?php for($i=0;$i<count($resRecm);$i++){ ?>
+                <?php for($i=0;$i<count($resReqtrAllJobs);$i++){ ?>
                   <div class="col-sm-12 col-md-6 col-lg-4 col-xl-4">
                     <div class="card">
                       <div class="card-body">
-                        
+
+                          <p class="card-text">#JR<?php echo $resReqtrAllJobs[$i]['id']?>SR-000</p>
                           <div class="card-title">
-                              <h5><?php echo $resRecm[$i]['title']?></h5>
+                              <h5><?php echo $resReqtrAllJobs[$i]['title']?></h5>
                           </div>
-                          <label class="post-date">Posted: <?php echo date("d/m/Y", strtotime($resRecm[$i]['create_dateTime']))?></label>
-                          <p class="card-info"><?php echo $resRecm[$i]['descr']?> </p>
-                          <!-- <div class="text-right"><a href="#">View Details</a></div> -->
+                          <label class="post-date">Posted: <?php echo date("d/m/Y", strtotime($resReqtrAllJobs[$i]['create_dateTime']))?></label>
+                          <p class="card-info"><?php 
+                          if($resReqtrAllJobs[$i]['descr'] != "null"){
+                          echo $resReqtrAllJobs[$i]['descr'];
+                          } ?></p>
+                          <div class="text-right"><a href="view_service_details.php?id=<?php echo $resReqtrAllJobs[$i]['id'];?>">View Details</a></div>
                       </div>
                     </div>
                   </div>
@@ -181,19 +212,23 @@ $( document ).ready(function() {
                   <div class="col-sm-12 col-md-6 col-lg-4 col-xl-4">
                     <div class="card">
                       <div class="card-body">
-                        <p class="card-text"><?php echo $resList[$i]['srExternId']?>;</p>
+                        <?php if($resList[$i]['bidAwardId'] == NULL){?>
+                        <p class="card-text">#JR<?php echo $resList[$i]['id']?>SR-000</p>
+                      <?php }else{ ?>
+                        <p class="card-text">#AG<?php echo $resList[$i]['id']?>SR-<?php echo $resList[$i]['bidAwardId']?></p>
+                      <?php } ?>
                           <div class="card-title">
-                              <h5><?php echo $resList[$i]['sr_title'];
-                              $clr =($resList[$i]['status']=='pending')? "orange":"#00982e";
-                              $clr =($resList[$i]['status']=='cancelled')? "red":$clr;
-                              ?></h5>
+                              <h5 class="ellipsis" title="<?php echo $resList[$i]['title']?>"><?php echo $resList[$i]['title']?></h5>
                               <div>
-                                  <span class="ongoing" style="background-color:<?php echo $clr;?>"><?php echo $resList[$i]['status']?></span>
+                                  <span class="ongoing"><?php echo $resList[$i]['status']?></span>
                                   <span class="badge badge-secondary"><?php echo $resList[$i]['srid']?> 5</span>
                               </div>
                           </div>
                           <label class="post-date">Posted: <?php echo date("d/m/Y",strtotime($resList[$i]['create_dateTime']))?></label>
-                          <p class="card-info"><?php echo $resList[$i]['descr']?> </p>
+                          <p class="card-info"><?php 
+                          if($resList[$i]['descr'] != 'null'){
+                            echo $resList[$i]['descr'];
+                          } ?> </p>
                           <div class="text-right"><a href="view_service_details.php?id=<?php echo $resList[$i]['id'];?>">View Details</a></div>
                       </div>
                     </div>
@@ -238,5 +273,5 @@ $( document ).ready(function() {
         </aside>
        
      </div>
-	  </section>
+    </section>
   <?php include("footer.php"); ?>  
