@@ -13,7 +13,7 @@ if($id==''){
 }
 ///////////////////////////////Details section///////////////////////////////////
 $servID=$_GET['id']; 
-$sqlServ="select a.*, b.address from view_serviceRequests as a, address as b where a.id=b.srId and a.id='$servID'";
+$sqlServ="select a.*, b.address from view_serviceRequests as a left join address as b on a.id=b.srId where a.id='$servID'";
 //echo $sqlServ;
 $res=$_sqlObj->query($sqlServ);
 $dateFrom = date("jS M Y-h:i A",strtotime($res[0]['dateTimeTo']));
@@ -34,8 +34,7 @@ $dtTo = $dateToArr[0];
 //$jobs = $res[0]['jobs'];
 ///////////////////////////////BIDS section///////////////////////////////////
 
-$sqlBids="SELECT bids.title,bids.ownerid , bids.summ,bids.descr,bids.payType,bids.payAmt,bids.dateTimeTo,bids.dateTimeFrom, bids.create_dateTime,users.username,users.firstName,users.midName FROM `bids`, users WHERE bids.`srId` = '$servID' and users.id=bids.ownerId ORDER by bids.create_dateTime desc";
-//echo $sqlBids;
+$sqlBids="SELECT vb.*,u.username,u.firstName,u.midName FROM view_bids as vb, users as u WHERE vb.srId = '$servID' and u.id=vb.ownerId and vb.bidstatus != 'cancel' ORDER by vb.create_dateTime desc";
 
 $resBids=$_sqlObj->query($sqlBids);
 $rowBids=@reset($resBids);
@@ -64,9 +63,42 @@ $rowbidInfoShlstd=@reset($bidInfoShlstd);
 //echo "</pre>";
 
 ################Get agreement info
-
 $bidInfoAgremnt=$_sqlObj->query('select view_bids.*,users.username,users.firstName,users.midName from view_bids, users where srId='.$servID.' and srBidAwardId is not NULL and buttonstatus is null  and bidstatus != "cancel" and users.id = view_bids.ownerId order by last_updated desc');
 $rowbidInfoAgremnt=@reset($bidInfoAgremnt);
+
+######### Payment calculation
+
+$sql_get_saved_bids = "SELECT * FROM bidPayments WHERE bidid='".$rowbidInfoAgremnt['id']."' AND status='18' AND usertype='seller' order by id desc limit 1 ";
+                    $result_get_saved_bids = $_sqlObj->query($sql_get_saved_bids);
+                     //$count_saved_bids = $result_get_saved_bids->num_rows;
+                     /*$fetch_saved_bids = $result_get_saved_bids->fetch_assoc();
+                     $db_get_saved_bids->close();*/
+                     $amounttype=$result_get_saved_bids[0]['amounttype'];
+                     $payAmt=$result_get_saved_bids[0]['payAmt'];
+                     if( $amounttype == "1")
+                         $amt_type="Full Payment";
+                     else $amt_type="Partial Payment";
+
+######### Request Payment calculation
+$sql_get_saved_bids = "SELECT SUM(payAmt) AS paidamt FROM bidpayments WHERE bidid='".$rowbidInfoAgremnt['id']."' AND status='19' AND usertype='buyer'";
+                    $result_get_saved_bids = $_sqlObj->query($sql_get_saved_bids);
+                    /*$result_get_saved_bids_2 = $db_get_saved_bids->query($sql_get_saved_bids);
+                     $count_saved_bids = $result_get_saved_bids->num_rows;
+                     $fetch_saved_bids = $result_get_saved_bids->fetch_assoc();
+                     $db_get_saved_bids->close();*/
+                    $bid_actual_amount=$remainingamount=$rowbidInfoAgremnt['payAmt'];
+                     $amount_type=1;
+                     echo "<br>".$result_get_saved_bids['paidamt'];
+                     if($result_get_saved_bids[0]['paidamt'] >0)
+                      $paidamt=$result_get_saved_bids[0]['paidamt'];
+                      $remainingamount=$bid_actual_amount-$paidamt;
+                      $amounttype=2;$bidstatus="";$amt_type = "Partial Payment";
+                     //$bid_actual_amount=$bidArr['payAmt'];
+                       /*if($bid_actual_amount <=$paidamt)
+                         {
+                           $bidstatus="Job Completed"; 
+                           $job="yes" ;
+                         } */                    
 
 
 ######### Chat Console
@@ -126,6 +158,9 @@ if($_SESSION['id'] == $sr_user_id){
     $chaturl = "https://app.helptimize.com/chat/enter.php?buyerid=".$sr_user_id."&sellerid=".$_SESSION['id'];
 }
 
+
+
+
 ?>        
         <section class="wrapper">
 
@@ -152,7 +187,18 @@ if($_SESSION['id'] == $sr_user_id){
                         </li>
                         <?php } ?>
                         <li class="nav-item">
-                                <a class="nav-link" id="five-tab" data-toggle="tab" href="#five" role="tab" aria-controls="Five" aria-selected="false">Communication</a>
+                            <?php if($res[0]['ownerId'] == $id){ 
+                                $fromval = "buyer";
+
+                            }else{
+                                $fromval = "seller";
+                            }
+
+                                $userval = $rowBids['ownerName'];
+                                $bidstatusval = $rowBids['bidstatus'];
+                                $statusval = $rowBids['status'];
+                            ?>
+                                <a class="nav-link videoclick" data-from="<?php echo $fromval; ?>" data-user="<?php echo $userval; ?>" data-bidstatus="<?php echo $bidstatusval; ?>" data-status="<?php echo $statusval; ?>" data-srid="<?php echo $servID; ?>" id="five-tab" data-toggle="tab" href="#five" role="tab" aria-controls="Five" aria-selected="false">Communication</a>
                         </li>
                     </ul>
                     <div class="search">
@@ -179,7 +225,7 @@ if($_SESSION['id'] == $sr_user_id){
                             </div>
                         </div>  
                         <p class="MRGT20PX"><b>Amount</b></p>
-                        <p><?php echo $res[0]['paytype'] ?>, $<?php echo $res[0]['payAmt'] ?> </p> 
+                        <p style="text-transform: capitalize; "><?php echo $res[0]['paytype'] ?>, $<?php echo $res[0]['payAmt'] ?> </p> 
                         <?php if($res[0]['ownerId'] == $id){ ?>
                         <p class="MRGT20PX"><b>Personal Note</b></p>
                         <p class="card-text"><?php echo $res[0]['summ'] ?></p>
@@ -252,7 +298,7 @@ if($_SESSION['id'] == $sr_user_id){
                                             
                                             <div class="form-group MRGT10PX">
                                                 <label ><b>Amount:</b></label>
-                                                <label id="bid_amnt"></label>
+                                                <label id="bid_amnt" style="text-transform: capitalize;"></label>
                                             </div>
                                             <div class="form-group MRGT10PX">
                                                 <label><b>Duration:</b> </label>
@@ -459,7 +505,7 @@ if($_SESSION['id'] == $sr_user_id){
                                             
                                             <div class="form-group MRGT10PX">
                                                 <label ><b>Amount:</b></label>
-                                                <label id="bid_amnt_stl"></label>
+                                                <label id="bid_amnt_stl" style="text-transform: capitalize;"></label>
                                             </div>
                                             <div class="form-group MRGT10PX">
                                                 <label><b>Duration:</b> </label>
@@ -652,27 +698,34 @@ if($_SESSION['id'] == $sr_user_id){
                                             
                                             <div class="form-group MRGT10PX">
                                                 <label ><b>Amount:</b></label>
-                                                <label id="bid_amnt_agrm"></label>
+                                                <label id="bid_amnt_agrm" style="text-transform: capitalize;"></label>
                                             </div>
                                             <div class="form-group MRGT10PX">
                                                 <label><b>Duration:</b> </label>
                                                 <label id="bid_duration_agrm"></label>
                                             </div>
+                                           
                                             <div id="bid_milestone_agrm" class="form-group MRGT10PX">
-                                                <?php  include_once("view_bid_new.php");?>
+                                                
                                                 
 
                                             </div>
                                             <div class="MRGT20PX">
+                                                <?php if($rowbidInfoAgremnt['status'] == "awarded" && $rowbidInfoAgremnt['ownerId'] == $_SESSION['id']){ ?>
+                                                    <input type="button" value="ACCEPT AGREEMENT" id="bidReceivePaymentBtn" data-status="16" name="bidRequestPayment" data-bidid="<?php echo $rowbidInfoAgremnt['id'];?>" data-userid="<?php echo $rowbidInfoAgremnt['ownerId']; ?>" class="changeinwork btn btn-primary general_orange_button_border_radius general_orange_button_size general_orange_button_background general_orange_button_no_border" style="background-color:red; border-color: red;font-weight:bold;">
+                                                <?php }else if($rowbidInfoAgremnt['status'] != "job completed"){ ?>
                                                 <button class="orange-btn" id="edit_agreement"
                                                 onclick="edit_agreement(<?php echo $rowbidInfoAgremnt['id'].",".$servID;?>);">Edit Agreement</button>
-                                                <?php if($rowBids['ownerid'] == $_SESSION['id']){ ?>
-                                                <button class="orange-btn" id="request_pay">Request Payment</button>
-                                                <?php }else if($res[0]['ownerId'] == $id){ ?>
-                                                <button class="orange-btn" id="request_pay">Make Payment</button>
-                                                <?php }else{ ?>
-                                                <button class="orange-btn" id="request_pay">Make Payment</button>
+                                                
+                                                <button class="button-secondary requestpaypopup" data-bidamount="<?php $rowbidInfoAgremnt['payAmt'] ?>" id="request_pay" data-paidamt="<?php echo $paidamt; ?>" style="display:none"><i class="fa fa-money"></i> Request Payment</button>
                                                 <?php } ?>
+                                                <?php if($rowbidInfoAgremnt['srOwnerId'] == $_SESSION['id']){ ?>
+                                                    <?php if($rowbidInfoAgremnt['status'] == 'request for payment'){ ?>
+                                                <button  data-bidid="<?php echo $rowbidInfoAgremnt['id'];?>" data-amount="<?php echo $payAmt ?>"  data-amounttype="<?php echo $amt_type?>" data-actualamount="<?php echo $rowbidInfoAgremnt['payAmt'] ?>"  data-paidamt="<?php echo $paidamt ?>" data-from="no" class="approveclick button-secondary" id="approve_pay"><i class="fa fa-money"></i> Approve / Reject Payment</button>
+                                                <?php }else if($rowbidInfoAgremnt['status'] == 'in work'){ ?>
+                                                    <button class=" button-secondary requestpaypopup" id="make_pay"><i class="fa fa-money"></i> Make Payment</button>
+                                                        <?php } ?>
+                                                     <?php } ?>
                                             </div>
                                         </div>
                                         <div class="tab-pane fade p-3" id="bid-profile-agrm" role="tabpanel" aria-labelledby="one-tab">
@@ -807,12 +860,13 @@ if($_SESSION['id'] == $sr_user_id){
                     </div>
                     </div>
                     <div class="tab-pane fade p-3" id="five" role="tabpanel" aria-labelledby="five-tab">
-                        <iframe style="border:0px;" src="<?php echo $chaturl ?>" width="100%" height="700px" allow="geolocation; camera; microphone;"></iframe> 
+                         <iframe style="border:0px;" src="<?php echo $chaturl ?>" width="100%" height="700px" allow="geolocation; camera; microphone;"></iframe>  
 
                     </div>
                 </div>
             </aside>
         </section>
     </div>
-    
+     <?php  include_once("view_bid_new.php");?>
+
 <?php include("footer.php"); ?>  

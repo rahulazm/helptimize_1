@@ -56,10 +56,10 @@ nav a, nav a:hover   { color: #000000; }
 .card-text { font-size: 12px; margin-bottom: 6px; }
 .wrapper .card { text-align: left; }
 .card-title { display: flex; justify-content: space-between; }
-.card-title span.ongoing { background: #00982e; color: #fff; padding: 4px 10px; border-radius: 5px; font-size: 14px; width: 100px; text-align: center; }
-.card-title span.completed { background: #F2F2F2; color: #BEBEBE; padding: 4px 10px; border-radius: 5px; font-size: 14px; width: 100px; text-align: center; }
-.card-title span.rejected { background: #EC222E; color: #fff; padding: 4px 10px; border-radius: 5px; font-size: 14px; width: 100px; text-align: center; }
-.card-title span.pending { background: #FF9900; color: #fff; padding: 4px 10px; border-radius: 5px; font-size: 14px; width: 100px; text-align: center; }
+.card-title span.ongoing { background: #00982e; text-transform: capitalize; color: #fff; padding: 4px 10px; border-radius: 5px; font-size: 14px; width: 100px; text-align: center; }
+.card-title span.completed { background: #F2F2F2; text-transform: capitalize; color: #BEBEBE; padding: 4px 10px; border-radius: 5px; font-size: 14px; width: 100px; text-align: center; }
+.card-title span.rejected { background: #EC222E; text-transform: capitalize; color: #fff; padding: 4px 10px; border-radius: 5px; font-size: 14px; width: 100px; text-align: center; }
+.card-title span.pending { background: #FF9900; text-transform: capitalize; color: #fff; padding: 4px 10px; border-radius: 5px; font-size: 14px; width: 100px; text-align: center; }
 .post-date { font-size: 14px; }
 .card-info { font-size: 14px; }
 
@@ -215,4 +215,23 @@ nav a, nav a:hover   { color: #000000; }
   white-space: nowrap;
   overflow: hidden;
   text-overflow: ellipsis;
+}
+
+.modal-open .modal{
+  position: absolute;
+    height: auto;
+    z-index: 99999;
+    top: 25%;
+    margin: auto;
+    left: 33%;
+}
+
+.modal-header .close{
+      right: -5px;
+    position: absolute;
+    top: -33px;
+}
+
+#bidConfirm{
+  display: none;
 }

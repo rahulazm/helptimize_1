@@ -9,9 +9,10 @@ require_once("./mysql_lib.php");
 //ini_set('display_startup_errors', 1);
 //error_reporting(E_ALL);
 //$id=$_sqlObj->escape($_GET['id']);
-//$bidArr=@reset($_sqlObj->query('select * from view_bids where id='.$id.';'));
-//$srId=$bidArr['srId'];
+$bidArr=@reset($_sqlObj->query('select * from view_bids where srId='.$_GET['id'].' and ownerId='.$_SESSION['id'].' and bidstatus != "cancel";'));
+$srId=$bidArr['srId'];
 $srId=$_GET['id'];
+$id=$bidArr['id'];
 #########Redirect to preview page if bid is edited
 if($bidArr['bidstatus'] =='editbid')
     header('Location: editbid_preview.php?id='.$id);
@@ -27,7 +28,7 @@ if( !($_SESSION['id']==$bidArr['ownerId'] || $_SESSION['id']==$bidArr['srOwnerId
 
 
 }$ReqPay='';
-$job="no" ;$reject="no";
+$job="no" ;$reject="no";$Popup ="no";
 if($bidArr["status"] == "job completed") $job="yes" ;
 if($bidArr['bidstatus'] == "rejected")
         { 
@@ -82,8 +83,8 @@ $milestone_count=count($milestones);
                      //$bid_actual_amount=$bidArr['payAmt'];
                        if($bid_actual_amount <=$paidamt)
                          {
-                           $bidstatus="Job Completed"; 
-                           $job="yes" ;
+                           /*$bidstatus="Job Completed"; 
+                           $job="yes" ;*/
                          }
 if( $_SESSION['id']==$bidArr['ownerId'] && ($bidArr['status'] == "in work" || $bidArr['status'] == "approved payment" || $bidArr['status'] == "payment rejected"))
 {
@@ -92,10 +93,12 @@ if( $_SESSION['id']==$bidArr['ownerId'] && ($bidArr['status'] == "in work" || $b
      if($paidamt<$bid_actual_amount && $milestone_count == 0) ///check if bid amount is less than paid amount and no milestone is added
      $ReqPay='<input type="button" value="Request Payment" id="bidReceivePaymentBtn" name="bidRequestPayment" class="requestpaypopup btn btn-primary general_orange_button_border_radius general_orange_button_size general_orange_button_background general_orange_button_no_border">';
 }
-/*if( $bidArr['status'] == "awarded" && $_SESSION['id']==$bidArr['ownerId'])
+
+if( $bidArr['status'] == "awarded" && $_SESSION['id']==$bidArr['ownerId'])
 {
+  $Popup="yes";
      $ReqPay='<input type="button" value="Accept SR" id="bidReceivePaymentBtn" data-status="16" name="bidRequestPayment" class="changeinwork btn btn-primary general_orange_button_border_radius general_orange_button_size general_orange_button_background general_orange_button_no_border">';
-}*/
+}
 
   #########Bidder Gold rating
    $qstr="select * from checkr_verification where user_id = '".$bidArr['ownerId']."' order by id desc";
@@ -794,7 +797,7 @@ $html.='
 </html>
 ';
 
-echo $html;
+//echo $html;
 
 ?>
 
@@ -809,7 +812,9 @@ echo $html;
                     
                 
                 <form id="request_payment">
+                  <input type="hidden" id="userid_session1" value="<?php echo $_SESSION['id'] ?>" >
                 <div class="form-group">
+                  <input type="hidden" id="paidamt" />
                         <label><font color="black"><span class="dyn_content"></span></font></label>
                        
                     </div>
@@ -871,7 +876,126 @@ echo $html;
         </div>
     </div>
 
+<div id="modal_approve_pay" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h6 class="modal-title" style="color:#000000";><center><i class="fa fa-info-circle" aria-hidden="true"></i><span class="approvehead">Approve / Reject Payment Request</span></center></h6>
+                </div>
+                    <div class="modal-body">
+                    
+                
+                <form id="approve_payment">
+<input type="hidden" id="userid_session" value="<?php echo $_SESSION['id'] ?>" >
+
+                <div class="form-group">
+                        <label><font color="black"><span class="dyn_content"></span></font></label>
+                       
+                    </div>
+
+                <div class="form-group statusclass">
+                        <label><font color="black">Status</font></label>
+                        <select class="form-control" id="status_type" name="status_type">
+
+                                <option value="1">Approved</option>
+                                <option value="2">Rejected
+                                </option>
+                            </select>
+                    </div>
+                    <div class="hideclass"><input type="hidden" name="status_type" id="status_type" value="1"> 
+                      <input type="hidden" id="userid" value="<?php echo $_SESSION ?>"></div>
+                
+                  
+                    <div class="form-group shownotes">
+                        <label><font color="black">Notes</font></label>
+                        <textarea class="form-control" id="notes" name="notes">
+</textarea>
+
+                    </div> 
+                    
+                    <div class="form-group showtype">
+                        <label><font color="black"><?php echo AMOUNT_TYPE;?></font></label>
+                        <select class="form-control" id="amount_type" name="amount_type">
+<option value=""><?php echo SELECT_AMOUNT_TYPE; ?></option>
+                                <option value="1"><?php echo FULL_AMOUNT; ?></option>
+                                <option value="2"><?php echo PARTIAL_AMOUNT; ?>
+                                </option>
+                            </select>
+                    </div>
+                
+                    
+                    <div class="form-group showamount">
+                        <label><font color="black"><?php echo ENTER_PAMOUNT;?></font></label>
+                        <input placeholder="<?php echo ENTER_PAMOUNT;?>" type="text" class="form-control" id="amount" name="amount">
+                    </div>
+                    
+                    
+                    <input type="hidden" name="bidid" value="<?php echo $id; ?>" id="bidid">
+            <input type="hidden" name="bidamount" value="" id="bidamount">
+
+            <input type="hidden" name="paidamt" value="" id="paidamt">
+                    
+                    
+                    <center>
+                    
+                    <button type="submit" class="btn btn-success" ><?php echo SUBMIT;?></button>
+                    
+                        </form>
+                    
+                    </center>
+                            
+                    </div>
+            </div>
+        </div>
+    </div>
    
+<div id="modal_milestone_pay" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                    <h4 class="modal-title" style="color:#000000";><center><i class="fa fa-info-circle fa-2x" aria-hidden="true"></i>Reject Milestone Payment</center></h4>
+                </div>
+                    <div class="modal-body">
+                    
+                
+                <form id="milestone_payment">
+
+                <div class="form-group">
+                        <label><font color="black">Milestone Amount :  <span class="mdyn_content"></span></font></label>
+                       
+                    </div>
+
+                      
+                
+                  
+                    <div class="form-group ">
+                        <label><font color="black">Notes</font></label>
+                        <textarea class="form-control" id="mnotes" name="notes">
+</textarea>
+
+                    </div> 
+                    
+                
+                    
+                    
+                    <input type="hidden" name="mid" value="" id="mid">
+           <input type="hidden" name="mamount" value="" id="mamount">
+                    
+                    
+                    <center>
+                    
+                    <button type="submit" class="btn btn-success" ><?php echo SUBMIT;?></button>
+                    
+                        </form>
+                    
+                    </center>
+                            
+                    </div>
+            </div>
+        </div>
+    </div>
 
 <script src="./js/jquery-1.11.3.min.js"></script>
    <!--  <script src="./js/bootstrap.min.js"></script> -->
@@ -920,6 +1044,7 @@ $(document).on("click", ".requestpaypopup", function(e) {
     var paidamt = <?php echo $paidamt; ?>;
     var remain = bidamount - parseInt(paidamt);
     $(".dyn_content").html("Request Pay - Received Amount $"+paidamt+" (Remaining Balance $"+remain+")");
+    $("#paidamt").val(paidamt);
     $('#modal_request_pay').modal('show');
 
 
@@ -1329,6 +1454,51 @@ $(document).on("click", ".videoclick", function(e) {
 
 });
  ///////////Video call click script --- End - 13.05.19
+
+
+
+    
+
+    
+
+    
+///Accept popup
+$( document ).ready(function() {
+  <?php if($reject == "yes"){ ?>
+    swal({
+                                        title: "Change Request - Rejected",
+                                        text: "<?php echo $rejectnotes; ?>",
+                                        type: "warning"
+                                        
+                    
+                    
+              
+                        }); 
+
+  <?php }  else if($Popup == "yes"){ ?>
+    swal({
+                                        title: "Accept Agreement",
+                                        text: "You have been awarded the project. Please accept and start work!",
+                                        type: "warning"
+                                       
+                    
+              
+                        }); 
+
+  <?php } else if($job == "yes"){ ?>
+    swal({
+                                        title: "Job Completed",
+                                        text: "This project is completed! ",
+                                        type: "warning"
+                                        
+                    
+                    
+              
+                        }); 
+
+  <?php } ?>
+
+});
 
  function doneBid(id){
           var remainingamount='<?php echo $remainingamount; ?>';

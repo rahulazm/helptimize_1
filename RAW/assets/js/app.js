@@ -462,8 +462,14 @@ $('input, textarea').focus(function(){
           $('#goldstarresp').html(jsonData.goldstarresp);
           $('#goldstarresp_agrm').html(jsonData.goldstarresp);
 
+          $('#bid_milestone_agrm').html(jsonData.milestones);
+
           if(jsonData.shortlist == "yes"){
             $("#shortlist").hide();
+          }
+
+          if(jsonData.loggedin_user_id == jsonData.ownerid){
+            $("#request_pay").show();
           }
           console.log(jsonData);
         });
@@ -640,4 +646,461 @@ function hire(bid_id,serv_id) {
     }      
       
 
+$(document).on("click", ".requestpaypopup", function(e) {
+
+    //var bidamount = parseInt($("#bidamount").val());
+    var bidamount = ($(this).data('bidamount'));
+    //var paidamt = <?php echo $paidamt; ?>;
+    var paidamt = ($(this).data('paidamt'));
+    var remain = bidamount - parseInt(paidamt);
+    $(".dyn_content").html("Request Pay - Received Amount $"+paidamt+" (Remaining Balance $"+remain+")");
+    $('#modal_request_pay').modal('show');
+
+
+});
+
     
+$(document).on("click", ".approveclick", function(e) {
+    var id =($(this).data('bidid'));
+    var bidamount =($(this).data('amount'));
+    var amounttype =($(this).data('amounttype'));
+    var actualamount =($(this).data('actualamount'));
+    var paidamt =($(this).data('paidamt')); 
+    var from =($(this).data('from')); 
+       
+   $("#bidid").val(id);
+   $("#bidamount").val(actualamount); 
+   $("#paidamt").val(paidamt); 
+   if(from =="no")
+   {   
+   $(".dyn_content").html("Requested Amount :  $"+bidamount+" ("+amounttype+")");
+    $(".statusclass").show();
+    $(".hideclass").hide();
+    }
+    else
+    {
+      $(".dyn_content").html("");
+     $(".approvehead").html("Make Payment"); 
+     $(".statusclass").hide();
+     $(".hideclass").show();
+    }
+
+    $('#modal_approve_pay').modal('show');
+
+});
+$(document).on("change", "#amount_type", function(e) {
+
+    if($('#amount_type').val() == "2")
+    $(".showamount").show();
+    else {
+        $(".showamount").hide();
+    }
+
+});
+
+$(document).on("change", "#status_type", function(e) {
+
+    if($('#status_type').val() == "1")
+    {
+    $(".showtype").show();
+    $(".shownotes").hide();
+}
+    else {
+        $(".shownotes").show();
+        $(".showtype").hide();
+        $(".showamount").hide();
+    }
+
+});
+
+$('#request_payment').formValidation({
+        framework: 'bootstrap',
+        
+        fields: {
+            amount_type: {
+                validators: {
+                    notEmpty: {
+                        message: "Please select amount type"
+                    }
+                    
+                }
+            },
+            amount: {
+                validators: {
+                    notEmpty: {
+                        message: "Please enter partial amount"
+                    }
+                    
+                }
+            }
+                
+            
+        }
+    }).on('success.form.fv', function(e) {
+    
+            e.preventDefault();
+        
+            
+            var amount_type = $('#amount_type').val();
+            var amount = $('#amount').val();
+            var bidid = $("#bidid").val();
+            var bidamount = parseInt($("#bidamount").val());
+            var paidamt = $("#paidamt").val();
+
+            ///if amount type is full then save bid amount otherwise get entered amount
+            if($('#amount_type').val() == "1")
+                var amount = parseInt(bidamount);
+            else
+                var amount = parseInt($('#amount').val());
+
+            ///Total amount calculation (add already paid amount with current entered amount)
+            var total=parseInt(paidamt)+parseInt(amount);
+
+            // check if amount exceed the bid amount
+            if(amount>bidamount || total>bidamount)
+            {
+                 swal("Error", "The amount exceeded your bid amount", "error");
+                 return false;
+            }
+            
+    
+            
+            var formData = {
+                'amount_type'     : amount_type,
+                'amount'     : amount,
+                'bidid' : bidid,
+                'mid' : 0,
+                'userid' : $('#userid_session1').val()
+            }
+    
+      
+            var feedback = $.ajax({
+                type: "POST",
+                url: "service_request_payment.php",
+                data: formData,         
+                async: false,
+                
+            }).complete(function(){
+            
+            
+            }).responseText;
+        //alert(feedback);
+  
+            if(feedback == "success"){
+            
+              swal({
+                    type : "success",
+                    title: "Success",
+                    text: "Payment request submitted successfully"
+               },
+                function(){
+                       $('#modal_request_pay').modal('hide');
+                      //window.location.href="main.php";
+                }
+                );
+              
+            
+            }
+  
+            
+            
+    
+     });
+$('#approve_payment').formValidation({
+        framework: 'bootstrap',
+        
+        fields: {
+            amount_type: {
+                validators: {
+                    notEmpty: {
+                        message: "Please select Amount type"
+                    }
+                    
+                }
+            },
+            amount: {
+                validators: {
+                    notEmpty: {
+                        message: "Please Enter Partial Amount"
+                    }
+                    
+                }
+            }
+                
+            
+        }
+    }).on('success.form.fv', function(e) {
+    
+            e.preventDefault();
+        
+            
+            var amount_type = $('#amount_type').val();
+            var status_type = $('#status_type').val();
+            var bidid = $("#bidid").val();
+            var notes = $("#notes").val();  
+            var bidamount = parseInt($("#bidamount").val()); 
+            var paidamt = $("#paidamt").val();
+            var userid = $("#userid").val();
+
+           
+            ///if status type is approved only check amount condition
+            if($('#status_type').val() == "1")
+            {
+            ///if amount type is full then save bid amount
+            if($('#amount_type').val() == "1")
+                var amount = parseInt(bidamount);
+            else
+                var amount = parseInt($('#amount').val());
+
+            ///Total amount calculation (add already paid amount with current entered amount)
+            var total=parseInt(paidamt)+parseInt(amount);
+
+            // check if amount exceed the bid amount
+            if(amount>bidamount || total>bidamount)
+            {
+                 swal("Error", "Amount exceeded bid amount", "error");
+                 return false;
+            }       
+        
+            }
+            
+            var formData = {
+                'amount_type'     : amount_type,
+                'status_type'     : status_type,
+                'amount'     : amount,
+                'bidid' : bidid,
+                'mid' : 0,
+                'notes' : notes,
+                'userid' : userid
+            }
+    
+      
+            var feedback = $.ajax({
+                type: "POST",
+                url: "service_approve_payment.php",
+                data: formData,         
+                async: false,
+                
+            }).complete(function(){
+            
+            
+            }).responseText;
+        
+  
+            if(feedback == "success"){
+            
+              swal({
+                    type : "success",
+                    title: "Success",
+                    text: "Payment Requested responded successfully"
+               },
+                function(){
+                       $('#modal_request_pay').modal('hide');
+                      //window.location.href="main.php";
+                }
+                );
+
+            
+            }
+  
+            
+            
+    
+     });
+
+
+$('#approve_payment').formValidation({
+        framework: 'bootstrap',
+        
+        fields: {
+            amount_type: {
+                validators: {
+                    notEmpty: {
+                        message: "Please select Amount type"
+                    }
+                    
+                }
+            },
+            amount: {
+                validators: {
+                    notEmpty: {
+                        message: "Please Enter Partial Amount"
+                    }
+                    
+                }
+            }
+                
+            
+        }
+    }).on('success.form.fv', function(e) {
+    
+            e.preventDefault();
+        
+            
+            var amount_type = $('#amount_type').val();
+            var status_type = $('#status_type').val();
+            var bidid = $("#bidid").val();
+            var notes = $("#notes").val();  
+            var bidamount = parseInt($("#bidamount").val()); 
+            var paidamt = $("#paidamt").val();
+
+           
+            ///if status type is approved only check amount condition
+            if($('#status_type').val() == "1")
+            {
+            ///if amount type is full then save bid amount
+            if($('#amount_type').val() == "1")
+                var amount = parseInt(bidamount);
+            else
+                var amount = parseInt($('#amount').val());
+
+            ///Total amount calculation (add already paid amount with current entered amount)
+            var total=parseInt(paidamt)+parseInt(amount);
+
+            // check if amount exceed the bid amount
+            if(amount>bidamount || total>bidamount)
+            {
+                 swal("Error", "Amount exceeded bid amount", "error");
+                 return false;
+            }       
+        
+            }
+            
+            var formData = {
+                'amount_type'     : amount_type,
+                'status_type'     : status_type,
+                'amount'     : amount,
+                'bidid' : bidid,
+                'mid' : 0,
+                'notes' : notes,
+                'userid' : $('#userid_session').val()
+            }
+    
+      
+            var feedback = $.ajax({
+                type: "POST",
+                url: "service_approve_payment.php",
+                data: formData,         
+                async: false,
+                
+            }).complete(function(){
+            
+            
+            }).responseText;
+        
+  
+            if(feedback == "success"){
+            
+              swal({
+                    type : "success",
+                    title: "Success",
+                    text: "Payment Requested responded successfully"
+               },
+                function(){
+                       $('#modal_approve_pay').modal('hide');
+                      //window.location.href="main.php";
+                }
+                );
+
+            
+            }
+  
+            
+            
+    
+     });
+  
+
+    $(document).on("click", ".changeinwork", function(e) {
+  var status=$(this).data('status');
+
+  var formData = {
+            
+            'status'     : '16',
+            'bidid' : ($(this).data('bidid')),
+            'userid' : ($(this).data('userid'))
+      }
+  
+    
+      var feedback = $.ajax({
+          type: "POST",
+          url: "changestatus.php",
+            data: formData,       
+            async: false,
+          
+        }).complete(function(){
+        
+        
+        }).responseText;
+      
+  
+            if(feedback == "success"){            
+           
+              swal({
+                    type : "success",
+                    title: "Success",
+                    text: "Accepted service request successfully!"
+                                },
+                function(){
+                               localStorage.setItem("pushfrom","award");
+                                //window.location.href="main.php";
+                }
+                );
+            
+           
+            
+            }
+
+
+});
+
+
+$(document).on("click", ".videoclick", function(e) {
+    var from =($(this).data('from'));
+    var user =($(this).data('user'));
+    var sr_id = ($(this).data('srid'));
+    var status = ($(this).data('status'));
+    var bidstatus = ($(this).data('bidstatus'));
+    var addi="";
+     if((status == "job completed" || bidstatus =="Job Completed") && from == "buyer")
+    {
+        var addi="Additionally you will be charged 5 USD as the Agreement is completed.";
+    }
+    if(from == "buyer")
+      var tle= "Communicate to Provider";
+      else if(from == "seller")
+    var tle= "Communicate to Requestor";
+  
+  if(from == "buyer")
+  var msg1=" Should you cancel this request after communicating with this seller a small fee will be charged per terms and services agreement. ";
+  else 
+  var msg1="";
+
+  var msg="Your communication request will be sent to " + user + ". " + msg1 +  addi + " Are you sure to continue?";
+
+  
+   swal({
+                                        title: tle,
+                                        text: msg,
+                                        type: "warning",
+                                        showCancelButton: true,
+                                        cancelButtonText: "Cancel",
+                                        confirmButtonColor: "#5cb85c",
+                                        confirmButtonText: "Chat Now",
+                                        closeOnConfirm: true
+                                },
+
+                                function(conf){
+          if(conf){         
+         
+          //call here for         
+          var rtrnObj=(urlCall('./videocall.php?usertype='+from+'&sr_id='+sr_id));
+            if(rtrnObj=="success"){
+                           
+                             //window.open("messaging_specific.php?sr_id="+sr_id);
+                    }
+            
+          }
+                        }); 
+
+});
