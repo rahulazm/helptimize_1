@@ -1,9 +1,9 @@
 <?php
-require_once("common.inc.php");
+session_start();
 
-require_once "check_session.php";
-
-require_once("mysql_lib.php");
+$configs = require_once("/etc/helptimize/conf.php");
+require_once("./common.inc.php");
+require_once("./mysql_lib.php");
 
 //ini_set('display_errors', 1);
 //ini_set('display_startup_errors', 1);
@@ -725,7 +725,7 @@ $html.='<form id="bidConfirm" action="javascript:void(0);" method="POST"><div cl
 
                ';
 
-$inOffTmpl = "";               
+//$inOffTmpl = "";               
     
 $html.='
     <tr>

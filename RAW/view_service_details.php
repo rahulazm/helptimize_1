@@ -111,7 +111,8 @@ if($_SESSION['id'] == $sr_user_id){
     $buyer_name = $result_username[0]['username'];
     //$chaturl = "https://helptimize.webtv.fr/enter.php?buyerid=".$sr_user_id;
     //$chaturl = "chat/enter.php?buyerid=(".$buyer_name.")";
-  $chaturl = "chat/enter.php?buyerid=".$sr_user_id;
+    //$chaturl = "chat/enter.php?buyerid=".$sr_user_id;
+    $chaturl = "https://app.helptimize.com/chat/enter.php?buyerid=".$sr_user_id;
 }else{
     $qstr = "SELECT username FROM users WHERE id='$sr_user_id'";
     $result_username = $_sqlObj->query($qstr);
@@ -121,7 +122,8 @@ if($_SESSION['id'] == $sr_user_id){
     $seller_name = $result_username[0]['username'];
     //$chaturl = "https://helptimize.webtv.fr/enter.php?buyerid=".$sr_user_id."&sellerid=".$_SESSION['id'];
     //$chaturl = "chat/enter.php?buyerid=(".$buyer_name.")&sellerid=(".$seller_name.")";
-  $chaturl = "chat/enter.php?buyerid=".$sr_user_id."&sellerid=".$_SESSION['id'];
+    //$chaturl = "chat/enter.php?buyerid=".$sr_user_id."&sellerid=".$_SESSION['id'];
+    $chaturl = "https://app.helptimize.com/chat/enter.php?buyerid=".$sr_user_id."&sellerid=".$_SESSION['id'];
 }
 
 ?>        
@@ -657,10 +659,20 @@ if($_SESSION['id'] == $sr_user_id){
                                                 <label id="bid_duration_agrm"></label>
                                             </div>
                                             <div id="bid_milestone_agrm" class="form-group MRGT10PX">
+                                                <?php  include_once("view_bid_new.php");?>
+                                                
+
                                             </div>
                                             <div class="MRGT20PX">
                                                 <button class="orange-btn" id="edit_agreement"
                                                 onclick="edit_agreement(<?php echo $rowbidInfoAgremnt['id'].",".$servID;?>);">Edit Agreement</button>
+                                                <?php if($rowBids['ownerid'] == $_SESSION['id']){ ?>
+                                                <button class="orange-btn" id="request_pay">Request Payment</button>
+                                                <?php }else if($res[0]['ownerId'] == $id){ ?>
+                                                <button class="orange-btn" id="request_pay">Make Payment</button>
+                                                <?php }else{ ?>
+                                                <button class="orange-btn" id="request_pay">Make Payment</button>
+                                                <?php } ?>
                                             </div>
                                         </div>
                                         <div class="tab-pane fade p-3" id="bid-profile-agrm" role="tabpanel" aria-labelledby="one-tab">
@@ -802,5 +814,5 @@ if($_SESSION['id'] == $sr_user_id){
             </aside>
         </section>
     </div>
-    <?php  include_once("view_bid_new.php");?>
+    
 <?php include("footer.php"); ?>  
