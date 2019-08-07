@@ -124,7 +124,7 @@ $( document ).ready(function() {
                                   <span class="badge badge-secondary"><?php echo $bidList[$i]['srid']?> 5</span>
                               </div>
                           </div>
-                          <label class="post-date">Posted: <?php echo date("d/m/Y",strtotime($bidList[$i]['create_dateTime']));?></label>
+                          <label class="post-date">Posted: <?php echo date("jS M Y h:i A",strtotime($bidList[$i]['create_dateTime']));?></label>
                           <!-- <label class="card-info">Requestor: <?php echo $bidList[$i]['srOwnerName']?> </label>
                           <label class="card-info">Price: $<?php echo $bidList[$i]['payAmt']." ".$bidList[$i]['payType']?> </label> -->
                           <p class="card-info">
@@ -164,7 +164,7 @@ $( document ).ready(function() {
                           <div class="card-title">
                               <h5 class="ellipsis" title="<?php echo $resReqtrAllJobs[$i]['title']?>"><?php echo $resReqtrAllJobs[$i]['title']?></h5>
                           </div>
-                          <label class="post-date">Posted: <?php echo date("d/m/Y", strtotime($resReqtrAllJobs[$i]['create_dateTime']))?></label>
+                          <label class="post-date">Posted: <?php echo date("jS M Y h:i A", strtotime($resReqtrAllJobs[$i]['create_dateTime']))?></label>
                           <p class="card-info"><?php 
                           if($resReqtrAllJobs[$i]['descr'] != "null"){
                           echo $resReqtrAllJobs[$i]['descr'];
@@ -192,7 +192,7 @@ $( document ).ready(function() {
         <aside>
             <aside class="jobRequests2">
               <div class="flex-layout" style="/*width: 1070px;*/">
-                  <div><h1>Jobs Requests</h1></div>
+                  <div><h1>Job Requests</h1></div>
                   <div>
                       <button class="btn-orange" onclick="addSR();">+ Post New Job</button>
                       <div class="btn-group dropdown-btn" role="group">
@@ -224,7 +224,7 @@ $( document ).ready(function() {
                                   <span class="badge badge-secondary"><?php echo $resList[$i]['srid']?> 5</span>
                               </div>
                           </div>
-                          <label class="post-date">Posted: <?php echo date("d/m/Y",strtotime($resList[$i]['create_dateTime']))?></label>
+                          <label class="post-date">Posted: <?php echo date("jS M Y h:i A",strtotime($resList[$i]['create_dateTime']))?></label>
                           <p class="card-info"><?php 
                           if($resList[$i]['descr'] != 'null'){
                             echo $resList[$i]['descr'];

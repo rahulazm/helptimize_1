@@ -655,8 +655,8 @@ $html.='<form id="bidConfirm" action="javascript:void(0);" method="POST"><div cl
                 <thead>
                 <tr>
                         <th colspan="2" id="titleHeaders" >
-                        <label for="comment">'.$pr_title.': '.$bidArr['title'].' <strong>('.$bidArr['id'].')</strong>
-                        </label>
+                        <!--<label for="comment">'.$pr_title.': '.$bidArr['title'].' <strong>('.$bidArr['id'].')</strong>
+                        </label>-->
                         </th>
                 </tr>
         </thead>
@@ -879,9 +879,9 @@ echo $html;
     <script src="./js/sweetalert.min.js"></script>
     <script src="./js/intlTelInput.min.js"></script>
     <script src="./js/helptimize.js"></script>    
-  <script src="./formvalidation/js/formValidation.min.js"></script>
-    <script src="./formvalidation/js/framework/bootstrap.min.js"></script>  
-     <link rel="stylesheet" href="./formvalidation/css/formValidation.min.css">
+  <script src="./js/formValidation.min.js"></script>
+    <script src="./js/framework/bootstrap.min.js"></script>  
+     <link rel="stylesheet" href="./css/formValidation.min.css">
     
 <script type="text/javascript" >
   /**

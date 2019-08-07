@@ -27,7 +27,7 @@ $today = date("Y-m-d H:i:s");
   #########Bidder/Requestor Blue star rating
    $sql_rating = "SELECT AVG(rating) AS rating FROM ratings WHERE toUserId='".$userid."' ";
    $rating=$_sqlObj->query($sql_rating);   
-   $bluestar_Percentage=($rating[0]['rating']*100)/5;
+   $bluestar_Percentage=round((($rating[0]['rating']*100)/5),2);
    //if($type == "seller")
      $sql_rating = "SELECT * FROM view_serviceRequests WHERE bidderId='".$userid."' or ownerId='".$userid."' ";
   // else

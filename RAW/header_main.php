@@ -81,7 +81,7 @@ $db_count_unread_messages->close();
                     <nav class="nav">
                     <a class="nav-link active" href="main.php">Dashboard</a>
                     <a class="nav-link" href="#">Payments</a>
-                    <a class="nav-link" href="#">Settings</a>
+                    <a class="nav-link" href="my_account.php">Settings</a>
                     </nav>
                 </div>
                 <div class="col-sm-3 col-md-6 col-lg-3 col-xl-3 col-12">
@@ -96,6 +96,7 @@ $db_count_unread_messages->close();
                             <i class="fas fa-user"></i>
                         </button>
                         <div class="dropdown-menu" aria-labelledby="btnGroupDrop1">
+                            <a class="dropdown-item" href="my_account.php">My Account</a>
                             <a class="dropdown-item" href="logout.php">Logout</a>
                         </div>
                     </div>

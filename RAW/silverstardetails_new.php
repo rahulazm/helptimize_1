@@ -8,16 +8,16 @@ $password = $configs["password"];
 $host = $configs["host"];
 $db_name = $configs["db_name"];
 
-session_start();
+//session_start();
 
-$userid = $_REQUEST["userid"];
+$userid = $_SESSION["id"];
 
 $today = date("Y-m-d H:i:s"); 
 
 
  
   #########Bidder/Requestor All  rating
- $qstr="select * from verifyDocs where userId = '".$userid."' order by id desc";
+ $qstr="select * from verifydocs where userId = '".$userid."' order by id desc";
   $document=$_sqlObj->query($qstr);
   $count_doc=count($document);
    $j=0;
@@ -31,6 +31,6 @@ $row=reset($document);
     $row=next($document);
      }
      $disp.='</table>';
-echo $disp;
+     $dispSilver = $disp;
 
 ?>
