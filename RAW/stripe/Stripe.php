@@ -60,3 +60,19 @@ require(dirname(__FILE__) . '/Stripe/ApplicationFee.php');
 require(dirname(__FILE__) . '/Stripe/ApplicationFeeRefund.php');
 require(dirname(__FILE__) . '/Stripe/BitcoinReceiver.php');
 require(dirname(__FILE__) . '/Stripe/BitcoinTransaction.php');
+
+$params = array(
+	"testmode"   => $configs['testmode'],
+	"private_live_key" => $configs['private_live_key'],
+	"public_live_key"  => $configs['public_live_key'],
+	"private_test_key" =>$configs['private_test_key'],
+	"public_test_key"  =>$configs['public_test_key']
+);
+
+if ($params['testmode'] == "on") {
+	Stripe::setApiKey($params['private_test_key']);
+	$pubkey = $params['public_test_key'];
+} else {
+	Stripe::setApiKey($params['private_live_key']);
+	$pubkey = $params['public_live_key'];
+}
