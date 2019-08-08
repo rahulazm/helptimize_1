@@ -1,8 +1,13 @@
 <?php
 
+
 require_once("./header_main.php");
 
+$userid = $_SESSION['id'];
 
+/*ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);*/
 
 $accordion_id = $_GET['accordion_id'];
 $user_id= $row_accout_id['id'];
@@ -22,31 +27,30 @@ $name = $row_accout_id['name'];
 
 
 $mobile_number = "+" . $mobile_number;
-
 $db_get_states = new mysqli("$host", "$username", "$password", "$db_name");
-
 if($db_get_states ->connect_errno > 0){
     die('Unable to connect to database [' . $db_get_states ->connect_error . ']');
 }
 
 $sql_get_states = "SELECT * FROM states";
-
 $result_get_states = $db_get_states->query($sql_get_states);
-
 $db_get_states->close();
 
 
+//getusername and designation
+
+
+
+echo $result_get_user;
 // get verified document
 
 
 $db_verified_documents = new mysqli("$host", "$username", "$password", "$db_name");
-
 if($db_verified_documents ->connect_errno > 0){
     die('Unable to connect to database [' . $db_verifized_documents ->connect_error . ']');
 }
 
 $sql_verified_documents = "SELECT * FROM accounts_id_verified WHERE account_id ='$account_id'";
-
 $result_get_verified_documents = $db_verified_documents->query($sql_verified_documents);
 $row_cnt_verified_documents = $result_get_verified_documents->num_rows;
 
@@ -328,6 +332,10 @@ li {   display: list-item;   text-align: -webkit-match-parent;}
 .btn-default{background:#ccc;}
 #doc_submit{background:#ccc;}
 .clr{clear:both;}
+#awarded_sr_list_wrapper{display:block !important;}
+#awarded_sr_list_wrapper div{display:block !important;}
+#uploaddocument .input-group{display:flex !important;}
+
 </style>
 
 <?php
@@ -339,10 +347,13 @@ echo $_template["nav"];
 ?>
 
 
+
+
+
 <!-- layout and tab div--><div class="layout">
 <div class="topblock">
             <div class="flex-layout-lrft">
-            <div class="user-image"> <img src="./assets/images/user.jpg"> <br> <h5>Member Name </h5><small>Designation</small> </div>
+            <div class="user-image"> <img src="./assets/images/user.jpg"> <br> <h5><?php echo $firstname; ?> Member Name </h5><small>Designation</small> </div>
             </div>
             <div class="flex-layout-right"><div class="memberg">Gold Member</div>
                                     <div class="user-diomand">
@@ -364,11 +375,11 @@ echo $_template["nav"];
     <div id="tab-1" style="display: block;" class="tabscnt">
    <!-- contact info form -->
    <form id="contact_info" name="contact_info" >
-   <!--   <div class="form-group">
-              <label for="usr"><font color="black"><?php echo CUSTOMER_MOBILE;?><?font></label>
+     <div class="form-group">
+              <label for="usr"><?php echo CUSTOMER_MOBILE;?></label>
               <input type="tel" class="form-control" id="customer_mobile" name="customer_mobile" value="<?php echo $mobile_number;?>">
-              <br><?php //echo PLEASE_KEY_IN_A_VALID_MOBILE_NUMBER_VERIFY ;?>
-  </div>  -->
+              <br><?php echo PLEASE_KEY_IN_A_VALID_MOBILE_NUMBER_VERIFY ;?>
+  </div>
   <div class="form-group">
           <label for="usr"><font color="black"><?php echo CURRENT_CUSTOMER_EMAIL;?><?font></label>
               <input type="text" readonly class="form-control" id="current_email" name="current_email" value="<?php echo $email;?>">
@@ -472,62 +483,29 @@ echo $_template["nav"];
     </div>
      <div id="tab-4" style="display: none;" class="tabscnt">
       <!-- document varification -->
-      <?php  if($row_cnt_verified_documents > 0){ ?>
-      <?php echo DOCUMENT_ID_CONFIRMED ;?></p>
-      <?php echo DOCUMENT_DETAILS ;?></p>
-      <table id="verified_document" class="table table-striped table-bordered" cellspacing="0" width="100%">
-          <thead>
-              <tr>
-                  <th><p><?php echo TYPE ;?></p></th>
-                  <th><p><?php echo NUMBER ;?></p></th>
-                  <th><p><?php echo EXPIRATION ;?></p></th>
-                  </tr>
-          </thead>
-          <tbody>
-          <?php    while ($row = $result_get_verified_documents->fetch_assoc()) {    ?>
-           <tr>
-                <td><?php echo $row['document_type'];?></td>
-                <td><?php echo $row['document_number'];?> </td>
-                <td><?php echo $row['document_expiration_date'];?>  </td>
 
-           </tr>
-           <?php
-           }
-           ?>
-            </tbody>
-       </table>
-       <button type='button'  class='btn btn-danger' onclick='id_verified_delete()'><i class="fa fa-trash-o" aria-hidden="true"></i> <?php echo DELETE;?></button>
-    <?php   }else{  ?>
-      <p><?php echo ACCEPTED_DOCUMENT;?></p>
-       <p><?php echo ACCEPTED_DOCUMENT_2;?></p>
-<form id="uploadimage" action="" method="post" enctype="multipart/form-data">
-  <input type="hidden" id="sr_id" name="sr_id" value="<?php echo $sr_id;?>">
-            <label><?php echo TAKE_PICTURE_OR_SELECT_FILE;?></label>
-            <div class="input-group">
-                <label class="input-group-btn">
-                    <span class="btn btn-primary">
-                      Select&hellip;
-                      <input type="file"  name="file" id="file" accept="image/*" capture="camera"  style="display: none;" />
-                    </span>
-                </label>
-                <input type="text" id="filepath" name="filepath" class="form-control" readonly value="">
-            </div>
-            <br>
-            <input type="submit" id="picture_submit" name="picture_submit"value="<?php echo UPLOAD_DOCUMENT;?>" class = "btn btn-default" />
-   </form>
-      <?php  } ?>
-      <?php   if($count_doc > 0){   ?>
+      <?php
+
+
+
+      if($count_doc > 0){
+
+      ?>
        <?php //echo DOCUMENT_ID_CONFIRMED ;?></p>
-      <?php //echo DOCUMENT_DETAILS ;?></p>
+             <?php //echo DOCUMENT_DETAILS ;?></p>
       <table id="awarded_sr_list" class="table table-striped table-bordered" cellspacing="0" width="100%">
           <thead>
               <tr>
                   <th><p>#</p></th>
                   <th><p>Name</p></th>
                   <th><p>File</p></th>
+
                   </tr>
           </thead>
+
           <tbody>
+
+
           <?php $j=0;
            $row=reset($document);
         //  while ($row) {
@@ -540,16 +518,31 @@ while ($row = $document->fetch_assoc()) {
                 <td><a href="<?php echo imgPath2Url($row['document_identfication']);?>" target="_blank">View</a>|<a href="javascript:void()" class="document_verified_delete" data-id="<?php echo $row['id'];?>">Delete</a></td>
 
            </tr>
+
            <?php
             $row=next($document);
            }
            ?>
+
             </tbody>
        </table>
+
       <!--  <button type='button'  class='btn btn-danger' onclick='id_verified_delete()'><i class="fa fa-trash-o" aria-hidden="true"></i> <?php //echo DELETE;?></button> -->
-    <?php  }//else{  ?>
+
+
+    <?php
+
+    }//else{
+
+    ?>
+
+
+
       <p><?php echo ACCEPTED_DOCUMENTS;?></p>
        <p><?php //echo ACCEPTED_DOCUMENT_2;?></p>
+
+
+
       <form id="uploaddocument" action="" method="post" enctype="multipart/form-data"><input type="hidden" name="<?php echo ini_get("session.upload_progress.name")?>" value="pics" />
   <input type="hidden" id="sr_id" name="sr_id" value="<?php echo $sr_id;?>">
             <label><?php echo TAKE_PICTURE_OR_SELECT_FILE;?></label>
@@ -557,20 +550,38 @@ while ($row = $document->fetch_assoc()) {
                 <label class="input-group-btn">
                     <span class="btn btn-primary">
                       Select&hellip;
-                     <input type="file" class="file1"  name="img[]" id="file" accept="image/*" capture="camera"  style="display: none;" />
+                                       <input type="file" class="file1"  name="img[]" id="file" accept="image/*" capture="camera"  style="display: none;" />
+
                     </span>
                 </label>
                 <input type="text" id="filepath1" name="filepath" class="form-control" readonly value="">
             </div>
              <label>Name</label>
              <div class="input-group">
-          <input type="text"   name="title[]" id="title" />
+
+
+
+                                       <input type="text"   name="title[]" id="title" />
+
+
+
+
             </div>
              <div class="input-group">
               <input type="checkbox"   name="che_status" id="che_status" />I accept that the document is not fraudulent
+
             </div>
+            <br>
+
             <input type="submit" id="doc_submit" name="doc_submit"value="<?php echo UPLOAD_DOCUMENT;?>" class = "btn btn-default" />
+
    </form>
+
+
+      <?php
+      //}
+      ?>
+
       <!-- dociment varification -->
     </div>
      <div id="tab-5" style="display: none;" class="tabscnt">

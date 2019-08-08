@@ -575,17 +575,7 @@ $('input, textarea').focus(function(){
         i++;
       }
     }
-
    
-
-  $(document).ready(function() {
-
-    _initCard(1, 'jobRequests');
-    _initCard(1, 'recommended');
-    _initCard(1, 'jobRequests2');
-  });
-
-      
 
 function shortlist(id) {
       var bidid = id;
@@ -645,6 +635,13 @@ function hire(bid_id,serv_id) {
       });
     }      
       
+
+  $(document).ready(function() {
+
+    _initCard(1, 'jobRequests');
+    _initCard(1, 'recommended');
+    _initCard(1, 'jobRequests2');
+ 
 
 $(document).on("click", ".requestpaypopup", function(e) {
 
@@ -1103,4 +1100,7 @@ $(document).on("click", ".videoclick", function(e) {
           }
                         }); 
 
-});
+    });
+
+
+ });
