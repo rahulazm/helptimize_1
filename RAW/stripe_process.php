@@ -5,14 +5,15 @@ $configs = require_once("/etc/helptimize/conf.php");
 require_once("./mysql_lib.php");
 require_once 'stripe/Stripe.php';
 print("<pre>");
-//print_r($_POST);
+print_r($_POST);
 //exit;
 
 //replace with actual data
+/**
 $_POST['transAmnt'] = "10.88";
 $_POST['invoiceid'] = "108";
 $_POST['description'] = "SOME desc";
-
+**/
 if(isset($_POST['stripeToken']))
 {
 	//transAmnt
