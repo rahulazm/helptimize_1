@@ -11,7 +11,7 @@ $amount_cents = str_replace(".","",$transAmnt);
 <script src="js/jquery-3.2.1.min.js"></script>
 
 <div align="center" id="calcFee">
-  <form action="#" method="POST" id="frmCheckout">
+  <form action="" method="POST" id="frmCheckout">
   <script
     src="https://checkout.stripe.com/checkout.js" class="stripe-button"
     data-key="<?php echo $params['public_test_key']; ?>"
@@ -36,18 +36,19 @@ $amount_cents = str_replace(".","",$transAmnt);
         var transAmnt=<?php echo $amount_cents;?>;
         var invoiceid="2055";
         var description="safwsfsfsf";
-        var stripeToken = "<?php echo $_POST['stripeToken'];?>";
+        //var stripeToken = "<?php echo $_POST['stripeToken'];?>";
         //do your own request an handle the results
         $.post("stripe_process.php",
         {
           transAmnt : transAmnt,
           invoiceid:invoiceid,
           description:description,
-          stripeToken:stripeToken
+          source:'tok_visa'
+          //stripeToken:stripeToken
         },
         function(data,status){
          
-         alert("Data: " + data + "\nStatus: " + status);
+         //alert("Data: " + data + "\nStatus: " + status);
          if(status=="success"){
             swal({
                 title: "Success",

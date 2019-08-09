@@ -4,8 +4,8 @@ $configs = require_once("/etc/helptimize/conf.php");
 //require_once("./common.inc.php");
 require_once("./mysql_lib.php");
 require_once 'stripe/Stripe.php';
-print("<pre>");
-print_r($_POST);
+//print("<pre>");
+//print_r($_POST);
 //exit;
 
 //replace with actual data
@@ -14,19 +14,20 @@ $_POST['transAmnt'] = "10.88";
 $_POST['invoiceid'] = "108";
 $_POST['description'] = "SOME desc";
 **/
-if(isset($_POST['stripeToken']))
+if(isset($_POST['transAmnt']))
 {
 	//transAmnt
 	$amount_cents = str_replace(".","",$_POST['transAmnt']);  // Chargeble amount
 	$invoiceid = $_POST['invoiceid']; 
 	$description=$_POST['description'];
+	$source=$_POST['source'];
 	//$description = "Invoice #" . $invoiceid . " - " . $invoiceid;
    
 	try {
 		$charge = Stripe_Charge::create(array(		 
 			  "amount" => $amount_cents,
 			  "currency" => "usd",
-			  "source" => $_POST['stripeToken'],
+			  "source" => $source,
 			  "description" => $description)			  
 		);
 
@@ -79,11 +80,9 @@ if(isset($_POST['stripeToken']))
 		}		  
 	}
 	
-	echo "<BR>Stripe Payment Status : ".$result;
-	
-	echo "<BR>Stripe Response : ";
-	
-	print_r($charge); 
+	//echo "<BR>Stripe Payment Status : ".$result;
+	//  echo "<BR>Stripe Response : ";
+	//print_r($charge); 
 	exit;
 }
 
