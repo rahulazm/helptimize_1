@@ -39,6 +39,7 @@ $sqlBids="SELECT vb.*,u.username,u.firstName,u.midName FROM view_bids as vb, use
 $resBids=$_sqlObj->query($sqlBids);
 $rowBids=@reset($resBids);
 
+
 ##########Get total number of bids in this SR
 $count=($_sqlObj->query('select count(id) as totbid from view_bids where srId='.$servID.';'));
 $totalbid_count=$count[0]["totbid"];
@@ -53,6 +54,7 @@ $bidInfo=@reset($_sqlObj->query('select id,count(id) as bidNum, (select avg(payA
 
 $bidInfoShlstd=$_sqlObj->query('select view_bids.*,users.username,users.firstName,users.midName from view_bids, users where srId='.$servID.' and shortlist = "yes" and buttonstatus is null  and bidstatus != "cancel" and users.id = view_bids.ownerId group by view_bids.id order by last_updated desc');
 $rowbidInfoShlstd=@reset($bidInfoShlstd);
+
 //$cntShrtltd = @count($bidInfoShlstd);
 //$rowbidInfoShlstd['ownerId']=0;
 //$rowbidInfoShlstd['ownerId'] = ($cntShrtltd > 0 ) ? $rowbidInfoShlstd['ownerId'] : 0;
@@ -175,7 +177,7 @@ if($_SESSION['id'] == $sr_user_id){
                         </li>
                         <?php if($res[0]['ownerId'] == $id){ ?>
                         <li class="nav-item">
-                            <a class="nav-link" id="two-tab" data-toggle="tab" href="#two" role="tab" aria-controls="Two" aria-selected="false" onclick="getUserDetails(<?php $rowBids['ownerid']=(isset($rowBids['ownerid']))?$rowBids['ownerid']:0;echo $rowBids['ownerid']." ,".$servID;?>,'bids')">Bids</a>
+                            <a class="nav-link" id="two-tab" data-toggle="tab" href="#two" role="tab" aria-controls="Two" aria-selected="false" onclick="getUserDetails(<?php $rowBids['ownerId']=(isset($rowBids['ownerId']))?$rowBids['ownerId']:0;echo $rowBids['ownerId']." ,".$servID;?>,'bids')">Bids</a>
                         </li>
                         <li class="nav-item">
                             <a class="nav-link" id="three-tab" data-toggle="tab" href="#three" role="tab" aria-controls="Three" aria-selected="false" onclick="getUserDetails(<?php $rowbidInfoShlstd['ownerId']=isset($rowbidInfoShlstd['ownerId'])?$rowbidInfoShlstd['ownerId']:0;echo $rowbidInfoShlstd['ownerId']." ,".$servID;?>,'stl')">Shortlisted</a>
@@ -241,7 +243,7 @@ if($_SESSION['id'] == $sr_user_id){
                             <div class="col-md-3 col-lg-3 col-sm-3">
                                 <aside class="users-list">
                                 <?php while($rowBids) {?>
-                                    <div class="flex-layout" style="cursor:pointer" onclick="getUserDetails(<?php echo $rowBids['ownerid']." ,".$servID;?>)">
+                                    <div class="flex-layout" style="cursor:pointer" onclick="getUserDetails(<?php echo $rowBids['ownerId']." ,".$servID;?>)">
                                         <div><span><i class="fas fa-user"></i></span></div>
                                         <div>
                                             <div><?php echo $rowBids['firstName']." ".$rowBids['midName']."( ".$rowBids['username']." )";?></div>
@@ -308,8 +310,8 @@ if($_SESSION['id'] == $sr_user_id){
                                             </div>
                                             <div class="MRGT20PX">
                                                 <?php if($res[0]['bidAwardId'] == NULL){ ?>
-                                                <button class="orange-btn" id="hire"
-                                                onclick="hire(<?php echo $bidInfo['id'].",".$servID;?>);">Hire Now!</button>
+                                                <button class="orange-btn" id="hire" data-bidid=""
+                                                onclick="hire(this, <?php echo $servID;?>);">Hire Now!</button>
                                                 <?php } ?>
                                                 <button class="button-secondary" id="shortlist" onclick="shortlist(<?php echo $bidInfo['id'];?>);">Shortlist</button>
                                             </div>
@@ -457,7 +459,7 @@ if($_SESSION['id'] == $sr_user_id){
                                         </div>
                                         <div id="diamndr1_stl" style="min-width: 100px"></div>
                                     </div>
-                                <?php $rowbidInfoShlstd=@next($bidInfoShlstd); } ?>
+                                <?php $rowbidInfoShlstd=@next($bidInfoShlstd); }?>
                                     
                                 </aside>
                             </div>
@@ -515,8 +517,8 @@ if($_SESSION['id'] == $sr_user_id){
                                             </div>
                                             <div class="MRGT20PX">
                                                 <?php if($res[0]['bidAwardId'] == NULL){ ?>
-                                                <button class="orange-btn" id="hire"
-                                                onclick="hire(<?php echo $rowbidInfoShlstd['id'].",".$servID;?>);">Hire Now!</button>
+                                                <button class="orange-btn" data-bidid="" id="hire_stl"
+                                                onclick="hire(this, <?php echo $servID;?>);">Hire Now!</button>
                                                 <?php } ?>
                                             </div>
                                         </div>
