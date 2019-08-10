@@ -22,7 +22,9 @@ $billing_city = $row_accout_id['billing_city'];
 $billing_state = $row_accout_id['billing_state'];
 
 $company_name = $row_accout_id['company_name'];
-$firstname = $row_accout_id['firstname'];
+$firstname = $row_accout_id['firstName'];
+$midname = $row_accout_id['midName'];
+$surname = $row_accout_id['surName'];
 $name = $row_accout_id['name'];
 
 
@@ -136,6 +138,9 @@ a[href^="https://maps.google.com/maps"]{display:none !important}
 }
 </style>
 <style>
+
+</style>
+<style>
   
   .pac-container {
     background-color: #FFF;
@@ -171,7 +176,10 @@ a[href^="https://maps.google.com/maps"]{display:none !important}
     resize:both;
     overflow:auto; 
 }
-      
+/*  #mapdiv div{
+    display: block !important;
+  }
+    */  
     </style>
     <link type="text/css" rel="stylesheet" href="https://fonts.googleapis.com/css?family=Roboto:300,400,500">
     <style>
@@ -279,12 +287,13 @@ a[href^="https://maps.google.com/maps"]{display:none !important}
 
 <script src="js/intlTelInput.min.js"></script>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/zxcvbn/4.3.0/zxcvbn.js"></script>
-<script src="formvalidation/js/formValidation.min.js"></script>
+<script src="js/formValidation.min.js"></script>
 <script src="js/framework/bootstrap.min.js"></script>
 
 <link href="//cdn.datatables.net/plug-ins/1.10.7/integration/bootstrap/3/dataTables.bootstrap.css" rel="stylesheet">
- <link rel="stylesheet" href="formvalidation/css/formValidation.min.css">
+
   <link href="css/formValidation.min.css" rel="stylesheet">
+  <link href="css/intlTelInput.css" rel="stylesheet">
 
 
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -296,7 +305,7 @@ $('.tabs-nav a').on('click', function (event) {
 
     $('.tab-active').removeClass('tab-active');
     $(this).parent().addClass('tab-active');
-    $('.tabs-stage div').hide();
+    $('.tabs-stage').children('div').hide();
     $($(this).attr('href')).show();
 });
 
@@ -308,7 +317,12 @@ $('.tabs-nav a:first').trigger('click'); // Default
 <style type="text/css">
 <!-- renu css code -->
 body .collapse:not(.show) {   display: block !important;}
-.form-group{  display: block !important;}
+/*.form-group,
+.intl-tel-input,
+.flag-container,
+.selected-flag,
+.iti-flag,
+.iti-arrow{ display: block !important; }*/
 ul, li, div {   background: hsla(0, 0%, 0%, 0);   border: 0;   font-size: 100%;   margin: 0;   outline: 0;   padding: 0;   vertical-align: baseline;    font: 13px/20px "Droid Sans", Arial, "Helvetica Neue", "Lucida Grande", sans-serif;   text-shadow: 0 1px 0 hsl(0, 100%, 100%);}
 li {   display: list-item;   text-align: -webkit-match-parent;}
 .tabs-nav { list-style: none;   margin: 0;   padding: 0; float:right;}
@@ -353,7 +367,7 @@ echo $_template["nav"];
 <!-- layout and tab div--><div class="layout">
 <div class="topblock">
             <div class="flex-layout-lrft">
-            <div class="user-image"> <img src="./assets/images/user.jpg"> <br> <h5><?php echo $firstname; ?> Member Name </h5><small>Designation</small> </div>
+            <div class="user-image"> <img src="./assets/images/user.jpg"> <br> <h5><?php echo $firstname.' '.$surname; ?> </h5><small><?php echo $row_accout_id['username']; ?></small> </div>
             </div>
             <div class="flex-layout-right"><div class="memberg">Gold Member</div>
                                     <div class="user-diomand">
@@ -378,14 +392,14 @@ echo $_template["nav"];
      <div class="form-group">
               <label for="usr"><?php echo CUSTOMER_MOBILE;?></label>
               <input type="tel" class="form-control" id="customer_mobile" name="customer_mobile" value="<?php echo $mobile_number;?>">
-              <br><?php echo PLEASE_KEY_IN_A_VALID_MOBILE_NUMBER_VERIFY ;?>
+              <!-- <br><?php echo PLEASE_KEY_IN_A_VALID_MOBILE_NUMBER_VERIFY ;?> -->
   </div>
   <div class="form-group">
-          <label for="usr"><font color="black"><?php echo CURRENT_CUSTOMER_EMAIL;?><?font></label>
+          <label for="usr"><font color="black"><?php echo CURRENT_CUSTOMER_EMAIL;?></font></label>
               <input type="text" readonly class="form-control" id="current_email" name="current_email" value="<?php echo $email;?>">
           </div>
   <div class="form-group">
-          <label for="usr"><font color="black"><?php echo NEW_CUSTOMER_EMAIL;?><?font></label>
+          <label for="usr"><font color="black"><?php echo NEW_CUSTOMER_EMAIL;?></font></label>
               <input type="text"  class="form-control" id="new_email" name="new_email">
           </div>
           <center>
@@ -1371,7 +1385,7 @@ $(document).on('change', ':file', function() {
   
   
   $(document).ready(function() {
- 
+    geoloc();
  		$('#collapseFour').on('shown.bs.collapse', function () {
       	geoloc();
 		});
@@ -1441,7 +1455,7 @@ google.maps.event.addDomListener(window, 'resize', function() {
                 utilsScript: 'js/utils.js',
                 autoPlaceholder: true,
 
-                preferredCountries: ['my']
+                preferredCountries: ['us']
             });
    
    
@@ -3000,3 +3014,4 @@ var atLeastOneIsChecked = $('[name="categId[]"]:checked').length;
       	$("#accordion_4").children().bind('click', function(){});
       }
 </script>
+<?php include("footer.php"); ?>  

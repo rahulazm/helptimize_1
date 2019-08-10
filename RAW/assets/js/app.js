@@ -461,6 +461,8 @@ $('input, textarea').focus(function(){
           $('#goldstarresp_stl').html(jsonData.goldstarresp);
           $('#goldstarresp').html(jsonData.goldstarresp);
           $('#goldstarresp_agrm').html(jsonData.goldstarresp);
+          $('#hire').attr("data-bidid",jsonData.id);
+          $('#hire_stl').attr("data-bidid",jsonData.id);
 
           $('#bid_milestone_agrm').html(jsonData.milestones);
 
@@ -604,10 +606,11 @@ function shortlist(id) {
       });
     }      
 
-function hire(bid_id,serv_id) {
+function hire(elm, serv_id) {
 
 
-      //var bidid = id;
+      var bid_id = ($(elm).data('bidid'));
+
       $.get("bid_award.php",
         {
           bidId : bid_id,
@@ -628,7 +631,7 @@ function hire(bid_id,serv_id) {
                 closeOnConfirm: true
               },
               function(){
-                //location.href = "service_request_saved_list.php";
+                location.href = "view_service_details.php?id="+serv_id;
               });
              //console.log(jsonData);
          //}
@@ -687,7 +690,7 @@ $(document).on("click", ".approveclick", function(e) {
 });
 $(document).on("change", "#amount_type", function(e) {
 
-    if($('#amount_type').val() == "2")
+    if($(this).val() == "2")
     $(".showamount").show();
     else {
         $(".showamount").hide();
@@ -697,7 +700,7 @@ $(document).on("change", "#amount_type", function(e) {
 
 $(document).on("change", "#status_type", function(e) {
 
-    if($('#status_type').val() == "1")
+    if($(this).val() == "1")
     {
     $(".showtype").show();
     $(".shownotes").hide();
@@ -738,17 +741,17 @@ $('#request_payment').formValidation({
             e.preventDefault();
         
             
-            var amount_type = $('#amount_type').val();
-            var amount = $('#amount').val();
-            var bidid = $("#bidid").val();
-            var bidamount = parseInt($("#bidamount").val());
-            var paidamt = $("#paidamt").val();
+            var amount_type = $('#request_payment').find('#amount_type').val();
+            var amount = $('#request_payment').find('#amount').val();
+            var bidid = $('#request_payment').find("#bidid").val();
+            var bidamount = parseInt($('#request_payment').find("#bidamount").val());
+            var paidamt = $('#request_payment').find("#paidamt").val();
 
             ///if amount type is full then save bid amount otherwise get entered amount
-            if($('#amount_type').val() == "1")
+            if($('#request_payment').find('#amount_type').val() == "1")
                 var amount = parseInt(bidamount);
             else
-                var amount = parseInt($('#amount').val());
+                var amount = parseInt($('#request_payment').find('#amount').val());
 
             ///Total amount calculation (add already paid amount with current entered amount)
             var total=parseInt(paidamt)+parseInt(amount);
@@ -831,23 +834,24 @@ $('#approve_payment').formValidation({
             e.preventDefault();
         
             
-            var amount_type = $('#amount_type').val();
-            var status_type = $('#status_type').val();
-            var bidid = $("#bidid").val();
-            var notes = $("#notes").val();  
-            var bidamount = parseInt($("#bidamount").val()); 
-            var paidamt = $("#paidamt").val();
-            var userid = $("#userid").val();
+            var amount_type = $('#approve_payment').find('#amount_type').val();
+            var status_type = $('#approve_payment').find('#status_type').val();
+            var bidid = $('#approve_payment').find("#bidid").val();
+            var notes = $('#approve_payment').find("#notes").val();  
+            var bidamount = parseInt($('#approve_payment').find("#bidamount").val()); 
+            var paidamt = $('#approve_payment').find("#paidamt").val();
+            var userid = $('#approve_payment').find("#userid").val();
 
-           
+           /*alert($('#approve_payment').find('#status_type').val());
+           alert($('#approve_payment').find('#amount_type').val());*/
             ///if status type is approved only check amount condition
-            if($('#status_type').val() == "1")
+            if($('#approve_payment').find('#status_type').val() == "1")
             {
             ///if amount type is full then save bid amount
-            if($('#amount_type').val() == "1")
+            if($('#approve_payment').find('#amount_type').val() == "1")
                 var amount = parseInt(bidamount);
             else
-                var amount = parseInt($('#amount').val());
+                var amount = parseInt($('#approve_payment').find('#amount').val());
 
             ///Total amount calculation (add already paid amount with current entered amount)
             var total=parseInt(paidamt)+parseInt(amount);
@@ -871,8 +875,13 @@ $('#approve_payment').formValidation({
                 'userid' : userid
             }
     
-      
-            var feedback = $.ajax({
+            $("#stripe_pay").css("display: block;");
+            $('#stripe_amnt_cents').val(amount*100);
+            $('#stripe_db_data').val(JSON.stringify(formData));
+            $('#stripe_db_script').val('service_approve_payment.php');
+
+
+            /*var feedback = $.ajax({
                 type: "POST",
                 url: "service_approve_payment.php",
                 data: formData,         
@@ -898,13 +907,13 @@ $('#approve_payment').formValidation({
                 );
 
             
-            }
+            }*/
   
             
             
     
      });
-
+/*
 
 $('#approve_payment').formValidation({
         framework: 'bootstrap',
@@ -1005,7 +1014,7 @@ $('#approve_payment').formValidation({
             
             
     
-     });
+     });*/
   
 
     $(document).on("click", ".changeinwork", function(e) {
@@ -1101,6 +1110,64 @@ $(document).on("click", ".videoclick", function(e) {
                         }); 
 
     });
+
+
+
+$('#frmCheckout').get(0).submit = function() {
+
+        //var transAmnt=<?php echo $amount_cents;?>;
+        var transAmnt = $('#stripe_amnt_cents').val();
+        var invoiceid="2055";
+        var description="safwsfsfsf";
+
+        console.log("stripe_amnt_cents: "+$("#stripe_amnt_cents").val());
+        console.log("stripe_db_data: "+$("#stripe_db_data").val());
+        console.log("stripe_db_script: "+$("#stripe_db_script").val());
+        //var stripeToken = "<?php echo $_POST['stripeToken'];?>";
+        //do your own request an handle the results
+        $.post("stripe_process.php",
+        {
+          transAmnt : transAmnt,
+          invoiceid:invoiceid,
+          description:description,
+          source:'tok_visa'
+          //stripeToken:stripeToken
+        },
+        function(data,status){
+         
+         //alert("Data: " + data + "\nStatus: " + status);
+
+         formData = JSON.parse($('#stripe_db_data').val());
+         pageurl = $('#stripe_db_script').val();
+
+         var feedback = $.ajax({
+                type: "POST",
+                url: pageurl,
+                data: formData,         
+                async: false,
+                
+            }).complete(function(){
+            
+            
+            }).responseText;
+         if(status=="success"){
+            swal({
+                title: "Success",
+                text: "Payment done successfully",
+                type: "success",
+                showCancelButton: false,
+                confirmButtonColor: "#5CB85C",
+                confirmButtonText: "OK",
+                closeOnConfirm: true
+              },
+              function(){
+                //location.href = "service_request_saved_list.php";
+                $('#modal_request_pay').modal('hide');
+              });
+             //console.log(jsonData);
+         }
+      });
+   }
 
 
  });

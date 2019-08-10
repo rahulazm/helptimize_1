@@ -842,9 +842,12 @@ $html.='
                     
                     <center>
                     
-                    <button type="submit" class="btn btn-success" ><?php echo SUBMIT;?></button>
+                    <button type="submit" class="btn btn-success" >PROCEED</button>
+                    
                     
                         </form>
+
+                    
                     
                     </center>
                             
@@ -904,7 +907,7 @@ $html.='
                             </select>
                     </div>
                     <div class="hideclass"><input type="hidden" name="status_type" id="status_type" value="1"> 
-                      <input type="hidden" id="userid" value="<?php echo $_SESSION ?>"></div>
+                      <input type="hidden" id="userid" value="<?php echo $_SESSION['id'] ?>"></div>
                 
                   
                     <div class="form-group shownotes">
@@ -939,11 +942,12 @@ $html.='
                     
                     <center>
                     
-                    <button type="submit" class="btn btn-success" ><?php echo SUBMIT;?></button>
-                    
-                        </form>
-                    
+                    <button type="submit" class="btn btn-success" >PROCEED</button>
+                    <span id="stripe_pay" style="display: none;">
+                      <?php include("stripe_checkout.php"); ?> 
+                    </span>
                     </center>
+                        </form>
                             
                     </div>
             </div>
@@ -1037,6 +1041,7 @@ $( document ).ready(function() {
 });
 **/
 $(".showamount").hide();
+$(".shownotes").hide();
 
 $(document).on("click", ".requestpaypopup", function(e) {
 
@@ -1100,7 +1105,7 @@ $(document).on("click", ".requestmileopopup", function(e) {
 
 
 
-$(document).on("change", "#amount_type", function(e) {
+/*$(document).on("change", "#amount_type", function(e) {
 
     if($('#amount_type').val() == "2")
     $(".showamount").show();
@@ -1108,7 +1113,7 @@ $(document).on("change", "#amount_type", function(e) {
         $(".showamount").hide();
     }
 
-});
+});*/
 
 $('#request_payment').formValidation({
         framework: 'bootstrap',
@@ -1160,8 +1165,6 @@ $('#request_payment').formValidation({
                  return false;
             }
             
-    
-            
             var formData = {
                 'amount_type'     : amount_type,
                 'amount'     : amount,
@@ -1170,6 +1173,7 @@ $('#request_payment').formValidation({
                 'userid' : <?php echo $_SESSION['id']; ?>
             }
     
+
       
             var feedback = $.ajax({
                 type: "POST",

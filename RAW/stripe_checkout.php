@@ -12,6 +12,9 @@ $amount_cents = str_replace(".","",$transAmnt);
 
 <div align="center" id="calcFee">
   <form action="" method="POST" id="frmCheckout">
+    <input type="hidden" id="stripe_amnt_cents" />
+    <input type="hidden" id="stripe_db_data" />
+    <input type="hidden" id="stripe_db_script" />
   <script
     src="https://checkout.stripe.com/checkout.js" class="stripe-button"
     data-key="<?php echo $params['public_test_key']; ?>"
@@ -31,9 +34,10 @@ $amount_cents = str_replace(".","",$transAmnt);
 <script type="text/javascript">
   
    //hang on event of form with id=myform
-    $('#frmCheckout').get(0).submit = function() {
+    /*$('#frmCheckout').get(0).submit = function() {
 
-        var transAmnt=<?php echo $amount_cents;?>;
+        //var transAmnt=<?php echo $amount_cents;?>;
+        var transAmnt = $('#stripe_amnt_cents').val();
         var invoiceid="2055";
         var description="safwsfsfsf";
         //var stripeToken = "<?php echo $_POST['stripeToken'];?>";
@@ -65,7 +69,7 @@ $amount_cents = str_replace(".","",$transAmnt);
              //console.log(jsonData);
          }
       });
-   }
+   }*/
 </script>
 
 <!--

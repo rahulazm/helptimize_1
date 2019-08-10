@@ -28,9 +28,6 @@ $sql_update_sr = "UPDATE bids SET shortlist='yes',last_updated='$today' WHERE id
 $db_update_sr->query($sql_update_sr);
 $db_update_sr->close();
 
-echo "success";
-
-/**
 $db_update_sr = new mysqli("$host", "$username", "$password", "$db_name");
 
 if($db_update_sr->connect_errno > 0){
@@ -72,6 +69,6 @@ $db_update_sr->close();
 	  $pusher->trigger('pop_up_message',$userid, $data);*///bidArr[0]['ownerExternId']
 	//////After creating service request call pusher notification to other users --- End
 
-
+echo "success";
 
 ?>
