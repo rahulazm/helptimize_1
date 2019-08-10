@@ -116,6 +116,7 @@ include "check_session.php";
             <li><a href="pipedrive_settings.php">Pipedrive</a></li>
             <li><a href="phone_number_settings.php">Phone Number Format</a></li>
             <li><a href="various_settings.php">Various</a></li>
+            <li><a href="pltfrm_settings.php">Platform fee</a></li>
           
 
           </ul>
