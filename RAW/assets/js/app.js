@@ -194,6 +194,205 @@ function prev() {
 }
 
 
+
+function create_bid_next() {
+  //$('#amount, #ramount').val('')
+    var getId = $('.super-widget-tab input[type="radio"]:checked').last().parent().next().children('input').attr('id');
+    var address = $('#getaddr').val();
+    var jobtitle = $('#jobtitle').val();
+    var desc  = $('#desc').val();
+    var serv  = $('input:radio[name=serv]:checked').val();
+    var pay  = $('input:radio[name=pay]:checked').val();
+    var amount  = $('#amount').val();
+    var bank  = $('input:radio[name=bank]:checked').val();
+    var mapaddress = $('#pac-input').val();
+    var newaddress = $('#newaddress').val();
+    var recurringtype = localStorage.getItem('recurring');
+    var lat=$('#lat').val();
+    var lng=$('#lng').val();
+    var ramount=$('#ramount').val();
+    var service_id=$('#service_id').val();
+    //var time = '10:15 AM';
+    //var startdate = '10/10/2018';
+    //var enddate = '11/10/2018';
+    var pic_id = $('#pic_id').val();
+    var schedule_note = $('#schedule_note').val();
+    var address;
+    //alert(schedule_note);
+
+
+    if($('#description').length){
+       $('#description').text(desc);
+    }
+    //alert($('#amnt').length);
+    //alert(pay+", "+ amount+" $");
+
+    //alert("startDate1" + localStorage.getItem('startDate1'));
+    //alert("endDate1" + localStorage.getItem('endDate1'));  
+
+
+    if($('#amnt').length){
+      var newtext = pay+", $"+ amount;
+      $('#amnt').text(newtext);
+    }
+
+    if(mapaddress!=""){
+      $('#address').text(mapaddress);
+      address = mapaddress;
+    }
+
+    if(newaddress!=""){
+      $('#address').text(newaddress);
+      address = newaddress;
+    }
+if(recurringtype!='One Time'){
+  $('#recamnt').show();
+}
+
+if(getId=='finish'){
+  var startDate1 = localStorage.getItem('startDate1') ; 
+  var endDate1   = localStorage.getItem('endDate1') ; 
+  var startMin  = localStorage.getItem('startMin') ; 
+  var endMin    = localStorage.getItem('endMin') ; 
+  var dbStartDate = localStorage.getItem('dbStartDate') ; 
+  var dbEndDate   =localStorage.getItem('dbEndDate') ; 
+ 
+}
+ 
+if(startDate1!=""){
+      $('#startdate').text(localStorage.getItem('startDate1'));
+  }
+if(startMin!=""){
+  $('#startMin').text(localStorage.getItem('startMin'));
+}
+if(endDate1!=""){
+      $('#enddate').text(localStorage.getItem('endDate1'));
+    }
+if(endMin!=""){
+  $('#endMin').text(localStorage.getItem('endMin'));
+}
+
+
+//alert("desc----"+desc);
+//alert(address);
+/*if($('#start-date').length){
+  alert($('#start-date').val());
+}*/
+var bid_bool="";
+var totalhours="";
+var rateperhour="";
+var is18=1;
+var selected_provider="";
+var buttonstatus='submit';
+var provider_type="";
+var time="";
+
+var imgs=[];
+  $('#sr_imgs input[type="hidden"]').each(function(){
+  imgs[this.id]=this.value;
+   alert(this.value);
+   console.log('images');
+  });
+
+if(getId=='finish'){
+  
+  /*
+  var tmp= {title : desc,
+      descr : desc,
+      summ : desc,
+      bidDate : bid_bool,
+      dateTimeBool: time,
+      dateTimeFrom : dbStartDate,
+      dateTimeTo : dbEndDate,
+      set_schedule : recurringtype,
+      schedule_note : schedule_note,
+      schedule_amount : ramount,
+      payAmt : amount,
+      payType : pay,
+      totalhours : totalhours,
+      rateperhour : rateperhour,
+      category : serv,
+      is18 : is18,
+      provider_type : provider_type,
+      reqstedBidId : selected_provider,
+      imgs : imgs,
+      addr : address,
+      buttonstatus : buttonstatus,
+      current : "11",
+      sr_number : "108",
+      posLong:lng,
+      posLat:lat};
+      console.log(tmp);
+  */
+
+  $.post("bid_submit_new.php",
+    {
+      title : jobtitle,
+      descr : desc,
+      summ : desc,
+      bidDate : bid_bool,
+      dateTimeBool: time,
+      dateTimeFrom : dbStartDate,
+      dateTimeTo : dbEndDate,
+      set_schedule : recurringtype,
+      schedule_note : schedule_note,
+      schedule_amount : ramount,
+      payAmt : amount,
+      payType : pay,
+      totalhours : totalhours,
+      rateperhour : rateperhour,
+      category : serv,
+      is18 : is18,
+      provider_type : provider_type,
+      reqstedBidId : selected_provider,
+      imgs : imgs,
+      addr : address,
+      buttonstatus : buttonstatus,
+      current : "11",
+      sr_number : "108",
+      service_id : service_id,
+      posLong:lng,
+      posLat:lat
+    },
+    function(data,status){
+      console.log("Data: " + data + "\nStatus: " + status);
+    });
+
+}
+
+    
+
+    $('.super-widget-tab input[type="radio"]:checked').last().parent().next().children('input').prop('checked', true);
+    $('.super-widget-tab-info summary').hide();
+    $('.'+getId).show();
+    if($('#prev').css('visibility') == 'hidden' && $('.super-widget-tab input[type="radio"]:checked').length > 1) { 
+        $('#prev').css('visibility', 'visible');
+    } else if(($('.super-widget-tab input[type="radio"]').last().is(':checked'))) {
+        $('#next').hide()
+    }
+
+    if(getId == "payment"){
+      //alert('test: '+ localStorage.getItem('recurring'))
+      payTypeSetting();
+    }
+}
+
+function create_bid_prev() {
+    var getId = $('.super-widget-tab input[type="radio"]:checked').last().parent().prev().children('input').attr('id');
+    $('.super-widget-tab input[type="radio"]:checked').last().prop('checked', false);
+    $('.super-widget-tab-info summary').hide();
+    $('.'+getId).show();
+    if($('.super-widget-tab input[type="radio"]:checked').length < 2) {
+        $('#prev').css('visibility', 'hidden');
+        $('#next').show();
+    } 
+    if(getId == "payment"){
+      payTypeSetting();
+    }
+}
+
+
+
 function getDetails(obj){
     //alert(obj);
     var seller = $("#seller").length;
@@ -463,16 +662,79 @@ $('input, textarea').focus(function(){
           $('#goldstarresp_agrm').html(jsonData.goldstarresp);
           $('#hire').attr("data-bidid",jsonData.id);
           $('#hire_stl').attr("data-bidid",jsonData.id);
+          $('#shortlist').attr("data-bidid",jsonData.id);
+
+          $('#accept_agreement_btn').attr('data-bidid',jsonData.id);
+          $('#accept_agreement_btn').attr('data-userid',jsonData.ownerId);
+
+          $('#request_pay').attr('data-bidamount',jsonData.payAmt);
+          $('#request_pay').attr('data-paidamt',jsonData.paid_amnt);
+
+          $('#approve_pay').attr('data-bidid',jsonData.id);
+          $('#approve_pay').attr('data-amount',jsonData.request_amnt);
+          $('#approve_pay').attr('data-amounttype',jsonData.amnt_type);
+          $('#approve_pay').attr('data-actualamount',jsonData.payAmt);
+          $('#approve_pay').attr('data-paidamt',jsonData.paid_amnt);
+
+          $('#make_pay').attr('data-bidamount',jsonData.payAmt);
+          $('#make_pay').attr('data-paidamt',jsonData.paid_amnt);
 
           $('#bid_milestone_agrm').html(jsonData.milestones);
 
           if(jsonData.shortlist == "yes"){
             $("#shortlist").hide();
           }
-
-          if(jsonData.loggedin_user_id == jsonData.ownerid){
-            $("#request_pay").show();
+          if(jsonData.loggedin_user_id != jsonData.srOwnerId){
+            $('#hire').hide();
+            $('#hire_stl').hide();
+            $('#shortlist').hide();
           }
+
+          $('#request_pay').hide();
+          $('#make_pay').hide();
+          $('#approve_pay').hide();
+          $('#accept_agreement_btn').hide();
+
+          if(jsonData.loggedin_user_id == jsonData.ownerId || jsonData.loggedin_user_id == jsonData.srOwnerId){
+             
+            switch(jsonData.status){
+              case 'submitted':
+              case 'job completed':
+                  break;
+              case 'awarded':
+                  if(jsonData.loggedin_user_id == jsonData.ownerId){
+                    $('#accept_agreement_btn').show();
+                  }
+                  break;
+              case 'request for payment':
+                  if(jsonData.loggedin_user_id == jsonData.srOwnerId){
+                      $('#approve_pay').show();
+                  }
+                  break;
+              case 'approved payment':
+              case 'payment rejected':
+                if(jsonData.loggedin_user_id == jsonData.ownerId){
+                      $('#request_pay').show();
+                }else if(jsonData.loggedin_user_id == jsonData.srOwnerId){
+                      $('#make_pay').show();
+                }
+              break;
+              case 'in work':
+                if(jsonData.loggedin_user_id == jsonData.ownerId){
+                      $('#request_pay').show();
+                }else if(jsonData.loggedin_user_id == jsonData.srOwnerId){
+                      $('#make_pay').show();
+                }
+              break;  
+            }
+          }
+          if(jsonData.loggedin_user_id == jsonData.ownerId || jsonData.loggedin_user_id == jsonData.srOwnerId){
+            $('edit_agreement').show();
+          }else{
+            $('edit_agreement').hide();
+          }
+
+          console.log("getUserDetails: ");
           console.log(jsonData);
         });
   }          
@@ -579,8 +841,8 @@ $('input, textarea').focus(function(){
     }
    
 
-function shortlist(id) {
-      var bidid = id;
+function shortlist(elm) {
+      var bidid = ($(elm).data('bidid'));
       $.post("addshortlist_new.php",
         {
           bidid : bidid
@@ -668,9 +930,12 @@ $(document).on("click", ".approveclick", function(e) {
     var paidamt =($(this).data('paidamt')); 
     var from =($(this).data('from')); 
        
-   $("#bidid").val(id);
-   $("#bidamount").val(actualamount); 
-   $("#paidamt").val(paidamt); 
+   $('#approve_payment').find("#bidid").val(id);
+   $('#approve_payment').find("#bidamount").val(actualamount); 
+   $('#approve_payment').find("#paidamt").val(paidamt); 
+   $('#request_payment').find("#bidid").val(id);
+   $('#request_payment').find("#bidamount").val(actualamount); 
+   $('#request_payment').find("#paidamt").val(paidamt); 
    if(from =="no")
    {   
    $(".dyn_content").html("Requested Amount :  $"+bidamount+" ("+amounttype+")");
@@ -875,11 +1140,31 @@ $('#approve_payment').formValidation({
                 'userid' : userid
             }
     
-            $("#stripe_pay").css("display: block;");
-            $('#stripe_amnt_cents').val(amount*100);
+            
+            /*$('#stripe_amnt_cents').val(amount*100);
             $('#stripe_db_data').val(JSON.stringify(formData));
-            $('#stripe_db_script').val('service_approve_payment.php');
+            $('#stripe_db_script').val('service_approve_payment.php');*/
 
+            var stripeData = {
+              'stripe_amnt_cents' : (amount*100),
+              'stripe_db_data' : JSON.stringify(formData),
+              'stripe_db_script' : 'service_approve_payment.php',
+              'bidid' : bidid
+            }
+
+            var stripeForm = $.ajax({
+                type: "POST",
+                url: "stripe_checkout.php",
+                data: stripeData,         
+                async: false,
+                
+            }).complete(function(data){
+              
+            
+            }).responseText;
+
+            $("#stripe_pay").css("display","block");
+            $("#stripe_pay").html(stripeForm);
 
             /*var feedback = $.ajax({
                 type: "POST",
@@ -1039,7 +1324,7 @@ $('#approve_payment').formValidation({
         
         }).responseText;
       
-  
+  console.log(feedback);
             if(feedback == "success"){            
            
               swal({

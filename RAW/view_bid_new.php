@@ -943,9 +943,9 @@ $html.='
                     <center>
                     
                     <button type="submit" class="btn btn-success" >PROCEED</button>
-                    <span id="stripe_pay" style="display: none;">
-                      <?php include("stripe_checkout.php"); ?> 
-                    </span>
+                    <div id="stripe_pay" style="display: none;">
+                      
+                    </div>
                     </center>
                         </form>
                             

@@ -1,4 +1,5 @@
 /* Global css */
+/* Global css */
 @font-face {
   font-family: OpenSans-light;
   src: url(../fonts/OpenSans-Light.ttf);
@@ -33,11 +34,11 @@ h3, h4, b{
 input[type = "text"], textarea { width: 100%; background: #F2F2F2; border: none; border-bottom: 1px solid rgb(184, 184, 184); padding: 8px; }
 .wrapper { display: flex; justify-content: center; flex-wrap: wrap; margin-top: 20px; }
 .disabled  { opacity: .5;}
-p{margin-bottom: 5px !important;}
+
 /* switch button */
 .switch-btn { border: 1px solid #118ab2; border-radius: 60px; display: flex; justify-content: space-between; align-items: center; }
 .switch-btn span { margin: 2px; }
-.switch-btn label { border-radius: 100px; margin: 0; padding: 6px 40px; cursor: pointer;}
+.switch-btn label { border-radius: 100px; margin: 0; padding: 6px 40px; }
 .switch-btn input[type="radio"]:checked+label { background: #118ab2; color: #fff; font-weight: bold; }
 .switch-btn input[type="radio"] { display: none; }
 
@@ -69,6 +70,7 @@ nav a, nav a:hover   { color: #000000; }
 .MRGCenter      { margin: 0 auto; }
 .WDTH300PX {width: 300px; }
 .WDTH80        { width: 80%; }
+.WDTH100 { width: 100%; }
 .WDTH90         { width: 90%; }
 .MRGB10PX   { margin-bottom: 10px; }
 .MRGT20PX   { margin-top: 20px; }
@@ -84,13 +86,25 @@ nav a, nav a:hover   { color: #000000; }
 .button-secondary, .button-secondary:hover { background: #fff; color: #118ab2; border: 1px solid #118ab2; border-radius: 2px; padding: 5px 8px; }
 .orange-btn { background: orange; border: none; color: #fff; padding: 5px 8px; border-radius: 2px; }
 .user-details-tab .nav-tabs .nav-link.active { border-bottom: 2px solid #118ab2; }
+.login { width: 37%; text-align: center; }
+.login-form { width: 70%; margin: 0 auto; }
+.login-form input[type="text"], .login-form input[type="password"] { border-bottom: none; border-radius: 6px; margin-bottom: 10px; }
+.login-form button, .login-form button:hover { border-radius: 4px; margin-bottom: 10px; padding: 8px;}
 .tui-full-calendar-popup-container .tui-full-calendar-popup-section:nth-child(1),
 /* .tui-full-calendar-popup-container .tui-full-calendar-popup-section:nth-child(2), */
 .tui-full-calendar-popup-container .tui-full-calendar-popup-section:nth-child(3),
 .tui-full-calendar-popup-container .tui-full-calendar-section-private,
 .tui-full-calendar-popup-container .tui-full-calendar-popup-section-item.tui-full-calendar-section-allday,
 .tui-full-calendar-popup-section.tui-full-calendar-dropdown.tui-full-calendar-close.tui-full-calendar-section-state { display: none; }
+.carousel-item { display: grid; height: 100%;}
+.login-carousel { width: 63%; height: 753px; overflow: hidden; }
+.carousel-item img { max-width: 100%; max-height: 100vh; margin: auto; }
 .img-thumbnail { width: 200px; }
+.carousel-indicators li { width: 20px !important; height: 20px !important; border: none !important; border-radius: 100%; opacity: 1; }
+.carousel-indicators .active { background: #118ab2 }
+.button-google, .button-google:hover { background: crimson; border-radius: 4px; border: none; color: #fff; padding: 8px; }
+.account { font-size: 12px; color: rgb(53, 53, 53); font-weight: bold; }
+.account span { font-weight: normal; }
 /* .row { align-items: baseline; } */
 .custom-drop-down { border: 1px solid #bbb; padding: 5px; height: 30px; font-size: 12px; }
 .card-header { margin-top: 20px; background: transparent; border: 1px solid rgba(0,0,0,.125); box-shadow: 0 0px 20px rgba(50,50,93,.1), 0 2px 3px rgba(0,0,0,.07); display: flex; justify-content: space-between; align-items: center; padding: 0 1.25rem; }
@@ -217,20 +231,7 @@ nav a, nav a:hover   { color: #000000; }
   text-overflow: ellipsis;
 }
 
-.modal-open .modal{
-  position: absolute;
-    height: auto;
-    z-index: 99999;
-    top: 25%;
-    margin: auto;
-    left: 33%;
-}
 
-.modal-header .close{
-      right: -5px;
-    position: absolute;
-    top: -33px;
-}
 
 #bidConfirm{
   display: none;

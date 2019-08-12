@@ -175,15 +175,16 @@ if($_SESSION['id'] == $sr_user_id){
                         <li class="nav-item">
                             <a class="nav-link active" id="one-tab" data-toggle="tab" href="#one" role="tab" aria-controls="One" aria-selected="true">Detail</a>
                         </li>
-                        <?php if($res[0]['ownerId'] == $id){ ?>
+                        
                         <li class="nav-item">
                             <a class="nav-link" id="two-tab" data-toggle="tab" href="#two" role="tab" aria-controls="Two" aria-selected="false" onclick="getUserDetails(<?php $rowBids['ownerId']=(isset($rowBids['ownerId']))?$rowBids['ownerId']:0;echo $rowBids['ownerId']." ,".$servID;?>,'bids')">Bids</a>
                         </li>
+                        <?php if($res[0]['ownerId'] == $id){ ?>
                         <li class="nav-item">
                             <a class="nav-link" id="three-tab" data-toggle="tab" href="#three" role="tab" aria-controls="Three" aria-selected="false" onclick="getUserDetails(<?php $rowbidInfoShlstd['ownerId']=isset($rowbidInfoShlstd['ownerId'])?$rowbidInfoShlstd['ownerId']:0;echo $rowbidInfoShlstd['ownerId']." ,".$servID;?>,'stl')">Shortlisted</a>
                         </li>
                         <?php } ?>
-                        <?php if($res[0]['bidAwardId'] != NULL){ ?>
+                        <?php if(($res[0]['bidAwardId'] != NULL) && (($res[0]['ownerId'] == $id) || $res[0]['bidderId'] == $id) ){ ?>
                         <li class="nav-item">
                                 <a class="nav-link" id="four-tab" data-toggle="tab" href="#four" role="tab" aria-controls="Four" aria-selected="false" onclick="getUserDetails(<?php $rowbidInfoAgremnt['ownerId']=isset($rowbidInfoAgremnt['ownerId'])?$rowbidInfoAgremnt['ownerId']:0;echo $rowbidInfoAgremnt['ownerId']." ,".$servID;?>,'agrm')">Agreement</a>
                         </li>
@@ -233,8 +234,8 @@ if($_SESSION['id'] == $sr_user_id){
                         <p class="card-text"><?php echo $res[0]['summ'] ?></p>
                         <button class="button-secondary">Cancel Job</button>&nbsp;
                         <button class="button-secondary">Cancel & Re-Submit Job</button>
-                        <?php }else if($res[0]['bidAwardId'] == NULL){ ?>
-                        <a  href="create_bid.php?srid=<?php echo $res[0]['id'];?>"><button class="button-secondary">Place Your Bid</button></a>
+                        <?php }else if($res[0]['bidAwardId'] == NULL && $_GET['new'] == 1){ ?>
+                        <a  href="create_bid.php?job_id=<?php echo $_GET['id']; ?>"><button class="button-secondary">Place Your Bid</button></a>
                         <?php } ?>        
                     </div>
                     <div class="tab-pane fade p-3" id="two" role="tabpanel" aria-labelledby="two-tab">
@@ -313,7 +314,7 @@ if($_SESSION['id'] == $sr_user_id){
                                                 <button class="orange-btn" id="hire" data-bidid=""
                                                 onclick="hire(this, <?php echo $servID;?>);">Hire Now!</button>
                                                 <?php } ?>
-                                                <button class="button-secondary" id="shortlist" onclick="shortlist(<?php echo $bidInfo['id'];?>);">Shortlist</button>
+                                                <button class="button-secondary" id="shortlist" data-bidid="" onclick="shortlist(this);">Shortlist</button>
                                             </div>
                                         </div>
                                         <div class="tab-pane fade p-3" id="bid-profile" role="tabpanel" aria-labelledby="one-tab">
@@ -322,8 +323,8 @@ if($_SESSION['id'] == $sr_user_id){
                                                    <!--  <button class="orange-btn">View Original Service Request</button> -->
                                                 </div>
                                                 <div class="col-sm-6 col-md-6 col-lg-6 col-xl-6 text-right">
-                                                    <button class="button-secondary">+ Add to Shortlist</button>
-                                                    <button class="button-secondary"><i class="fas fa-user-check"></i> Award Bid</button>
+                                                    <!-- <button class="button-secondary">+ Add to Shortlist</button>
+                                                    <button class="button-secondary"><i class="fas fa-user-check"></i> Award Bid</button> -->
                                                 </div>
                                             </div>
                                             <!-- <h2><b>Revised Proposed Agreement: Pants(98)</b></h2> -->
@@ -713,21 +714,37 @@ if($_SESSION['id'] == $sr_user_id){
 
                                             </div>
                                             <div class="MRGT20PX">
-                                                <?php if($rowbidInfoAgremnt['status'] == "awarded" && $rowbidInfoAgremnt['ownerId'] == $_SESSION['id']){ ?>
-                                                    <input type="button" value="ACCEPT AGREEMENT" id="bidReceivePaymentBtn" data-status="16" name="bidRequestPayment" data-bidid="<?php echo $rowbidInfoAgremnt['id'];?>" data-userid="<?php echo $rowbidInfoAgremnt['ownerId']; ?>" class="changeinwork btn btn-primary general_orange_button_border_radius general_orange_button_size general_orange_button_background general_orange_button_no_border" style="background-color:red; border-color: red;font-weight:bold;">
+
+                                                <input id="accept_agreement_btn" type="button" value="ACCEPT AGREEMENT" data-status="16" name="accept_agreement_btn" data-bidid="" data-userid="" class="changeinwork btn btn-primary general_orange_button_border_radius general_orange_button_size general_orange_button_background general_orange_button_no_border" style="background-color:red; border-color: red;font-weight:bold;">
+
+
+                                                <button id="edit_agreement" class="orange-btn"
+                                                onclick="edit_agreement(this, <?php echo $servID;?>);">Edit Agreement</button>
+
+                                                
+                                                <button id="request_pay" class="button-secondary requestpaypopup" data-bidamount="" data-paidamt="" style="display:none"><i class="fa fa-money"></i> Request Payment</button>
+
+
+                                                <button id="approve_pay" data-bidid="" data-amount=""  data-amounttype="" data-actualamount=""  data-paidamt="" data-from="no" class="approveclick button-secondary"><i class="fa fa-money"></i> Approve / Reject Payment</button>
+
+                                                
+                                                <button id="make_pay" class="button-secondary requestpaypopup" data-bidamount="" data-paidamt=""><i class="fa fa-money"></i> Make Payment</button>
+
+                                                <!-- <?php if($rowbidInfoAgremnt['status'] == "awarded" && $rowbidInfoAgremnt['ownerId'] == $_SESSION['id']){ ?>
+                                                    <input type="button" value="ACCEPT AGREEMENT" id="accept_agreement_btn" data-status="16" name="accept_agreement_btn" data-bidid="" data-userid="" class="changeinwork btn btn-primary general_orange_button_border_radius general_orange_button_size general_orange_button_background general_orange_button_no_border" style="background-color:red; border-color: red;font-weight:bold;">
                                                 <?php }else if($rowbidInfoAgremnt['status'] != "job completed"){ ?>
                                                 <button class="orange-btn" id="edit_agreement"
-                                                onclick="edit_agreement(<?php echo $rowbidInfoAgremnt['id'].",".$servID;?>);">Edit Agreement</button>
+                                                onclick="edit_agreement(this, <?php echo $servID;?>);">Edit Agreement</button>
                                                 
-                                                <button class="button-secondary requestpaypopup" data-bidamount="<?php $rowbidInfoAgremnt['payAmt'] ?>" id="request_pay" data-paidamt="<?php echo $paidamt; ?>" style="display:none"><i class="fa fa-money"></i> Request Payment</button>
+                                                <button class="button-secondary requestpaypopup" data-bidamount="" id="request_pay" data-paidamt="" style="display:none"><i class="fa fa-money"></i> Request Payment</button>
                                                 <?php } ?>
                                                 <?php if($rowbidInfoAgremnt['srOwnerId'] == $_SESSION['id']){ ?>
                                                     <?php if($rowbidInfoAgremnt['status'] == 'request for payment'){ ?>
                                                 <button  data-bidid="<?php echo $rowbidInfoAgremnt['id'];?>" data-amount="<?php echo $payAmt ?>"  data-amounttype="<?php echo $amt_type?>" data-actualamount="<?php echo $rowbidInfoAgremnt['payAmt'] ?>"  data-paidamt="<?php echo $paidamt ?>" data-from="no" class="approveclick button-secondary" id="approve_pay"><i class="fa fa-money"></i> Approve / Reject Payment</button>
-                                                <?php }else if($rowbidInfoAgremnt['status'] == 'in work'){ ?>
-                                                    <button class=" button-secondary requestpaypopup" id="make_pay"><i class="fa fa-money"></i> Make Payment</button>
+                                                <?php }else if($rowbidInfoAgremnt['status'] != 'job completed'){ ?>
+                                                    <button class=" button-secondary requestpaypopup" data-bidamount="<?php echo $bid_actual_amount; ?>" data-paidamt="<?php echo $paidamt; ?>" id="make_pay"><i class="fa fa-money"></i> Make Payment</button>
                                                         <?php } ?>
-                                                     <?php } ?>
+                                                     <?php } ?> -->
                                             </div>
                                         </div>
                                         <div class="tab-pane fade p-3" id="bid-profile-agrm" role="tabpanel" aria-labelledby="one-tab">

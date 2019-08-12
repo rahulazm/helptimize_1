@@ -67,6 +67,22 @@ $db_count_unread_messages->close();
     <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">-->
     <script src="https://use.fontawesome.com/a91275e4b2.js"></script>
     <script src="https://js.pusher.com/4.0/pusher.min.js"></script> 
+    <style>
+    .modal-open .modal{
+      position: absolute;
+        height: auto;
+        z-index: 99999;
+        top: 25%;
+        margin: auto;
+        left: 33%;
+    }
+
+    .modal-header .close{
+          right: -5px;
+        position: absolute;
+        top: -33px;
+    }
+    </style>
     
     <title>HELPTIMIZE</title>
   </head>

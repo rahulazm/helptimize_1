@@ -22,7 +22,7 @@ if(isset($_POST['transAmnt']))
 	$description=$_POST['description'];
 	$source=$_POST['source'];
 	//$description = "Invoice #" . $invoiceid . " - " . $invoiceid;
-   
+   	$bidid = $_POST['bidid'];
 	try {
 		$charge = Stripe_Charge::create(array(		 
 			  "amount" => $amount_cents,
@@ -51,7 +51,7 @@ if(isset($_POST['transAmnt']))
 		$payment_response=$charge->status;
 		//$create_at=date("m/d/y H:i:s A");
 
-		$res=$_sqlObj->query("INSERT INTO `stripe_payment` (`id`, `email`, `item_number`, `amount`, `currency_code`, `txn_id`, `payment_status`, `payment_response`, `create_at`) VALUES (NULL, '$email', '$item_number', '$amount', '$currency_code', '$txn_id', '$payment_status', '$payment_response', CURRENT_TIMESTAMP);");
+		$res=$_sqlObj->query("INSERT INTO `stripe_payment` (`id`, `bidId`, `email`, `item_number`, `amount`, `currency_code`, `txn_id`, `payment_status`, `payment_response`, `create_at`) VALUES (NULL, '$bidid', '$email', '$item_number', '$amount', '$currency_code', '$txn_id', '$payment_status', '$payment_response', CURRENT_TIMESTAMP);");
 
 
 	} catch(Stripe_CardError $e) {			
