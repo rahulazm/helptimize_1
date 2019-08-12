@@ -76,16 +76,22 @@ include "menu.php";
   			<textarea class="form-control" rows="3" id="category_description" name="category_description"><?php echo $category_description;?></textarea>
 		</div>
 		
-		<?php
-             	echo '<button class="btn btn-success update_category" ><i class="fa fa-floppy-o fa-lg"></i> Update Category</button>';
-        ?>
-        
+		    
         
         <?php
-             	echo '<button class="btn btn-danger delete_category" ><i class="fa fa-trash fa-lg"></i> Delete Category</button>';
+             	//echo '<button class="btn btn-danger delete_category" ><i class="fa fa-trash fa-lg"></i> Delete Category</button>';
         ?>
+        <div class="form-group">
+          <label for="comment">Status</label><br>
+          <input type="radio" id="category_status" name="category_status" value="0" <?php if($row['status']=='0') echo "checked";?>> Active<br>
+          <input type="radio" id="category_status" name="category_status" value="1" <?php if($row['status']=='1') echo "checked";?>> Inctive<br>
+        </div>
         
         <hr>
+        <?php
+              echo '<button class="btn btn-success update_category" ><i class="fa fa-floppy-o fa-lg"></i> Update Category</button>';
+        ?>
+    
       
       <!--
         <label>Sub-Categories</label>
@@ -377,12 +383,13 @@ $(document).on("click", ".update_category", function(e) {
    var category_id = "<?php echo $category_id;?>";
    var category_name = $('#category_name').val();
    var category_decription = $('#category_description').val();
-
+   var category_status = document.querySelector('input[name="category_status"]:checked').value;
    
    var formData = {
 	'category_id'     : category_id,
 	'category_name'     : category_name,
-	'category_decription'     : category_decription
+	'category_decription': category_decription,
+  'category_status':category_status
     
 	}
     		
