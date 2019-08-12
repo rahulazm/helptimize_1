@@ -7,7 +7,7 @@ require_once("./resize_image.php");
 session_start();
 if($_POST['service']=='bids'){
 	
-	$bdrdetails=$_sqlObj->query("SELECT bids.id,bids.title,bids.ownerid,bids.shortlist, bids.summ,bids.descr,bids.payType,bids.payAmt,bids.dateTimeTo,bids.dateTimeFrom, bids.create_dateTime,users.username,users.firstName,users.midName ,categ.name,bids.categId,paytype.name as paytype , view_bids.status as bidstatus FROM `bids`, users,categ,paytype,view_bids WHERE bids.`srId` = '$_POST[srid]' and users.id=bids.ownerId and bids.ownerId='$_POST[ownerid]' and bids.bidstatus != 'cancel' and bids.categId=categ.id and paytype.id=bids.payType and view_bids.id = bids.id");
+	$bdrdetails=$_sqlObj->query("SELECT bids.id,bids.title,bids.ownerId,bids.shortlist, bids.summ,bids.descr,bids.payType,bids.payAmt,bids.dateTimeTo,bids.dateTimeFrom, bids.create_dateTime,users.username,users.firstName,users.midName ,categ.name,bids.categId,paytype.name as paytype , view_bids.status as status, view_bids.srOwnerId as srOwnerId FROM `bids`, users,categ,paytype,view_bids WHERE bids.`srId` = '$_POST[srid]' and users.id=bids.ownerId and bids.ownerId='$_POST[ownerid]' and bids.bidstatus != 'cancel' and bids.categId=categ.id and paytype.id=bids.payType and view_bids.id = bids.id");
 	$dateFrom = date("jS M Y-h:i A",strtotime($bdrdetails[0]['dateTimeTo']));
 	//echo $dateFrom;
 	$dateTo = date("jS M Y-h:i A",strtotime($bdrdetails[0]['dateTimeFrom']));
@@ -44,6 +44,23 @@ if($_POST['service']=='bids'){
 	#########GOLD STAR rating details
 	require_once("goldstardetails_new.php");
 	$bdrdetails[0]['goldstarresp']=$goldstarresp;
+
+
+	######### Payment calculation
+
+		$sql_get_saved_bids = "SELECT * FROM bidPayments WHERE bidid='".$bdrdetails[0]['id']."' AND status='18' AND usertype='seller' order by id desc limit 1 ";
+        $result_get_saved_bids = $_sqlObj->query($sql_get_saved_bids);
+        $bdrdetails[0]['request_amnt']=$result_get_saved_bids[0]['payAmt'];
+        if($bdrdetails[0]['request_amnt'] < $bdrdetails[0]['payAmt']){
+        	$bdrdetails[0]['amnt_type'] = 'Partial Amount';
+        }else{
+        	$bdrdetails[0]['amnt_type'] = 'Full Amount';
+        }
+
+	######### Request Payment calculation
+		$sql_get_saved_bids = "SELECT SUM(payAmt) AS paidamt FROM bidpayments WHERE bidid='".$bdrdetails[0]['id']."' AND status='19' AND usertype='buyer'";
+        $result_get_saved_bids = $_sqlObj->query($sql_get_saved_bids);
+        $bdrdetails[0]['paid_amnt']= $result_get_saved_bids[0]['paidamt'];
 
 
 	#########MILESTONES

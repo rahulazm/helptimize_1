@@ -21,7 +21,8 @@ $bidList=$_sqlObj->query($sqlList);
 $sqlList="select * from view_serviceRequests where ownerId='$id' order by last_updated desc";
 $resList=$_sqlObj->query($sqlList);
 
-$sqlReqtrAllJobs="select * from view_serviceRequests where ownerId !='$id' and bidAwardId is null order by last_updated desc";
+//$sqlReqtrAllJobs="select * from view_serviceRequests where ownerId !='$id' and bidAwardId is null order by last_updated desc";
+$sqlReqtrAllJobs = "select vs.* from view_serviceRequests as vs where ownerId !='4' and bidAwardId is null and (select ownerId from view_bids as vb where vb.srId = vs.id and vb.ownerId = '4' and vb.bidstatus != 'cancel') is NULL order by last_updated desc";
 $resReqtrAllJobs=$_sqlObj->query($sqlReqtrAllJobs);
 ?>
 <script>
@@ -169,7 +170,7 @@ $( document ).ready(function() {
                           if($resReqtrAllJobs[$i]['descr'] != "null"){
                           echo $resReqtrAllJobs[$i]['descr'];
                           } ?></p>
-                          <div class="text-right"><a href="view_service_details.php?id=<?php echo $resReqtrAllJobs[$i]['id'];?>">View Details</a></div>
+                          <div class="text-right"><a href="view_service_details.php?id=<?php echo $resReqtrAllJobs[$i]['id'];?>&new=1">View Details</a></div>
                       </div>
                     </div>
                   </div>
