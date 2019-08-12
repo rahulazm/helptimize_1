@@ -116,24 +116,27 @@ include "check_session.php";
             <li><a href="pipedrive_settings.php">Pipedrive</a></li>
             <li><a href="phone_number_settings.php">Phone Number Format</a></li>
             <li><a href="various_settings.php">Various</a></li>
-            <li><a href="pltfrm_settings.php">Platform fee</a></li>
-
+          
 
           </ul>
         </li>
         
         
       </ul>
-     
+      </div>
+      <div>
      
      <ul class="nav navbar-nav navbar-right">
+        
         <li><a href="srlist.php">SR List with few bids</a></li>
-        <li><a href="userslist.php">Users List</a></li>
+    </ul>
+     <ul class="nav navbar-nav navbar-right">
+        
         <li><a href="logout.php">Logout</a></li>
         
         
       </ul>
-      
+      </div>
     </div><!-- /.navbar-collapse -->
   </div><!-- /.container-fluid -->
 </nav>
