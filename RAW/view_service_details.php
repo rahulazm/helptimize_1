@@ -81,6 +81,15 @@ $sql_get_saved_bids = "SELECT * FROM bidPayments WHERE bidid='".$rowbidInfoAgrem
                          $amt_type="Full Payment";
                      else $amt_type="Partial Payment";
 
+############# Current Users 
+$userTypeInfo=$_sqlObj->query('select view_bids.* from view_bids where srId='.$servID.' and ownerId = '.$id.' and bidstatus != "cancel"');
+$rowuserTypeInfo=@reset($userTypeInfo);
+
+//print_r($rowuserTypeInfo);
+
+//echo $rowuserTypeInfo['id'];
+
+
 ######### Request Payment calculation
 $sql_get_saved_bids = "SELECT SUM(payAmt) AS paidamt FROM bidpayments WHERE bidid='".$rowbidInfoAgremnt['id']."' AND status='19' AND usertype='buyer'";
                     $result_get_saved_bids = $_sqlObj->query($sql_get_saved_bids);
@@ -172,21 +181,42 @@ if($_SESSION['id'] == $sr_user_id){
                 </div>
                 <div class="card-header tab-card-header">
                     <ul class="nav nav-tabs card-header-tabs" id="myTab" role="tablist">
+                        <!-- Session user is SR owner (Requester) -->
+                        <?php if($res[0]['ownerId'] == $id){ ?>   
                         <li class="nav-item">
                             <a class="nav-link active" id="one-tab" data-toggle="tab" href="#one" role="tab" aria-controls="One" aria-selected="true">Detail</a>
                         </li>
-                        
                         <li class="nav-item">
-                            <a class="nav-link" id="two-tab" data-toggle="tab" href="#two" role="tab" aria-controls="Two" aria-selected="false" onclick="getUserDetails(<?php $rowBids['ownerId']=(isset($rowBids['ownerId']))?$rowBids['ownerId']:0;echo $rowBids['ownerId']." ,".$servID;?>,'bids')">Bids</a>
+                            <a class="nav-link" id="two-tab" data-toggle="tab" href="#two" role="tab" aria-controls="Two" aria-selected="false" onclick="getUserDetails(<?php $rowBids['ownerId']=(isset($rowBids['ownerId']))?$rowBids['ownerId']:0;echo $rowBids['ownerId']." ,".$servID;?>,'bids')">Incoming Bids</a>
                         </li>
-                        <?php if($res[0]['ownerId'] == $id){ ?>
+
                         <li class="nav-item">
                             <a class="nav-link" id="three-tab" data-toggle="tab" href="#three" role="tab" aria-controls="Three" aria-selected="false" onclick="getUserDetails(<?php $rowbidInfoShlstd['ownerId']=isset($rowbidInfoShlstd['ownerId'])?$rowbidInfoShlstd['ownerId']:0;echo $rowbidInfoShlstd['ownerId']." ,".$servID;?>,'stl')">Shortlisted</a>
                         </li>
-                        <?php } ?>
-                        <?php if(($res[0]['bidAwardId'] != NULL) && (($res[0]['ownerId'] == $id) || $res[0]['bidderId'] == $id) ){ ?>
+                        <?php if($res[0]['bidAwardId'] != NULL){ ?>
                         <li class="nav-item">
                                 <a class="nav-link" id="four-tab" data-toggle="tab" href="#four" role="tab" aria-controls="Four" aria-selected="false" onclick="getUserDetails(<?php $rowbidInfoAgremnt['ownerId']=isset($rowbidInfoAgremnt['ownerId'])?$rowbidInfoAgremnt['ownerId']:0;echo $rowbidInfoAgremnt['ownerId']." ,".$servID;?>,'agrm')">Agreement</a>
+                        </li>
+                        <?php } ?>                        
+                        <?php } ?>
+                        <!-- Session User is a bidder (Provider) -->
+                        <?php if($rowuserTypeInfo['id'] != ''){  ?>
+                        <li class="nav-item">
+                            <a class="nav-link active" id="one-tab" data-toggle="tab" href="#one" role="tab" aria-controls="One" aria-selected="true">Original SR</a>
+                        </li>
+                        <?php if($rowuserTypeInfo['srBidAwardId'] == NULL){ ?>
+                        <li class="nav-item">
+                                <a class="nav-link " id="four-tab" data-toggle="tab" href="#four" role="tab" aria-controls="Four" aria-selected="false" onclick="getUserDetails(<?php $rowuserTypeInfo['ownerId']=isset($rowuserTypeInfo['ownerId'])?$rowuserTypeInfo['ownerId']:0;echo $rowuserTypeInfo['ownerId']." ,".$servID;?>,'agrm')">Your Bid</a>
+                        </li>
+                        <?php }else{ ?>
+                        <li class="nav-item">
+                                <a class="nav-link" id="four-tab" data-toggle="tab" href="#four" role="tab" aria-controls="Four" aria-selected="false" onclick="getUserDetails(<?php $rowuserTypeInfo['ownerId']=isset($rowuserTypeInfo['ownerId'])?$rowuserTypeInfo['ownerId']:0;echo $rowuserTypeInfo['ownerId']." ,".$servID;?>,'agrm')">Agreement</a>
+                        </li>
+                        <?php } ?> 
+                        <?php }elseif($res[0]['ownerId'] != $id){ ?>
+                        <!-- Session user is a non-bidder -->
+                        <li class="nav-item">
+                            <a class="nav-link active" id="placebid-tab" data-toggle="tab" href="#placebid" role="tab" aria-controls="Placebid" aria-selected="true">Details</a>
                         </li>
                         <?php } ?>
                         <li class="nav-item">
@@ -211,31 +241,75 @@ if($_SESSION['id'] == $sr_user_id){
                 </div>
 
                 <div class="tab-content" id="myTabContent">
+                    <?php if(($res[0]['ownerId'] == $id) || ($rowuserTypeInfo['id'] != '')){ ?>   
                     <div class="tab-pane fade show active p-3" id="one" role="tabpanel" aria-labelledby="one-tab">
+                    <?php }else{ ?>
+                    <div class="tab-pane fade p-3" id="one" role="tabpanel" aria-labelledby="one-tab">
+                    <?php } ?>
                         <!-- <p class="MRGT20PX"><b>Title</b> : <?php echo $res[0]['title'] ?></p> -->
-                        <p class="MRGT20PX"><b>Description</b></p>
+                        <h5  class="MRGT20PX">Location</h5>
+                        <div class="MRGT10PX"><i class="fas fa-map-marker-alt"></i> 
+                            <span><?php echo $res[0]['address'] ?></span>
+                        </div>
+
+                        <h5 class="MRGT20PX">Job Details</h5>
+                        <p class="MRGT10PX"><b>Description</b></p>
                         <p class="card-text"><?php echo $res[0]['descr'] ?></p>
-                        <p class="MRGT20PX"><b>Particulars</b></p>  
-                        <div class="row">
-                            <div class="col-sm-4 col-md-4 col-lg-4">
-                                <div><i class="far fa-clock"></i> <?php echo $dateFromArr[1]." ".$dateFromArr[2]." - ".$dateToArr[1]." ".$dateToArr[2]; ?></div>
-                                <div><i class="far fa-calendar-alt"></i> <?php echo $dateFromArr[0]." - ".$dateToArr[0];?></div>
-                            </div>
-                            <div class="col-sm-8 col-md-8 col-lg-8">
-                                <div><i class="fas fa-map-marker-alt"></i> 
-                                    <span><?php echo $res[0]['address'] ?></span>
-                                </div> 
-                            </div>
-                        </div>  
+                        <p class="MRGT10PX"><b>Particulars</b></p>
+                        <p>
+                            <div><i class="far fa-clock"></i> <?php echo $dateFromArr[1]." ".$dateFromArr[2]." - ".$dateToArr[1]." ".$dateToArr[2]; ?></div>
+                            <div><i class="far fa-calendar-alt"></i> <?php echo $dateFromArr[0]." - ".$dateToArr[0];?></div>
+                        </p>  
+
+                        <h5 class="MRGT20PX">Payment</h5>
+                        <p class="MRGT10PX"><b>Amount</b></p>
+                        <p style="text-transform: capitalize; "><?php echo $res[0]['paytype'] ?>, $<?php echo $res[0]['payAmt'] ?> </p> 
+                        <?php if($res[0]['ownerId'] == $id){ ?>
+                        <p class="MRGT10PX"><b>Personal Note</b></p>
+                        <p class="card-text"><?php echo $res[0]['summ'] ?></p>
+
+
+                        <button class="button-secondary">Cancel Job</button>&nbsp;
+                        <button class="button-secondary">Cancel & Re-Submit Job</button>
+                        <?php }else if($res[0]['bidAwardId'] == NULL && $_GET['new'] == 1){ ?>
+<!--                         <a  href="create_bid.php?job_id=<?php echo $_GET['id']; ?>"><button class="button-secondary">Place Your Bid</button></a> -->
+                        <?php } ?>        
+                    </div>
+                    <?php if($rowuserTypeInfo['id'] == '' && $res[0]['ownerId'] != $id) { ?>
+                        <div class="tab-pane fade show active p-3" id="placebid" role="tabpanel" aria-labelledby="one-tab">
+                    <?php }else{ ?>
+                    <div class="tab-pane fade p-3" id="placebid" role="tabpanel" aria-labelledby="one-tab">
+                    <?php } ?>
+                        <!-- <p class="MRGT20PX"><b>Title</b> : <?php echo $res[0]['title'] ?></p> -->
+                        <h5 class="MRGT20PX">Location &nbsp;<span class="FONTSIZE12px"><a href="create_bid.php?job_id=<?php echo $res[0]['id']; ?>&tab=location"><i class="fa fa-pencil" aria-hidden="true"></i>
+                            &nbsp;Edit</a></span></h5>
+                        <p><i class="fas fa-map-marker-alt"></i> 
+                            <span><?php echo $res[0]['address'] ?></span>
+                        </p>
+
+                        <h5 class="MRGT20PX">Job Details &nbsp;<span class="FONTSIZE12px"><a href="create_bid.php?job_id=<?php echo $res[0]['id']; ?>&tab=jobdetails"><i class="fa fa-pencil" aria-hidden="true"></i>
+                            &nbsp;Edit</a></span></h5>
+                        <p class="MRGT10PX"><b>Description</b></p>
+                        <p class="card-text"><?php echo $res[0]['descr'] ?></p>
+                        <p class="MRGT10PX"><b>Particulars</b></p>
+                        <p>
+                            <div><i class="far fa-clock"></i> <?php echo $dateFromArr[1]." ".$dateFromArr[2]." - ".$dateToArr[1]." ".$dateToArr[2]; ?></div>
+                            <div><i class="far fa-calendar-alt"></i> <?php echo $dateFromArr[0]." - ".$dateToArr[0];?></div>
+                        </p>  
+
+                        <h5 class="MRGT20PX">Payment &nbsp;<span class="FONTSIZE12px"><a href="create_bid.php?job_id=<?php echo $res[0]['id']; ?>&tab=payment"><i class="fa fa-pencil" aria-hidden="true"></i>
+                            &nbsp;Edit</a></span></h5>
                         <p class="MRGT20PX"><b>Amount</b></p>
                         <p style="text-transform: capitalize; "><?php echo $res[0]['paytype'] ?>, $<?php echo $res[0]['payAmt'] ?> </p> 
                         <?php if($res[0]['ownerId'] == $id){ ?>
                         <p class="MRGT20PX"><b>Personal Note</b></p>
                         <p class="card-text"><?php echo $res[0]['summ'] ?></p>
+
+                        
                         <button class="button-secondary">Cancel Job</button>&nbsp;
                         <button class="button-secondary">Cancel & Re-Submit Job</button>
                         <?php }else if($res[0]['bidAwardId'] == NULL && $_GET['new'] == 1){ ?>
-                        <a  href="create_bid.php?job_id=<?php echo $_GET['id']; ?>"><button class="button-secondary">Place Your Bid</button></a>
+<!--                         <a  href="create_bid.php?job_id=<?php echo $_GET['id']; ?>"><button class="button-secondary">Place Your Bid</button></a> -->
                         <?php } ?>        
                     </div>
                     <div class="tab-pane fade p-3" id="two" role="tabpanel" aria-labelledby="two-tab">
@@ -654,6 +728,7 @@ if($_SESSION['id'] == $sr_user_id){
                         </div>
                     </div>
                 </div>
+
                     <div class="tab-pane fade p-3" id="four" role="tabpanel" aria-labelledby="four-tab">
                         <div class="row" id="row">
                             
@@ -696,17 +771,26 @@ if($_SESSION['id'] == $sr_user_id){
                                     </div>
                                     <div class="tab-content">
                                         <div class="tab-pane fade show active p-3" id="bid-detail-agrm" role="tabpanel" aria-labelledby="one-tab">
-                                            <P><b>Comments: </b></p>
+                                            <h5 class="MRGT20PX">Location&nbsp;<span class="FONTSIZE12px"><a href="edit_bid.php?job_id=<?php echo $res[0]['id']; ?>&tab=location"><i class="fa fa-pencil" aria-hidden="true"></i>
+                            &nbsp;Edit</a></span></h5>
+                                            <P class="MRGT10PX"><b>Address: </b></p>
+                                            <div class="MRGT10PX" id="bid_address_agrm"></div>
+                                            <h5 class="MRGT20PX">Job Details&nbsp;<span class="FONTSIZE12px"><a href="edit_bid.php?job_id=<?php echo $res[0]['id']; ?>&tab=jobdetails"><i class="fa fa-pencil" aria-hidden="true"></i>
+                            &nbsp;Edit</a></span></h5>
+                                            <P class="MRGT10PX"><b>Comments: </b></p>
                                             <label id="bid_comment_agrm"></label>
-                                            
-                                            <div class="form-group MRGT10PX">
-                                                <label ><b>Amount:</b></label>
-                                                <label id="bid_amnt_agrm" style="text-transform: capitalize;"></label>
-                                            </div>
                                             <div class="form-group MRGT10PX">
                                                 <label><b>Duration:</b> </label>
                                                 <label id="bid_duration_agrm"></label>
                                             </div>
+
+                                            <h5 class="MRGT20PX">Payment&nbsp;<span class="FONTSIZE12px"><a href="edit_bid.php?job_id=<?php echo $res[0]['id']; ?>&tab=payment"><i class="fa fa-pencil" aria-hidden="true"></i>
+                            &nbsp;Edit</a></span></h5>
+                                            <div class="form-group MRGT10PX">
+                                                <label ><b>Amount:</b></label>
+                                                <label id="bid_amnt_agrm" style="text-transform: capitalize;"></label>
+                                            </div>
+
                                            
                                             <div id="bid_milestone_agrm" class="form-group MRGT10PX">
                                                 
@@ -718,8 +802,8 @@ if($_SESSION['id'] == $sr_user_id){
                                                 <input id="accept_agreement_btn" type="button" value="ACCEPT AGREEMENT" data-status="16" name="accept_agreement_btn" data-bidid="" data-userid="" class="changeinwork btn btn-primary general_orange_button_border_radius general_orange_button_size general_orange_button_background general_orange_button_no_border" style="background-color:red; border-color: red;font-weight:bold;">
 
 
-                                                <button id="edit_agreement" class="orange-btn"
-                                                onclick="edit_agreement(this, <?php echo $servID;?>);">Edit Agreement</button>
+                                                <!-- <button id="edit_agreement" class="orange-btn"
+                                                onclick="edit_agreement(this, <?php echo $servID;?>);">Edit Agreement</button> -->
 
                                                 
                                                 <button id="request_pay" class="button-secondary requestpaypopup" data-bidamount="" data-paidamt="" style="display:none"><i class="fa fa-money"></i> Request Payment</button>

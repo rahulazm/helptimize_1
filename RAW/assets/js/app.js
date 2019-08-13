@@ -679,6 +679,8 @@ $('input, textarea').focus(function(){
           $('#make_pay').attr('data-bidamount',jsonData.payAmt);
           $('#make_pay').attr('data-paidamt',jsonData.paid_amnt);
 
+          $('#bid_address_agrm').html(jsonData.address);
+
           $('#bid_milestone_agrm').html(jsonData.milestones);
 
           if(jsonData.shortlist == "yes"){
@@ -728,11 +730,11 @@ $('input, textarea').focus(function(){
               break;  
             }
           }
-          if(jsonData.loggedin_user_id == jsonData.ownerId || jsonData.loggedin_user_id == jsonData.srOwnerId){
+          /*if(jsonData.loggedin_user_id == jsonData.ownerId || jsonData.loggedin_user_id == jsonData.srOwnerId){
             $('edit_agreement').show();
           }else{
             $('edit_agreement').hide();
-          }
+          }*/
 
           console.log("getUserDetails: ");
           console.log(jsonData);
@@ -1346,7 +1348,7 @@ $('#approve_payment').formValidation({
 });
 
 
-$(document).on("click", ".videoclick", function(e) {
+/*$(document).on("click", ".videoclick", function(e) {
     var from =($(this).data('from'));
     var user =($(this).data('user'));
     var sr_id = ($(this).data('srid'));
@@ -1394,65 +1396,6 @@ $(document).on("click", ".videoclick", function(e) {
           }
                         }); 
 
-    });
-
-
-
-$('#frmCheckout').get(0).submit = function() {
-
-        //var transAmnt=<?php echo $amount_cents;?>;
-        var transAmnt = $('#stripe_amnt_cents').val();
-        var invoiceid="2055";
-        var description="safwsfsfsf";
-
-        console.log("stripe_amnt_cents: "+$("#stripe_amnt_cents").val());
-        console.log("stripe_db_data: "+$("#stripe_db_data").val());
-        console.log("stripe_db_script: "+$("#stripe_db_script").val());
-        //var stripeToken = "<?php echo $_POST['stripeToken'];?>";
-        //do your own request an handle the results
-        $.post("stripe_process.php",
-        {
-          transAmnt : transAmnt,
-          invoiceid:invoiceid,
-          description:description,
-          source:'tok_visa'
-          //stripeToken:stripeToken
-        },
-        function(data,status){
-         
-         //alert("Data: " + data + "\nStatus: " + status);
-
-         formData = JSON.parse($('#stripe_db_data').val());
-         pageurl = $('#stripe_db_script').val();
-
-         var feedback = $.ajax({
-                type: "POST",
-                url: pageurl,
-                data: formData,         
-                async: false,
-                
-            }).complete(function(){
-            
-            
-            }).responseText;
-         if(status=="success"){
-            swal({
-                title: "Success",
-                text: "Payment done successfully",
-                type: "success",
-                showCancelButton: false,
-                confirmButtonColor: "#5CB85C",
-                confirmButtonText: "OK",
-                closeOnConfirm: true
-              },
-              function(){
-                //location.href = "service_request_saved_list.php";
-                $('#modal_request_pay').modal('hide');
-              });
-             //console.log(jsonData);
-         }
-      });
-   }
-
+    });*/
 
  });

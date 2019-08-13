@@ -1309,7 +1309,7 @@ $(document).on("click", ".notesclick", function(e) {
 /////Refund Notes Popup End - 02.04.2019
 
     $(document).on("click", ".resubmitbtn", function(e) {
-        var id = <?php echo $id; ?>;
+        var id = '<?php echo $id; ?>';
         window.location.href="bid_reupdate.php?id="+id;
     });
      ///check page comes after milestone payment
@@ -1408,7 +1408,7 @@ $(document).on("click", ".democlick", function(e) {
     });
   
 ///////////Video call click script --- Start - 13.05.19
-$(document).on("click", ".videoclick", function(e) {
+/*$(document).on("click", ".videoclick", function(e) {
     var from =($(this).data('from'));
     var user =($(this).data('user'));
     var sr_id = <?php echo $srId; ?>;
@@ -1458,7 +1458,7 @@ $(document).on("click", ".videoclick", function(e) {
 
 });
  ///////////Video call click script --- End - 13.05.19
-
+*/
 
 
     

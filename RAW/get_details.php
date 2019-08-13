@@ -8,6 +8,15 @@ session_start();
 if($_POST['service']=='bids'){
 	
 	$bdrdetails=$_sqlObj->query("SELECT bids.id,bids.title,bids.ownerId,bids.shortlist, bids.summ,bids.descr,bids.payType,bids.payAmt,bids.dateTimeTo,bids.dateTimeFrom, bids.create_dateTime,users.username,users.firstName,users.midName ,categ.name,bids.categId,paytype.name as paytype , view_bids.status as status, view_bids.srOwnerId as srOwnerId FROM `bids`, users,categ,paytype,view_bids WHERE bids.`srId` = '$_POST[srid]' and users.id=bids.ownerId and bids.ownerId='$_POST[ownerid]' and bids.bidstatus != 'cancel' and bids.categId=categ.id and paytype.id=bids.payType and view_bids.id = bids.id");
+
+	$bdrAddress = $_sqlObj->query("SELECT * from address where srId = '$_POST[srid]' or (bidId = NULL or bidId = '$bdrdetails[0][id]')");
+	$rowBdrAddress=@reset($bdrAddress);
+
+	$bdrdetails[0]['address'] = "";
+	while($rowBdrAddress) {
+		$bdrdetails[0]['address'] .= "<p><i class='fas fa-map-marker-alt'></i>&nbsp;".$rowBdrAddress['address']."<span>";
+		$rowBdrAddress=next($bdrAddress);
+	}
 	$dateFrom = date("jS M Y-h:i A",strtotime($bdrdetails[0]['dateTimeTo']));
 	//echo $dateFrom;
 	$dateTo = date("jS M Y-h:i A",strtotime($bdrdetails[0]['dateTimeFrom']));
