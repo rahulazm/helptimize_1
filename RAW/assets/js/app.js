@@ -3,8 +3,8 @@ localStorage.removeItem('recurring');
 function next() {
   //$('#amount, #ramount').val('')
     var getId = $('.super-widget-tab input[type="radio"]:checked').last().parent().next().children('input').attr('id');
-      var address = $('#getaddr').val();
-      var jobtitle = $('#jobtitle').val();
+    var address = $('#getaddr').val();
+    var jobtitle = $('#jobtitle').val();
     var desc  = $('#desc').val();
     var serv  = $('input:radio[name=serv]:checked').val();
     var pay  = $('input:radio[name=pay]:checked').val();
@@ -52,6 +52,7 @@ function next() {
     }
 if(recurringtype!='One Time'){
   $('#recamnt').show();
+  $('#recamnt label').append(" ("+recurringtype+")");
 }
 
 if(getId=='finish'){
@@ -96,9 +97,11 @@ var imgs=[];
   $('#sr_imgs input[type="hidden"]').each(function(){
   imgs[this.id]=this.value;
    //alert(this.value);
+   console.log('images');
   });
 
 if(getId=='finish'){
+  
   /*
   var tmp= {title : desc,
       descr : desc,
@@ -157,7 +160,7 @@ if(getId=='finish'){
       posLat:lat
     },
     function(data,status){
-      //alert("Data: " + data + "\nStatus: " + status);
+      console.log("Data: " + data + "\nStatus: " + status);
     });
 
 }
@@ -196,7 +199,15 @@ function prev() {
 
 
 function create_bid_next() {
-  //$('#amount, #ramount').val('')
+   
+    var queryArr = [];
+   $('input[name^="milestones"]').each(function()
+    {   
+        
+        data = $(this).val();
+        queryArr.push(data);
+    });
+   console.log(queryArr);
     var getId = $('.super-widget-tab input[type="radio"]:checked').last().parent().next().children('input').attr('id');
     var address = $('#getaddr').val();
     var jobtitle = $('#jobtitle').val();
@@ -212,6 +223,8 @@ function create_bid_next() {
     var lng=$('#lng').val();
     var ramount=$('#ramount').val();
     var service_id=$('#service_id').val();
+    var milestones = queryArr;
+
     //var time = '10:15 AM';
     //var startdate = '10/10/2018';
     //var enddate = '11/10/2018';
@@ -247,6 +260,7 @@ function create_bid_next() {
     }
 if(recurringtype!='One Time'){
   $('#recamnt').show();
+  $('#recamnt label').append(" ("+recurringtype+")");
 }
 
 if(getId=='finish'){
@@ -351,6 +365,7 @@ if(getId=='finish'){
       current : "11",
       sr_number : "108",
       service_id : service_id,
+      milestones : queryArr,
       posLong:lng,
       posLat:lat
     },
@@ -390,8 +405,6 @@ function create_bid_prev() {
       payTypeSetting();
     }
 }
-
-
 
 function getDetails(obj){
     //alert(obj);
@@ -590,8 +603,7 @@ $('input, textarea').focus(function(){
       }
       //alert(obj);
       //var currentUrl = window.location.href + "&srid="+obj;
-      //location.href=currentUrl;
-      
+      //location.href=currentUrl;        
         $.post("get_details.php",
         {
           srid : srid,
@@ -638,7 +650,7 @@ $('input, textarea').focus(function(){
           $('#bidscnt').text("1");
           $('#avgfixcostamnt').text(fixedpay);
           $('#avghrlycostamnt').text(hrlypay);
-          //$('#agreedesc').text(jsonData.desc);
+          $('#agreedesc').text(jsonData.desc);
           $('#starr').text(jsonData.bluestar_Percentage);
           $('#starr_stl').text(jsonData.bluestar_Percentage);
           $('#starr_agrm').text(jsonData.bluestar_Percentage);
@@ -841,7 +853,10 @@ $('input, textarea').focus(function(){
         i++;
       }
     }
+
    
+
+    
 
 function shortlist(elm) {
       var bidid = ($(elm).data('bidid'));
@@ -902,8 +917,7 @@ function hire(elm, serv_id) {
       });
     }      
       
-
-  $(document).ready(function() {
+$(document).ready(function() {
 
     _initCard(1, 'jobRequests');
     _initCard(1, 'recommended');

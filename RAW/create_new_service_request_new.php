@@ -279,11 +279,11 @@ var gLng=-122.3321;
                       </div>
                   </div>
                   <div class="form-group MRGT10PX WDTH300PX ramount" id="recamnt" style="display:none">
-                      <label class="form-label" for="ramount">Recurrence Amount</label>
+                      <label class="form-label" for="ramount">Amount</label>
                       <input id="ramount" class="form-input" type="text" />
                    </div>       
                   <div class="form-group MRGT10PX WDTH300PX amount">
-                    <label class="form-label" for="amount">Amount</label>
+                    <label class="form-label" for="amount">Total Amount</label>
                     <input id="amount" class="form-input" type="text" />
                   </div>           
                   <!-- <div class="form-group MRGT10PX">

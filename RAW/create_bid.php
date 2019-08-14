@@ -291,11 +291,11 @@ var gLng=-122.3321;
                       </div>
                   </div>
                   <div class="form-group MRGT10PX WDTH300PX ramount" id="recamnt" style="display:none">
-                      <label class="form-label" for="ramount">Recurrence Amount</label>
+                      <label class="form-label" for="ramount">Amount</label>
                       <input id="ramount" class="form-input" type="text" />
                    </div>       
                   <div class="form-group MRGT10PX WDTH300PX amount">
-                    <label class="form-label" for="amount">Amount</label>
+                    <label class="form-label" for="amount">Total Amount</label>
                     <input id="amount" class="form-input" value="<?php echo $job_data[0]['schedule_amount']; ?>" type="text" />
                   </div>           
                   <!-- <div class="form-group MRGT10PX">
@@ -323,6 +323,64 @@ var gLng=-122.3321;
                   <input type="radio" name="bank" value="bank1" /> <label>My Bank Account</label><br/>
                   <input type="radio" name="bank" value="bank2" /> <label>My Bank Account</label>
                 </div>
+
+                <label for="checkAddMilestone" class="btn btn-success" style="margin-top: 30px;">Add Milestones</label>
+                        <input type="checkbox" class="checkHideShowBare" id="checkAddMilestone" style="display: none;"></input>
+                        <div class="bidMilestone rmStyleOnCheck">
+
+    <?php
+    if($srArr['paytype'] != "hourly")
+    {
+$heading="% of Agreement Sum"; $tot="Sum";}
+else {$heading="Hours";$tot="Total Hours";}
+
+    $inOffTmpl='
+<table id="open_bid_milestone" class="table table-striped table-bordered" cellspacing="0" width="100%" style="border-radius: 8px 8px 0px 0px;">
+                <thead>
+                <tr>
+                <th colspan="3" id="titleHeaders" style="background: none; color: black; border-right: 0px;">Milestones (optional)</th>
+                <th style="text-align: right;">
+      <i class="material-icons addButton" onclick="rmNewRow(\'#milestoneBody\')" >
+      remove_circle_outline
+      </i>
+
+      <i class="material-icons addButton" onclick="addNewRow(\'#milestoneBody\')" >
+      control_point
+      </i>
+    </th> 
+                </tr>
+                <tr class="colHeader">
+                        <th style="width: 10%;">Name</th>
+                        <th style="width: 20%;">Date</th>
+                        <th>Description</th>
+                        <th style="width: 15%;" class="changehead">'.$heading.'</th>
+                        </tr>
+                </thead>
+                
+                <tbody class="tbodyBorder" id="milestoneBody">';
+               
+    
+    $inOffTmpl.='
+                </tbody>
+    <tfoot>
+      <tr>
+        <td colspan=3 class="changetotal">
+        '.$tot.'
+        </td>
+        <td>
+        <input type="input" id="milestoneTotal" placeholder="total" value="" readonly />
+
+        </td>
+      </tr>
+    <tfoot>
+</table>';
+
+
+    echo $inOffTmpl;
+
+    ?>
+      </div>
+
 
               </summary>
               <summary class="review WDTH90 MRGCenter" style="display: none">
@@ -358,7 +416,61 @@ var gLng=-122.3321;
             </div>
             </aside>
         </section>
+<script type="text/javascript" src="js/bootstrap-datepicker.min.js"></script>
+<script type="text/javascript">
 
+function addNewRow( id )
+{
+    var inc= $( id ).children().length + 1;
+    //<input type=\'input\'  id="mileid"/>
+    $( id ).append('<tr><td><input type=\'input\' name=\'milestones['+inc+'][name]\' value="'+inc+'" readonly /></td><td><div class="input-group date" data-provide="datepicker"><input type="text" class="form-control datepicker" name=\'milestones['+inc+'][due_datetime]\'  data-date-format="mm-dd-yyyy" readonly><div class="input-group-addon"><span class="glyphicon glyphicon-th"></span></div></div></td><td><input type=\'input\' name=\'milestones['+inc+'][descr]\' /></td><td><input class="milestoneAmt" type=\'input\' name=\'milestones['+inc+'][amount]\' onkeypress="return isNumberKey(event)" onchange=\'milestoneTotalFunc(".milestoneAmt", "#milestoneTotal","'+inc+'")\' /><span class="tothouramt'+inc+'"></span></td></tr>');
+}
+
+function rmNewRow( id )
+{
+  if( $( id ).children().length >0)
+  {
+    
+  $( id + ' tr:last-child' ).remove();
+  var inc= $( id ).children().length;
+  if(inc==0 ) 
+    $("#milestoneTotal").val(""); 
+  else
+  milestoneTotalFunc(".milestoneAmt", "#milestoneTotal",inc);
+  }
+
+}
+
+$('#date_to .input-group.date').datepicker({
+    calendarWeeks: true,
+    autoclose: true,
+    format: "yyyy-mm-dd",
+    todayHighlight: true,
+    orientation: "top left",
+    todayBtn: "linked"
+    
+    
+});
+$.fn.datepicker.defaults.format = "yyyy-mm-dd";
+$.fn.datepicker.defaults.autoclose = true;
+$.fn.datepicker.defaults.todayHighlight = true;
+
+
+
+$('#date_from .input-group.date').datepicker({
+    calendarWeeks: true,
+    autoclose: true,
+    format: "yyyy-mm-dd",
+    todayHighlight: true,
+    orientation: "top left",
+    todayBtn: "linked"
+    
+    
+});
+
+</script>
+
+<link rel="stylesheet" type="text/css" href="css/bootstrap-datepicker3.min.css">
 <?php
 include("footer.php");
 ?>
