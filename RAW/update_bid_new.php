@@ -1,8 +1,4 @@
 <?php
-
-ini_set('display_errors', 1);
-ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);
 $_configs = include("/etc/helptimize/conf.php");
 require_once('./common.inc.php');
 require_once('./mysql_lib.php');
@@ -75,16 +71,14 @@ $payType = $_sqlObj->query('select id from paytype where name="'.$_POST['payType
 
 $status =  $_sqlObj->query('select id from status where status="submitted"');
 
-	$sr_id = $_POST['service_id'];
-	$sql_update_sr = "UPDATE serviceRequests SET last_updated=now() WHERE id='$sr_id'";
-	$sql_update_sr_Qry = $_sqlObj->query($sql_update_sr);
 
-    echo $str='insert into bids(srId, ownerId, create_datetime, title, descr, payType, payAmt, rateperhour, totalhours, advancePayment, dateTimeTo, dateTimeFrom, timeFrom, timeTo, categId, cancelFee, is18, ageApproved, status, last_updated, reviewedByRequest,set_schedule,schedule_note,schedule_amount) values('.$_POST['service_id'].', '.$_SESSION['id'].', now(), "'.$_POST['title'].'", "'.$_POST['descr'].'", '.$payType[0]['id'].', "'.$_POST['payAmt'].'", "'.$rateperhour.'", "'.$totalhours.'", "'.$_POST['advancePayment'].'", "'.$_POST['dateTimeTo'].'", "'.$_POST['dateTimeFrom'].'", "'.$_POST['timeFrom'].'", "'.$_POST['timeTo'].'", '.$_POST['category'].', "'.$_POST['cancelfee'].'", '.$is18.', 0, '.$status[0]['id'].', now(), 0, "'.$_POST['set_schedule'].'", "'.$_POST['schedule_note'].'", "'.$amount.'");';
+    $str='update bids set create_datetime=now(), title="'.$_POST['title'].'", descr="'.$_POST['descr'].'", payType='.$payType[0]['id'].', payAmt='.$_POST['payAmt'].', rateperhour='.$rateperhour.', totalhours='.$totalhours.', advancePayment='.$_POST['advancePayment'].', dateTimeTo="'.$_POST['dateTimeTo'].'", dateTimeFrom="'.$_POST['dateTimeFrom'].'", timeFrom = "'.$_POST['timeFrom'].'", timeTo = "'.$_POST['timeTo'].'", categId='.$_POST['category'].', cancelFee='.$_POST['cancelfee'].', is18='.$is18.', ageApproved=0, status='.$status[0]['id'].', last_updated=now(), reviewedByRequest=0,set_schedule="'.$_POST['set_schedule'].'",schedule_note="'.$_POST['schedule_note'].'",schedule_amount='.$amount.' WHERE id='.$_POST['bid_id'].' AND srId='.$_POST['service_id'].' AND ownerId='.$_SESSION['id'].'';
 	if($_sqlObj->query($str)){
 	$id=$_sqlObj->lastId();
 	
 		################Insert Revised table for bid
-	$Rev_str='insert into bids_revision(bidid,refno,srId, ownerId, create_datetime, title, descr, payType, payAmt, rateperhour, totalhours, advancePayment, dateTimeTo, dateTimeFrom, timeFrom, timeTo categId, cancelFee, is18, ageApproved, status, last_updated, reviewedByRequest,set_schedule,schedule_note,schedule_amount) values('.$id.',"1",'.$_POST['service_id'].', '.$_SESSION['id'].', now(), "'.$_POST['title'].'", "'.$_POST['descr'].'", '.$payType[0]['id'].', "'.$_POST['payAmt'].'", "'.$rateperhour.'", "'.$totalhours.'", "'.$_POST['advancePayment'].'", "'.$_POST['dateTimeTo'].'", "'.$_POST['dateTimeFrom'].'", "'.$_POST['timeFrom'].'", "'.$_POST['timeTo'].'",'.$_POST['category'].', "'.$_POST['cancelfee'].'", '.$is18.', 0, '.$status[0]['id'].', now(), 0, "'.$_POST['set_schedule'].'", "'.$_POST['schedule_note'].'", "'.$amount.'");';
+	$Rev_str='update bids set create_datetime=now(), title="'.$_POST['title'].'", descr="'.$_POST['descr'].'", payType='.$payType[0]['id'].', payAmt='.$_POST['payAmt'].', rateperhour='.$rateperhour.', totalhours='.$totalhours.', advancePayment='.$_POST['advancePayment'].', dateTimeTo="'.$_POST['dateTimeTo'].'", dateTimeFrom="'.$_POST['dateTimeFrom'].'", timeFrom = "'.$_POST['timeFrom'].'", timeTo = "'.$_POST['timeTo'].'", categId='.$_POST['category'].', cancelFee='.$_POST['cancelfee'].', is18='.$is18.', ageApproved=0, status='.$status[0]['id'].', last_updated=now(), reviewedByRequest=0,set_schedule="'.$_POST['set_schedule'].'",schedule_note="'.$_POST['schedule_note'].'",schedule_amount='.$amount.' WHERE bidid='.$_POST['bid_id'].' AND srId='.$_POST['service_id'].' AND ownerId='.$_SESSION['id'].'';
+
 	$Qry=$_sqlObj->query($Rev_str);
 	$refid=$_sqlObj->lastId();
 
@@ -103,7 +97,7 @@ $status =  $_sqlObj->query('select id from status where status="submitted"');
 			$Qry=$_sqlObj->query($Upd_str);
 		}
 
-		 ###########Update address with current bidid - April 10
+		###########Update address with current bidid - April 10
 		 $_sqlObj->query('update address set bidId='.$id.' where srId="'.$_POST['service_id'].'" and userId="'.$_SESSION['id'].'";');
 		 ################Insert Revised table for Address -- Start			
 			 $Rev_picstr='INSERT INTO address_revision ( userId, datetime, title, descr, address, posLong, posLat,srId,bidId)
@@ -117,14 +111,14 @@ $status =  $_sqlObj->query('select id from status where status="submitted"');
 
 		if($milestone_size > 0)
 		{
-			
+		
 		$ms=$_sqlObj->escapeArr($_POST['milestones']);
 		
 		
         $i = 0;
-		while($i < $milestone_size )
+		while($i <= $milestone_size )
 		{
-	
+
 				$rateperhour=0;$totalhours=0;
 				if($_POST['payType'] == "hourly")
 					{					
@@ -133,12 +127,13 @@ $status =  $_sqlObj->query('select id from status where status="submitted"');
 					$row["amount"]=$rateperhour*$totalhours;
 					}
 
-			$msstr='insert into milestones( datetime, bidId, due_datetime, name, descr, amountType, amount, notes, rateperhour, totalhours) values( now(), '.$id.', "'.$milestone_chunks[$i][1].'", "'.$milestone_chunks[$i][0].'", "'.$milestone_chunks[$i][2].'", "percent", "'.$milestone_chunks[$i][3].'", "", "'.$rateperhour.'", "'.$totalhours.'");';
+			$msstr='update milestones set datetime=now(), due_datetime="'.$milestone_chunks[$i][1].'", name="'.$milestone_chunks[$i][0].'", descr="'.$milestone_chunks[$i][2].'", amountType="percent", amount="'.$milestone_chunks[$i][3].'", rateperhour="'.$rateperhour.'", totalhours="'.$totalhours.'" WHERE bid='.$_POST['bid_id'].'';
 				if(!$_sqlObj->query($msstr)){
 				$rtrn['error'][]=$_sqlObj->error();
 				}
 		################Insert Revised table for Milestone
-			 $Rev_msstr='insert into milestones_revision(refid,refno, datetime, bidId, due_datetime, name, descr, amountType, amount, notes, rateperhour, totalhours) values('.$refid.',"1", now(), '.$id.', "'.$milestone_chunks[$i][1].'", "'.$milestone_chunks[$i][0].'", "'.$milestone_chunks[$i][2].'", "percent", "'.$milestone_chunks[$i][3].'", "", "'.$rateperhour.'", "'.$totalhours.'");';
+
+			$Rev_msstr='update milestones set datetime=now(), due_datetime="'.$milestone_chunks[$i][1].'", name="'.$milestone_chunks[$i][0].'", descr="'.$milestone_chunks[$i][2].'", amountType="percent", amount="'.$milestone_chunks[$i][3].'", rateperhour="'.$rateperhour.'", totalhours="'.$totalhours.'" WHERE bid='.$_POST['bid_id'].'';
 			$Qry=$_sqlObj->query($Rev_msstr);
 			$row=next($ms);
 
@@ -155,9 +150,11 @@ $status =  $_sqlObj->query('select id from status where status="submitted"');
 		if(!array_key_exists('error', $rtrn)){
 		$rtrn['status']=1;
 		$rtrn['msg']='bid successfully created';
-		//////After creating Bid call pusher notification to corresponding user --- Start
-	require __DIR__ . '/vendor/autoload.php';
-	$options = array(
+		
+
+	  //////After editing Bid call pusher notification to SR/Bid User --- Start
+		require __DIR__ . '/vendor/autoload.php';
+		$options = array(
 	    'cluster' => $_configs["push_cluster"],
 	    'useTLS' => true
 	  );
@@ -167,23 +164,32 @@ $status =  $_sqlObj->query('select id from status where status="submitted"');
 	    $_configs["push_app_id"],
 	    $options
 	  );
-		$type="newbid";
+		$type="editbid";
 	   // get corresponding user account_details
 	   $qry='select * from view_serviceRequests where id='.$_POST['service_id'];	
 	   $srArr=$_sqlObj->query($qry);
 	  	
-	 $userid = $srArr[0]['ownerId'];
-	 $url="view_service_details.php?id=".$_POST['service_id'];
-	 $Content="New incoming bid for - '".$srArr[0]['title']."'";
-	 $Content1="New incoming bid for - ".$srArr[0]['title']."";
+	   
+			if($_SESSION['id'] == $srArr[0]['ownerId'])
+			 $userid = $srArr[0]['srOwnerId'];
+			else
+			$userid = $srArr[0]['ownerId'];
+
+		$Content="Agreement '".$srArr[0]['title']."' has been changed and awaiting your approval";
+		$Content1="Agreement ".$srArr[0]['title']." has been changed and awaiting your approval";	  	
+	  	$url='view_service_details.php?id='.$_POST['service_id'];		 
+	  	
 	 $today = date("Y-m-d H:i:s");  
-	 $sql_insert_message = "INSERT INTO message_list (message_id,sr_id,message_type,message_title,date_time,read_status,user_id,receiver_id,url) VALUES ('". $id ."','". $_POST['service_id'] ."','". $type ."','". $Content1 ."','". $today ."','0','". $_SESSION['id'] ."','". $userid ."','". $url ."')";
-	 $result_insert_message = $_sqlObj->query($sql_insert_message);
-	 
+	 $sql_insert_message = "INSERT INTO message_list (message_id,sr_id,message_type,message_title,date_time,read_status,user_id,receiver_id,url) VALUES ('". $id ."','". $srId ."','". $type ."','". $Content1 ."','". $today ."','0','". $_SESSION['id'] ."','". $userid ."','". $url ."')";
+	$result_insert_message = $_sqlObj->query($sql_insert_message);	  
 	
+	 
+	  
+
 	  $data['message'] = $Content . "|" . $type. "|" . $url;
-	  $pusher->trigger('pop_up_message',$userid, $data);//$srArr[0]['ownerExternId']
-	//////After creating service request call pusher notification to other users --- End
+	  $pusher->trigger('pop_up_message',$userid, $data);//$value['externId']
+
+	//////After editing Bid call pusher notification to SR/Bid user --- End
 		}
 	$_SESSION['new_bid']=array();
 	echo json_encode($rtrn);

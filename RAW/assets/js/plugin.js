@@ -7,12 +7,12 @@
 
 (function(window, Calendar) {
     var cal, resizeThrottled;
-    var useCreationPopup = true;
-    var useDetailPopup = true;
+    var useCreationPopup = false;
+    var useDetailPopup = false;
     var datePicker, selectedCalendar;
 
     cal = new Calendar('#calendar', {
-        defaultView: 'week',
+        defaultView: 'month',
         useCreationPopup: useCreationPopup,
         useDetailPopup: useDetailPopup,
         taskView: false,
@@ -39,8 +39,8 @@
               
         }
     });
-
-    // event handlers
+// var x = cal._layout.container.childNodes[0].childNodes[1].childNodes[0].childNodes[0]
+ // event handlers
     cal.on({
         'clickMore': function(e) {
             console.log('clickMore', e);
@@ -52,39 +52,39 @@
             console.log('clickDayname', date);
         },
         'beforeCreateSchedule': function(e) {
+            $('#modal-new-schedule').modal('show');
+            //$( "#modal-new-schedule" ).show();
+            $( "#from_date" ).datepicker();
+            $( "#to_date" ).datepicker();
+            
             console.log('beforeCreateSchedule', e);
             $('#start-date').val(JSON.stringify(e.start._date));
             $('#end-date').val(JSON.stringify(e.end._date));
-            var utcStartDate =  moment.utc(e.start._date);
-            var startMin = utcStartDate.format('HH:mm a');
-            var utcEndDate =  moment.utc(e.end._date);
-            var endMin = utcEndDate.format('HH:mm a');
+            var utcStartDate =  moment.utc(e.start._date).local();
+            //var startMin = utcStartDate.format('HH:mm a');
+            var startMin = $("#time_from_value").val();
+            var utcEndDate =  moment.utc(e.end._date).local();
+            //var endMin = utcEndDate.format('HH:mm a');
+            var endMin = $("#time_to_value").val();
 
             var dbStartDate = utcStartDate.format('YYYY-MM-DD HH:mm:ss');
             var dbEndDate = utcEndDate.format('YYYY-MM-DD HH:mm:ss');
 
-            utcStartDate = utcStartDate.format('MM/DD/YYYY');
-            utcEndDate = utcEndDate.format('MM/DD/YYYY');
-            //alert("utcStartDate: " + utcStartDate);
+            /*utcStartDate = utcStartDate.format('DD/MM/YYYY');
+            utcEndDate = utcEndDate.format('DD/MM/YYYY');*/
 
-            //alert(moment.utc(e.start._date));
+            utcStartDate = utcStartDate.format('d MMM yyyy');
+            utcEndDate = utcEndDate.format('d MMM yyyy');
+
             localStorage.setItem('startDate1', utcStartDate);
             localStorage.setItem('endDate1', utcEndDate);
             localStorage.setItem('startMin', startMin);
             localStorage.setItem('endMin', endMin);
             localStorage.setItem('dbStartDate', dbStartDate);
-            localStorage.setItem('dbEndDate', dbEndDate);  
-            console.log(localStorage);
-
-            //localStorage.setItem('startDate', e.start._date);
-            //localStorage.setItem('endDate', e.end._date);            
-            //localStorage.setItem('startDate', e.start._date);
-            //localStorage.setItem('endDate', e.end._date);
+            localStorage.setItem('dbEndDate', dbEndDate);           
             var diD = _getDateDiff(e.start._date, e.end._date);
             localStorage.setItem('noofdays', diD);
-            //alert(diD);
             if(diD < 7) {
-                //alert("comes");
                 $('#recurring option').prop('disabled', true);
                 $('#recurring option[value="One Time"]').prop('disabled', false);
             } else if(diD < 14) {
@@ -106,8 +106,8 @@
             }else{
                 $('#recurring option').prop('disabled', false);
             }
-            // $('#start-date').val(e.start._date);
-            // $('#end-date').val(e.end._date);
+
+
             saveNewSchedule(e);
         },
         'beforeUpdateSchedule': function(e) {
@@ -116,8 +116,6 @@
             e.schedule.end = e.end;
             sessionStorage.setItem('startDate', e.start._date);
             sessionStorage.setItem('endDate', e.end._date);
-            // $('#start-date').val(e.start._date);
-            // $('#end-date').val(e.end._date);
             cal.updateSchedule(e.schedule.id, e.schedule.calendarId, e.schedule);
         },
         'beforeDeleteSchedule': function(e) {
@@ -126,8 +124,6 @@
         },
         'afterRenderSchedule': function(e) {
             var schedule = e.schedule;
-            // var element = cal.getElement(schedule.id, schedule.calendarId);
-            // console.log('afterRenderSchedule', element);
         },
         'clickTimezonesCollapseBtn': function(timezonesCollapsed) {
             console.log('timezonesCollapsed', timezonesCollapsed);
@@ -268,13 +264,21 @@
         var title = $('#new-schedule-title').val();
         var location = $('#new-schedule-location').val();
         var isAllDay = document.getElementById('new-schedule-allday').checked;
-        var start = datePicker.getStartDate();
-        var end = datePicker.getEndDate();
+        /*var start = datePicker.getStartDate();
+        var end = datePicker.getEndDate();*/
+        var start = new Date($("#from_date").val());
+        var end = new Date($("#to_date").val());
+
+        console.log("onNewSchedule");
+        console.log(cal);
+        console.log("from_date datepicker: "+start);
+        console.log("to_date datepicker: "+end);
+        
         var calendar = selectedCalendar ? selectedCalendar : CalendarList[0];
 
-        if (!title) {
+        /*if (!title) {
             return;
-        }
+        }*/
 
         cal.createSchedules([{
             id: String(chance.guid()),
@@ -295,7 +299,77 @@
             state: 'Busy'
         }]);
 
+
+
+        $('#start-date').val(JSON.stringify(start));
+        $('#end-date').val(JSON.stringify(end));
+        var utcStartDate =  moment(start).utc().local();
+        //var startMin = utcStartDate.format('HH:mm a');
+        var utcEndDate =  moment(end).utc().local();
+        //var endMin = utcEndDate.format('HH:mm a');
+
+        console.log("utcStartDate : "+utcStartDate);
+        console.log("utcEndDate : "+utcEndDate);
+        
+        var startMin = $("#time_from_value").val();
+        var endMin = $("#time_to_value").val();
+        var dbStartMin = convertTo24Hour(startMin);
+        var dbEndMin = convertTo24Hour(endMin);
+
+        var dbStartDate = utcStartDate.format('YYYY-MM-DD HH:mm:ss');
+        var dbEndDate = utcEndDate.format('YYYY-MM-DD HH:mm:ss');
+
+        /*utcStartDate = utcStartDate.format('DD/MM/YYYY');
+        utcEndDate = utcEndDate.format('DD/MM/YYYY');*/
+        utcStartDate = utcStartDate.format('DD MMM YYYY');
+        utcEndDate = utcEndDate.format('DD MMM YYYY');
+
+        console.log("After formating....");
+        console.log("utcStartDate : "+utcStartDate);
+        console.log("utcEndDate : "+utcEndDate);
+
+        console.log("time_from_value : "+startMin);
+        console.log("time_to_value : "+endMin);
+
+        localStorage.setItem('startDate', JSON.stringify(start));
+        localStorage.setItem('endDate', JSON.stringify(end));
+        localStorage.setItem('startDate1', utcStartDate);
+        localStorage.setItem('endDate1', utcEndDate);
+        localStorage.setItem('startMin', startMin);
+        localStorage.setItem('endMin', endMin);
+        localStorage.setItem('dbStartDate', dbStartDate);
+        localStorage.setItem('dbEndDate', dbEndDate);           
+        localStorage.setItem('dbStartMin', dbStartMin);
+        localStorage.setItem('dbEndMin', dbEndMin);
+        
+        var diD = _getDateDiff(start, end);
+        localStorage.setItem('noofdays', diD);
+        if(diD < 7) {
+            $('#recurring option').prop('disabled', true);
+            $('#recurring option[value="One Time"]').prop('disabled', false);
+        } else if(diD < 14) {
+            $('#recurring option').prop('disabled', true);
+            $('#recurring option[value="One Time"]').prop('disabled', false);
+            $('#recurring option[value="Weekly"]').prop('disabled', false);
+        } else if(diD < 30) {
+            $('#recurring option').prop('disabled', true);
+            $('#recurring option[value="Weekly"]').prop('disabled', false);
+            $('#recurring option[value="One Time"]').prop('disabled', false);
+            $('#recurring option[value="Twice Monthly"]').prop('disabled', false);
+
+        }else if(diD < 59) {
+            $('#recurring option').prop('disabled', true);
+            $('#recurring option[value="Weekly"]').prop('disabled', false);
+            $('#recurring option[value="One Time"]').prop('disabled', false);
+            $('#recurring option[value="Twice Monthly"]').prop('disabled', false);
+            $('#recurring option[value="Monthly"]').prop('disabled', false);
+        }else{
+            $('#recurring option').prop('disabled', false);
+        }
+
         $('#modal-new-schedule').modal('hide');
+        //$('#modal-new-schedule').hide();
+        console.log(cal);
     }
 
     function onChangeNewScheduleCalendar(e) {
@@ -326,15 +400,18 @@
                 end: end
             });
         }
-        var option = '<option>Recurring</option>' +
-        '<option>All day</option>' +
-        '<option>Weekly</option>' +
-        '<option>Twice Monthly</option>'+
-        '<option>Monthly</option>'+
-        '<option>Every other month</option>'
-        $('.tui-full-calendar-popup-container .tui-full-calendar-popup-section:nth-child(3)').hide();
-        $('.tui-full-calendar-section-allday').hide();
-        $('.tui-full-calendar-section-state').html('<div class="custom-drop-down"><select>'+option+'</select></div>');
+
+        console.log("createNewSchedule");
+        console.log(event);
+        // var option = '<option>Recurring</option>' +
+        // '<option>All day</option>' +
+        // '<option>Weekly</option>' +
+        // '<option>Twice Monthly</option>'+
+        // '<option>Monthly</option>'+
+        // '<option>Every other month</option>'
+        // $('.tui-full-calendar-popup-container .tui-full-calendar-popup-section:nth-child(3)').hide();
+        // $('.tui-full-calendar-section-allday').hide();
+        // $('.tui-full-calendar-section-state').html('<div class="custom-drop-down"><select>'+option+'</select></div>');
         // $('.tui-full-calendar-section-button-save').prepend('<div class="custom-drop-down"><select><option>Test1</option></select></div>')
     }
     function saveNewSchedule(scheduleData) {
@@ -354,7 +431,7 @@
             borderColor: calendar.borderColor,
             location: scheduleData.location,
             raw: {
-                class: scheduleData.raw['class']
+                class: ''/*scheduleData.raw['class']*/
             },
             state: scheduleData.state
         };
@@ -500,6 +577,18 @@
         return target.dataset ? target.dataset.action : target.getAttribute('data-action');
     }
 
+    function convertTo24Hour(time) {
+        time = time.toLowerCase();
+        var hours = parseInt(time.substr(0, 2));
+        if(time.indexOf('am') != -1 && hours == 12) {
+            time = time.replace('12', '0');
+        }
+        if(time.indexOf('pm')  != -1 && hours < 12) {
+            time = time.replace(hours, (hours + 12));
+        }
+        return time.replace(/(am|pm)/, '');
+    }
+
     resizeThrottled = tui.util.throttle(function() {
         cal.render();
     }, 50);
@@ -516,6 +605,7 @@
 (function() {
     var calendarList = document.getElementById('calendarList');
     var html = [];
+    
     CalendarList.forEach(function(calendar) {
         html.push('<div class="lnb-calendars-item"><label>' +
             '<input type="checkbox" class="tui-full-calendar-checkbox-round" value="' + calendar.id + '" checked>' +
@@ -524,6 +614,6 @@
             '</label></div>'
         );
     });
-
+    
     calendarList.innerHTML = html.join('\n');
 })();

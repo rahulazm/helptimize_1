@@ -1,6 +1,9 @@
 <?php
+/*ini_set('display_errors', 1);
+ini_set('display_startup_errors', 1);
+error_reporting(E_ALL);*/
 session_start();
-$configs = include("/etc/helptimize/conf.php");
+$_configs = include("/etc/helptimize/conf.php");
 require_once("./common.inc.php");
 require_once("./mysql_lib.php");
 require_once("./resize_image.php");
@@ -64,7 +67,7 @@ if($_SESSION['id']){
 			}
 		}
 
-	        $sqlStr='insert into serviceRequests values(null, "'.$post['title'].'", "'.$post['descr'].'", "'.$post['summ'].'", (select id from status where status="'.$post['status'].'"), "'.$post['bidDate'].'", now(),now(), (select id from paytype where name="'.$post['payType'].'"), "'.$post['payAmt'].'", "'.$post['totalhours'].'", "'.$post['rateperhour'].'", "'.$post['dateTimeTo'].'", "'.$post['dateTimeFrom'].'", '. $post['reqstedBidId'].', null, '.$post['category'].', '.$_SESSION['id'].', '.$post['is18'].', '.$post['guardApproval'].', "'.$post['externId'].'", 0, "", "'.$post['buttonstatus'].'",0,"'.$post['set_schedule'].'", "'.$post['schedule_note'].'", "'.$post['schedule_amount'].'");';
+	        $sqlStr='insert into serviceRequests values(null, "'.$post['title'].'", "'.$post['descr'].'", "'.$post['summ'].'", (select id from status where status="'.$post['status'].'"), "'.$post['bidDate'].'", now(),now(), (select id from paytype where name="'.$post['payType'].'"), "'.$post['payAmt'].'", "'.$post['totalhours'].'", "'.$post['rateperhour'].'", "'.$post['dateTimeTo'].'", "'.$post['dateTimeFrom'].'", "'.$post['timeFrom'].'", "'.$post['timeTo'].'", '. $post['reqstedBidId'].', null, '.$post['category'].', '.$_SESSION['id'].', '.$post['is18'].', '.$post['guardApproval'].', "'.$post['externId'].'", 0, "", "'.$post['buttonstatus'].'", "'.$post['cancelfee'].'","'.$post['set_schedule'].'", "'.$post['schedule_note'].'", "'.$post['schedule_amount'].'");';
 
 	 //echo($sqlStr);
 	 $rtrn=$_sqlObj->query($sqlStr);
@@ -141,9 +144,9 @@ error_log("====================>> adding addresses to sr: ".print_r($post['addr'
 		$userid = $value['userId'];
 		$Content="New incoming request -  '".$post['title']."'";
 		$Content1="New incoming request -  ".$post['title']."";
-	  $url="bid_interested.php?id=".$id;
+	  $url="view_service_details.php?id=".$id;
 	 $today = date("Y-m-d H:i:s");  
-	 echo $sql_insert_message = "INSERT INTO message_list (message_id,sr_id,message_type,message_title,date_time,read_status,user_id,receiver_id,url) VALUES ('". $id ."','". $id ."','". $type ."','". $Content1 ."','". $today ."','0','". $_SESSION['id'] ."','". $userid ."','". $url ."')";
+	 $sql_insert_message = "INSERT INTO message_list (message_id,sr_id,message_type,message_title,date_time,read_status,user_id,receiver_id,url) VALUES ('". $id ."','". $id ."','". $type ."','". $Content1 ."','". $today ."','0','". $_SESSION['id'] ."','". $userid ."','". $url ."')";
 	$result_insert_message = $_sqlObj->query($sql_insert_message);
 
 	  

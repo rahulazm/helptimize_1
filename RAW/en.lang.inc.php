@@ -249,7 +249,7 @@ define("APPROVED_MESSAGE_2", " was approved");
 define("APPROVE_SUCCESS", "Success");
 define("APPROVE_SUCCESS_DECRIPTION", "The service request was approved.");
 
-define("PUSH_NOTIFICATION_HEADER", "Incoming Notificaton");
+define("PUSH_NOTIFICATION_HEADER", "Incoming Notification");
 
 define("USER_PROFILE", "User Profile");
 

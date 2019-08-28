@@ -15,14 +15,14 @@ $res=$_sqlObj->query($sqlJobs);
 $jobs = $res[0]['jobs'];
 
 //$sqlList="select * from view_bids where srOwnerId='$id' and srBidAwardId is null and shortlist = 'yes' and buttonstatus is null and bidstatus != 'cancel' order by last_updated desc";
-$sqlList = "select * from view_bids where ownerId='$id' order by last_updated desc";
+$sqlList = "select vb.* , (select count(*) from view_bids as vb2 where vb2.srId = vb.srId and vb2.bidstatus != 'cancel') as bidcnt from view_bids as vb where vb.ownerId='$id' order by vb.last_updated desc";
 $bidList=$_sqlObj->query($sqlList);
 
-$sqlList="select * from view_serviceRequests where ownerId='$id' order by last_updated desc";
+$sqlList="select vs.* , (select count(*) from view_bids as vb where vb.srId = vs.id and vb.bidstatus != 'cancel') as bidcnt from view_serviceRequests as vs where vs.ownerId='$id' order by vs.last_updated desc";
 $resList=$_sqlObj->query($sqlList);
 
 //$sqlReqtrAllJobs="select * from view_serviceRequests where ownerId !='$id' and bidAwardId is null order by last_updated desc";
-$sqlReqtrAllJobs = "select vs.* from view_serviceRequests as vs where ownerId !='4' and bidAwardId is null and (select ownerId from view_bids as vb where vb.srId = vs.id and vb.ownerId = '4' and vb.bidstatus != 'cancel') is NULL order by last_updated desc";
+$sqlReqtrAllJobs = "select vs.* , (select count(*) from view_bids as vb where vb.srId = vs.id and vb.bidstatus != 'cancel') as bidcnt from view_serviceRequests as vs where ownerId !='$id' and bidAwardId is null and (select ownerId from view_bids as vb where vb.srId = vs.id and vb.ownerId = '$id' and vb.bidstatus != 'cancel') is NULL order by last_updated desc";
 $resReqtrAllJobs=$_sqlObj->query($sqlReqtrAllJobs);
 ?>
 <script>
@@ -122,7 +122,7 @@ $( document ).ready(function() {
                               <h5 class="ellipsis" title="<?php echo $bidList[$i]['sr_title']?>"><?php echo $bidList[$i]['sr_title']?></h5>
                               <div>
                                   <span class="ongoing"><?php echo $bidList[$i]['status']?></span>
-                                  <span class="badge badge-secondary"><?php echo $bidList[$i]['srid']?> 5</span>
+                                  <span class="badge badge-secondary"><?php echo $bidList[$i]['bidcnt']?></span>
                               </div>
                           </div>
                           <label class="post-date">Posted: <?php echo date("jS M Y h:i A",strtotime($bidList[$i]['create_dateTime']));?></label>
@@ -164,6 +164,9 @@ $( document ).ready(function() {
                           <p class="card-text">#JR<?php echo $resReqtrAllJobs[$i]['id']?>SR-000</p>
                           <div class="card-title">
                               <h5 class="ellipsis" title="<?php echo $resReqtrAllJobs[$i]['title']?>"><?php echo $resReqtrAllJobs[$i]['title']?></h5>
+                              <div>
+                                  <span class="badge badge-secondary"><?php echo $resReqtrAllJobs[$i]['bidcnt']?></span>
+                              </div>
                           </div>
                           <label class="post-date">Posted: <?php echo date("jS M Y h:i A", strtotime($resReqtrAllJobs[$i]['create_dateTime']))?></label>
                           <p class="card-info"><?php 
@@ -222,7 +225,7 @@ $( document ).ready(function() {
                               <h5 class="ellipsis" title="<?php echo $resList[$i]['title']?>"><?php echo $resList[$i]['title']?></h5>
                               <div>
                                   <span class="ongoing"><?php echo $resList[$i]['status']?></span>
-                                  <span class="badge badge-secondary"><?php echo $resList[$i]['srid']?> 5</span>
+                                  <span class="badge badge-secondary"><?php echo $resList[$i]['bidcnt']; ?></span>
                               </div>
                           </div>
                           <label class="post-date">Posted: <?php echo date("jS M Y h:i A",strtotime($resList[$i]['create_dateTime']))?></label>

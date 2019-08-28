@@ -5,7 +5,8 @@ if(!$_SESSION['id']){
 echo "Not logged in.";
 exit(0);
 }
-
+$sr_number=$_sqlObj->escape($_GET['sr_number']);
+$bidid=$_REQUEST["bidid"];
 //preserve previously unsubmitted SR if it exists.
 if($_POST){
 $_SESSION['new_sr']=$_POST;
@@ -14,14 +15,17 @@ $_SESSION['new_sr']=$_POST;
 $configs=$_configs;
 
 // load all addresses for this SR
-
+##########Check Total bid in Review bid table
+$qstr=($_sqlObj->query('
+select count(id) as totbid from bids_revision where bidid='.$bidid));
+$total_count= $qstr[0]["totbid"]+1;
 $db_get_sr_addresses = new mysqli("$host", "$username", "$password", "$db_name");
 
 if($db_get_sr_addresses ->connect_errno > 0){
     die('Unable to connect to database [' . $db_get_sr_addresses ->connect_error . ']');
 }
-$today=date("Y-m-d");
-$sql_get_sr_addresses = "SELECT * FROM address WHERE userId='".$_SESSION['id']."' and personal IS NULL and bidId is NULL and srId is null and (pob is null or pob=0)  and datetime LIKE '%$today%'";
+
+ $sql_get_sr_addresses = "SELECT * FROM address_revision WHERE userId='".$_SESSION['id']."' and personal IS NULL and bidId ='".$bidid."'  and refno ='".$total_count."' and (pob is null or pob=0)";//and bidId is NULL
 
 $result_get_sr_addresses = $db_get_sr_addresses->query($sql_get_sr_addresses);
 $location_count = $result_get_sr_addresses->num_rows;
@@ -37,7 +41,7 @@ if($db_get_addresses ->connect_errno > 0){
     die('Unable to connect to database [' . $db_get_addresses ->connect_error . ']');
 }
 
-$sql_get_addresses = "SELECT * FROM address WHERE userId='$account_id'";
+$sql_get_addresses = "SELECT * FROM address_revision WHERE userId='$account_id'";
 
 $result_get_addresses = $db_get_addresses->query($sql_get_addresses);
 
@@ -46,7 +50,7 @@ $db_get_addresses->close();
 
 
 
-$sql_get_addresses = "SELECT * FROM address WHERE userId=".$_SESSION['id']." and personal IS NOT NULL order by datetime, title";
+$sql_get_addresses = "SELECT * FROM address_revision WHERE userId=".$_SESSION['id']." and personal IS NOT NULL order by datetime, title";
 $result_get_addresses_edit=$_sqlObj->query($sql_get_addresses);
 
 $stored_addresses="";
@@ -68,7 +72,7 @@ $stored_addresses.='
 }
 
 
-$stored_addrs=$_sqlObj->query("select * from address where userId=".$_SESSION['id']." and personal IS NOT NULL order by datetime, title;");
+$stored_addrs=$_sqlObj->query("select * from address_revision where userId=".$_SESSION['id']." and personal IS NOT NULL order by datetime, title;");
 $storeAddrHtml="";
 foreach($stored_addrs as $row){
         $storeAddrHtml.="<option value=" . $row ['id'] . ">" . $row ['title'] . " | " . $row ['address'] .  "</option>";
@@ -140,8 +144,8 @@ a[href^="https://maps.google.com/maps"]{display:none !important}
   <div class="panel-body">
   
 <center>
-<!-- <h4><font color="#000000"><?php echo SELECT_ADDRESS;?></font></h4>
- --> </center>
+<h4><font color="#000000"><?php echo SELECT_ADDRESS;?></font></h4>
+ </center>
 
   </div>
     </div>
@@ -218,8 +222,8 @@ a[href^="https://maps.google.com/maps"]{display:none !important}
         width: 100px;
       }
       #address {
-        /*border: 1px solid #000090;
-        background-color: #f0f0ff;*/
+        border: 1px solid #000090;
+        background-color: #f0f0ff;
         width: 480px;
         padding-right: 2px;
       }
@@ -243,10 +247,7 @@ a[href^="https://maps.google.com/maps"]{display:none !important}
         height: 20px;
         margin-bottom: 2px;
       }
-.collapse.in {
-    display: block !important;
-    height: auto !important;
-}
+      
       
       .panel {
     margin: 0 !important; 
@@ -278,7 +279,7 @@ a[href^="https://maps.google.com/maps"]{display:none !important}
 
 
 
-<div style="margin:10px">
+    <div style="margin:10px">
     
     <?php 
     
@@ -286,9 +287,9 @@ a[href^="https://maps.google.com/maps"]{display:none !important}
     ?>
     
     <div class="panel panel-default text_input_radius">
-      <div class="panel-body">
-        <?php echo NO_SR_LOCATION?></div>
-    </div>
+  <div class="panel-body">
+ <?php echo NO_SR_LOCATION?></div>
+</div>
     
     <?php
     }
@@ -297,65 +298,65 @@ a[href^="https://maps.google.com/maps"]{display:none !important}
     
    <br>
     
-<div class="panel-group" id="accordion">
+    <div class="panel-group" id="accordion">
   <div class="panel panel-default">
     <div class="panel-heading">
-      <h6 class="panel-title">
+      <h4 class="panel-title">
        
         <button class="btn btn-primary general_blue_button_border_radius general_blue_button_size general_blue_button_background general_blue_button_no_border" type="button" data-toggle="collapse" data-target="#collapseOne">Add</button>
           <?php echo SELECT_FROM_GPS_LOCATION?>
       
       
-      </h6>
+      </h4>
     </div>
-    <div id="collapseOne" class="panel-collapse collapse">
+    <div id="collapseOne" class="panel-collapse collapse out">
       <div class="panel-body">
     
     
-       <label><?php echo MY_CURRENT_LOCATION?></label>
+    <label><?php echo MY_CURRENT_LOCATION?></label>
     
  
   
-        <p id ='mapdiv' name='mapdiv'></p>
-        
-        <br>
-        <div class="form-group">
-          <label for="usr"><?php echo CURRENT_ADDRESS?></label>
-          <input type="text" class="form-control text_input_radius" id="curent_address"  name="curent_address">
-        </div>
-        
-        
-        <div class="form-group">
-          <label for="usr"><?php echo ENTER_PROJECT_ADDRESS_NAME?></label>
-          <input type="text" class="form-control text_input_radius" id="current_address_name"  name="current_address_name"  value="<?php echo $location_count+1; ?>">
-        </div>
+  <p id ='mapdiv' name='mapdiv'></p>
+  
+  <br>
+  <div class="form-group">
+  <label for="usr"><?php echo CURRENT_ADDRESS?></label>
+  <input type="text" class="form-control text_input_radius" id="curent_address"  name="curent_address">
+  </div>
   
   
-        <div class="form-group">
-          <label for="comment"><?php echo ENTER_PROJECT_ADDRESS_DESCRIPTION?></label>
-          <textarea placeholder="<?php echo ADRESS_DESCRIPTION;?>" class="form-control text_input_radius" rows="2" id="current_address_description" name="current_address_description"></textarea>
-        </div>
+   <div class="form-group">
+  <label for="usr"><?php echo ENTER_PROJECT_ADDRESS_NAME?></label>
+  <input type="text" class="form-control text_input_radius" id="current_address_name"  name="current_address_name" value="<?php echo $location_count+1; ?>">
+</div>
   
-        <center>
-          <button class="btn btn-primary general_orange_button_border_radius general_orange_button_size general_orange_button_background general_orange_button_no_border" type="button" onclick="add_current_address()"><?php echo ADD_ADDRESS;?></button>
-        </center>
   
-      </div>
-    </div>
+   <div class="form-group">
+  <label for="comment"><?php echo ENTER_PROJECT_ADDRESS_DESCRIPTION?></label>
+  <textarea placeholder="<?php echo ADRESS_DESCRIPTION;?>" class="form-control text_input_radius" rows="2" id="current_address_description" name="current_address_description"></textarea>
+</div>
+  
+  <center>
+<button class="btn btn-primary general_orange_button_border_radius general_orange_button_size general_orange_button_background general_orange_button_no_border" type="button" onclick="add_current_address()"><?php echo ADD_ADDRESS;?></button>
+  </center>
+  
+  </div>
+   </div>
     </div>
     </div>
     
 <div class="panel-group" id="accordion3">
   <div class="panel panel-default">
     <div class="panel-heading">
-      <h6 class="panel-title">
+      <h4 class="panel-title">
       
         
          <button class="btn btn-primary general_blue_button_border_radius general_blue_button_size general_blue_button_background general_blue_button_no_border" type="button" data-toggle="collapse" data-target="#collapseThree">Add</button>
           <?php echo SELECT_NEW_LOCATION?>
-      </h6>
+      </h4>
     </div>
-    <div id="collapseThree" class="panel-collapse collapse">
+    <div id="collapseThree" class="panel-collapse collapse out">
       <div class="panel-body">
     
 		<div class="form-group">
@@ -387,15 +388,15 @@ a[href^="https://maps.google.com/maps"]{display:none !important}
     <div class="panel-group" id="accordion2">
   <div class="panel panel-default">
     <div class="panel-heading">
-      <h6 class="panel-title">
+      <h4 class="panel-title">
        
         
          <button class="btn btn-primary general_blue_button_border_radius general_blue_button_size general_blue_button_background general_blue_button_no_border" type="button" data-toggle="collapse" data-target="#collapseTwo">Add</button>
           <?php echo SELECT_FROM_STORED_LOCATION?>
         
-      </h6>
+      </h4>
     </div>
-    <div id="collapseTwo" class="panel-collapse collapse">
+    <div id="collapseTwo" class="panel-collapse collapse out">
       <div class="panel-body">
     
     
@@ -489,7 +490,7 @@ a[href^="https://maps.google.com/maps"]{display:none !important}
 
     
 <center>
-   <!-- <button onclick="go_back()" type="button" class="btn btn-primary general_orange_button_border_radius general_orange_button_size general_orange_button_background general_orange_button_no_border"><?php echo CONTINUE_BUTTON;?></button> -->
+   <button onclick="go_back()" type="button" class="btn btn-primary general_orange_button_border_radius general_orange_button_size general_orange_button_background general_orange_button_no_border"><?php echo CONTINUE_BUTTON;?></button>
    
   </center>
   
@@ -699,7 +700,7 @@ var latitude = "";
       	 
          latitude =  place.geometry.location.lat();
       	 longitude =  place.geometry.location.lng();
-         
+      
          //alert("latitude: " + latitude + " longitude: " + longitude);
       
       }
@@ -711,7 +712,7 @@ var latitude = "";
       	 
          latitude_3 =  place.geometry.location.lat();
       	 longitude_3 =  place.geometry.location.lng();
-         
+      
          //alert("latitude: " + latitude + " longitude: " + longitude);
       
       }
@@ -759,8 +760,8 @@ var latitude = "";
     </script>
     
     
-    <!-- <script src="https://maps.googleapis.com/maps/api/js?key=<?php echo $configs['google_map_api']; ?>&libraries=places&callback=initAutocomplete"
-        async defer></script> -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=<?php echo $configs['google_map_api']; ?>&libraries=places&callback=initAutocomplete"
+        async defer></script>
         
        
  
@@ -785,18 +786,19 @@ var address_saved_OK_text_2 = '<?php echo ADDRESS_SAVED_OK_TEXT_2; ?>';
 var description_missing = '<?php echo ADDRESS_DESCRIPTION_MISSING; ?>';
 
 
-var sr_number = '<?php echo $_REQUEST["sr_number"]; ?>';
+var sr_number = '<?php echo $sr_number; ?>';
 
 var from = '<?php echo $_REQUEST["from"]; ?>';
+
+var bid_id = '<?php echo $_REQUEST["bidid"]; ?>';
+
+var totalreview_count = '<?php echo $total_count; ?>';
+
 function go_back()
 {
-  
-     if(from == "cancel")
-       location.href = "cancel_resubmit_service_request.php?id="+sr_number;
-     else if(from == "submit")
-       location.href = "update_service_request.php?id="+sr_number;
-     else        
-     location.href = "create_new_service_request.php";
+     
+       location.href = "bid_reupdate.php?id="+bid_id;
+     
 } 
 
 
@@ -832,7 +834,7 @@ function add_stored_address(){
     	
     	var feedback = $.ajax({
     			type: "POST",
-    			url: "manageLocation.php",
+    			url: "manageRefLocation.php",
     		    data: formData,
     		
     		    async: false,
@@ -851,8 +853,7 @@ function add_stored_address(){
   				closeOnConfirm: false
 				},
 				function(){
-  					//location.href = "create_new_service_request_address_selection.php?from="+from+"&sr_number=" + sr_number;
-            
+  					location.href = "create_new_bidref_address_selection.php?from=" + from+"&bidid=" + bid_id+"&sr_number=" + sr_number;
 				});
     		
 				
@@ -901,14 +902,14 @@ function add_new_address_modal(){
         'address'     : address,
         'lat'     : latitude_3,
         'lng'     : longitude_3,
-	'type'    : 'personal',
-	'action'  : 'add'
+	      'type'    : 'personal',
+	      'action'  : 'add'
     }
 	
 	
 	    var feedback = $.ajax({
     			type: "POST",
-    			url: "manageLocation.php",
+    			url: "manageRefLocation.php",
     		    data: formData,
     		
     		    async: false,
@@ -933,24 +934,7 @@ function add_new_address_modal(){
 				},
 				function(){
 				    
-  					 //location.href = "create_new_service_request_address_selection.php?from="+from+"&sr_number=" + sr_number;
-             $.ajax({
-                      url: "show_added_address.php", 
-                      type: "GET",             
-                      //data: new FormData(this), 
-                      contentType: false,       
-                      cache: false,
-                      async: true,             
-                      processData:false,      
-                      
-                      success: function(data)   
-                        {
-                          var result_alladdress = data;
-                          $("#sr_address_list").html(result_alladdress);
-                          //console.log(result_alladdress);
-                          swal.close();
-                        }
-                      })
+  					 location.href = "create_new_bidref_address_selection.php?from=" + from+"&bidid=" + bid_id+"&sr_number=" + sr_number;
 				});
     		
     
@@ -963,9 +947,11 @@ function add_new_address()
 
 {
 		
-	var address = $('#autocomplete').val();
-	var name = $('#new_address_name').val();	
+	var address     = $('#autocomplete').val();
+	var name        = $('#new_address_name').val();	
 	var description = $('#new_address_description').val();
+  var service_id  = $('#service_id').val();
+  var bid_id      = $('#bid_id').val();
 	
 	if(address == ""){
 	
@@ -989,9 +975,9 @@ function add_new_address()
 			confirmButtonColor: '#E65825',
 		});
 		 exit;	
-	}*/
+	}
 	
-	/*if(description == ""){
+	if(description == ""){
 	
 		swal({
   			title: "Warning!",
@@ -1010,25 +996,27 @@ function add_new_address()
 	// store address in service_request_addresses
 	
 	var formData = {
-        'sr_number'     : sr_number,
-        'name'     : name,
-        'address'     : address,
-        'description'     : description,
+        'sr_number'    : service_id,
+        'name'         : name,
+        'bid_id'       : bid_id,
+        'review_count' : totalreview_count,
+        'address'      : address,
+        'description'  : description,
         'latitude'     : latitude,
-        'longitude'     : longitude
+        'longitude'    : longitude
     }
     
-    
+   
      var feedback = $.ajax({
     			type: "POST",
-    			url: "service_request_address_add.php",
+    			url: "bidref_address_add_new.php",
     		    data: formData,
     		
     		    async: false,
     			
-    		}).complete(function(){
+    		}).complete(function(data){
     		
-    		
+    		console.log(data);
     		/*
     		swal({
   				title: address_saved_OK,
@@ -1039,7 +1027,7 @@ function add_new_address()
   				closeOnConfirm: false
 				},
 				function(){
-  					location.href = "create_new_service_request_address_selection.php?sr_number=" + sr_number;
+  					location.href = "create_new_bidref_address_selection.php?sr_number=" + sr_number;
 				});
     		*/
     		
@@ -1049,11 +1037,7 @@ function add_new_address()
     			}).responseText;
     			
     			 var address_id = feedback;
-    			 localStorage.setItem("latitude_address",latitude);
-           localStorage.setItem("longitude_address",longitude);
-           gLat = latitude;
-           gLng = longitude;
-           initMap();
+    			 
     			 swal({
   				title: address_saved_OK,
   				text: address_saved_OK_text,
@@ -1068,31 +1052,12 @@ function add_new_address()
 				},
 				function(isConfirm){
   				if (isConfirm) {
-              console.log("if");
   				    stored_address_during_add_address(address_id, formData);
     				
-    				//location.href = "create_new_service_request_address_selection.php?sr_number=" + sr_number;
+    				//location.href = "create_new_bidref_address_selection.php?sr_number=" + sr_number;
   				
   				} else {
-            console.log("else");
-    			//location.href = "create_new_service_request_address_selection.php?from="+from+"&sr_number=" + sr_number;
-          $.ajax({
-                      url: "show_added_address.php", 
-                      type: "GET",             
-                      //data: new FormData(this), 
-                      contentType: false,       
-                      cache: false,
-                      async: true,             
-                      processData:false,      
-                      
-                      success: function(data)   
-                        {
-                          var result_alladdress = data;
-                          $("#sr_address_list").html(result_alladdress);
-                          //console.log(result_alladdress);
-                          swal.close();
-                        }
-                      })
+    			location.href = "create_new_bidref_address_selection.php?from=" + from+"&bidid=" + bid_id+"&sr_number=" + sr_number;
   				
   				}
 
@@ -1165,20 +1130,19 @@ function add_current_address()
     
      var feedback = $.ajax({
     			type: "POST",
-    			url: "service_request_address_add.php",
+    			url: "bidref_address_add_new.php",
     		    data: formData,
     		
     		    async: false,
     			
-    		}).complete(function(){
+    		}).complete(function(data){
     		
     		
-    		
+    		console.log(data);
 
   		     }).responseText;
   		     
-  		    localStorage.setItem("latitude_address",current_latitude);
-         localStorage.setItem("longitude_address",current_longitude);
+  		  
   		     var address_id = feedback;
   		     
   		     swal({
@@ -1197,32 +1161,12 @@ function add_current_address()
   				if (isConfirm) {
   				    stored_address_during_add_address(address_id,formData);
     				
-    				//location.href = "create_new_service_request_address_selection.php?sr_number=" + sr_number;
+    				//location.href = "create_new_bidref_address_selection.php?sr_number=" + sr_number;
   				
   				} else {
-    			//location.href = "create_new_service_request_address_selection.php?from="+from+"&sr_number=" + sr_number;
-          $.ajax({
-                      url: "show_added_address.php", 
-                      type: "GET",             
-                      //data: new FormData(this), 
-                      contentType: false,       
-                      cache: false,
-                      async: true,             
-                      processData:false,      
-                      
-                      success: function(data)   
-                        {
-                          var result_alladdress = data;
-                          $("#sr_address_list").html(result_alladdress);
-                          //console.log(result_alladdress);
-                          swal.close();
-
-                        }
-                      })
+    			location.href = "create_new_bidref_address_selection.php?from=" + from+"&bidid=" + bid_id+"&sr_number=" + sr_number;
   				
   				}
-
-          //swal.close();
 
 				});
 
@@ -1254,7 +1198,7 @@ $(document).on("click", ".btn_detail_address_update", function(e) {
     	
   	var feedback = $.ajax({
     			type: "POST",
-    			url: "service_request_address_update.php",
+    			url: "bid_address_update.php",
     		    data: formData,
     		
     		    async: false,
@@ -1272,24 +1216,7 @@ $(document).on("click", ".btn_detail_address_update", function(e) {
 				},
 				function(){
 				
-			//location.href = "create_new_service_request_address_selection.php?from="+from+"&sr_number=" + sr_number;
-      $.ajax({
-                      url: "show_added_address.php", 
-                      type: "GET",             
-                      //data: new FormData(this), 
-                      contentType: false,       
-                      cache: false,
-                      async: true,             
-                      processData:false,      
-                      
-                      success: function(data)   
-                        {
-                          var result_alladdress = data;
-                          $("#sr_address_list").html(result_alladdress);
-                          //console.log(result_alladdress);
-                          swal.close();
-                        }
-                      })
+				location.href = "create_new_bidref_address_selection.php?from=" + from+"&bidid=" + bid_id+"&sr_number=" + sr_number;
   
 				});
         				
@@ -1387,8 +1314,7 @@ function stored_address_during_add_address(address_id, formD){
 	'posLat'	: formD['latitude']
     	}
     	  
- console.log("stored_address_during_add_address : ");
- console.log(formData);
+ 
     var feedback = $.ajax({
     	type: "POST",
     	url: "service_request_address_store.php",
@@ -1409,32 +1335,12 @@ function stored_address_during_add_address(address_id, formD){
 			},
 				
 			function(){
-				//location.href = "create_new_service_request_address_selection.php?from="+from+"&sr_number=" + sr_number;
-        $.ajax({
-                      url: "show_added_address.php", 
-                      type: "GET",             
-                      //data: new FormData(this), 
-                      contentType: false,       
-                      cache: false,
-                      async: true,             
-                      processData:false,      
-                      
-                      success: function(data)   
-                        {
-                          var result_alladdress = data;
-                          $("#sr_address_list").html(result_alladdress);
-                          //console.log(result_alladdress);
-                          swal.close();
-                        }
-                      })
+				location.href = "create_new_bidref_address_selection.php?from=" + from+"&bidid=" + bid_id+"&sr_number=" + sr_number;
   
 		});
     		 		
     		
     });
-
-    console.log("add address feedback");
-    console.log(feedback);
   	
 }
 
@@ -1496,24 +1402,7 @@ $(document).on("click", ".stored_address", function(e) {
 				function(){
 				
 			
-				//location.href = "create_new_service_request_address_selection.php?from="+from+"&sr_number=" + sr_number;
-             $.ajax({
-                      url: "show_added_address.php", 
-                      type: "GET",             
-                      //data: new FormData(this), 
-                      contentType: false,       
-                      cache: false,
-                      async: true,             
-                      processData:false,      
-                      
-                      success: function(data)   
-                        {
-                          var result_alladdress = data;
-                          $("#sr_address_list").html(result_alladdress);
-                          //console.log(result_alladdress);
-                          swal.close();
-                        }
-                      })
+				location.href = "create_new_bidref_address_selection.php?from=" + from+"&bidid=" + bid_id+"&sr_number=" + sr_number;
   
 				});
     		
@@ -1561,7 +1450,7 @@ $(document).on("click", ".delete_stored_address", function(e) {
     	
     	   var feedback = $.ajax({
     			type: "POST",
-    			url: "manageLocation.php",
+    			url: "manageRefLocation.php",
     		    data: formData,
     		
     		    async: false,
@@ -1580,24 +1469,7 @@ $(document).on("click", ".delete_stored_address", function(e) {
 				},
 				function(){
 				
-				  //location.href = "create_new_service_request_address_selection.php?from="+from+"&sr_number=" + sr_number;
-          $.ajax({
-                      url: "show_added_address.php", 
-                      type: "GET",             
-                      //data: new FormData(this), 
-                      contentType: false,       
-                      cache: false,
-                      async: true,             
-                      processData:false,      
-                      
-                      success: function(data)   
-                        {
-                          var result_alladdress = data;
-                          $("#sr_address_list").html(result_alladdress);
-                          //console.log(result_alladdress);
-                          swal.close();
-                        }
-                      })
+				location.href = "create_new_bidref_address_selection.php?from=" + from+"&bidid=" + bid_id+"&sr_number=" + sr_number;
   
 				});
     		
@@ -1649,7 +1521,7 @@ $(document).on("click", ".delete_address", function(e) {
     	
     	   var feedback = $.ajax({
     			type: "POST",
-    			url: "manageLocation.php",
+    			url: "manageRefLocation.php",
     		    data: formData,
     		
     		    async: false,
@@ -1668,24 +1540,7 @@ $(document).on("click", ".delete_address", function(e) {
 				},
 				function(){
 				
-				  //location.href = "create_new_service_request_address_selection.php?from="+from+"&sr_number=" + sr_number;
-          $.ajax({
-                      url: "show_added_address.php", 
-                      type: "GET",             
-                      //data: new FormData(this), 
-                      contentType: false,       
-                      cache: false,
-                      async: true,             
-                      processData:false,      
-                      
-                      success: function(data)   
-                        {
-                          var result_alladdress = data;
-                          $("#sr_address_list").html(result_alladdress);
-                          //console.log(result_alladdress);
-                          swal.close();
-                        }
-                      })
+				location.href = "create_new_bidref_address_selection.php?from=" + from+"&bidid=" + bid_id+"&sr_number=" + sr_number;
   
 				});
     		
@@ -2251,7 +2106,7 @@ function showPosition(position) {
 		break;
 		case error.TIMEOUT:
 		//err.innerHTML = "The request to get user location timed out."
-			    $.get("https://ipinfo.io", function(response) {
+		    $.get("https://ipinfo.io", function(response) {
   					console.log("ipinfo get response: "+response.loc+ ", "+response.country);
 					var loc = response.loc.split(',');
   					var pos = {coords : {
@@ -2259,6 +2114,7 @@ function showPosition(position) {
         							longitude: loc[1]}};
         			showPosition(pos);
 				}, "jsonp");
+
 		break;
 		case error.UNKNOWN_ERROR:
 		err.innerHTML = "An unknown error occurred."
@@ -2288,7 +2144,7 @@ var display_last = "<?php echo DISPLAY_LAST; ?>";
 
 
 $(document).ready(function() {
-  initAutocomplete();
+
 
     geoloc();
     $('#sr_address_list').dataTable( {
@@ -2313,26 +2169,17 @@ $(document).ready(function() {
             "infoFiltered": filtered
         }
     } );
-
-
-    $(".panel-title button").on("click", function(){
-      setTimeout(function(){
-        $(".panel-collapse").removeClass("show");
-        panelID = $(this).attr("data-target");
-        $("#".panelID).addClass("show");
-      }, 2000);
-
-    })
-
 } );
 
 
-$('#accordion').on('hidden.bs.collapse', function () {
-  geoloc();
-})
-$('#accordion').on('shown.bs.collapse', function () {
-  geoloc(); 
-})
+ $('#accordion').on('hidden.bs.collapse', function () {
+     
+      geoloc();
+    })
+    $('#accordion').on('shown.bs.collapse', function () {
+   
+      geoloc(); 
+    })
      
 
 </script>

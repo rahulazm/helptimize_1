@@ -257,7 +257,8 @@ if($_SESSION['id'] == $sr_user_id){
                         <p class="card-text"><?php echo $res[0]['descr'] ?></p>
                         <p class="MRGT10PX"><b>Particulars</b></p>
                         <p>
-                            <div><i class="far fa-clock"></i> <?php echo $dateFromArr[1]." ".$dateFromArr[2]." - ".$dateToArr[1]." ".$dateToArr[2]; ?></div>
+                            <!-- <div><i class="far fa-clock"></i> <?php echo $dateFromArr[1]." ".$dateFromArr[2]." - ".$dateToArr[1]." ".$dateToArr[2]; ?></div> -->
+                            <div><i class="far fa-clock"></i> <span class="serreq_time"></span></div>
                             <div><i class="far fa-calendar-alt"></i> <?php echo $dateFromArr[0]." - ".$dateToArr[0];?></div>
                         </p>  
 
@@ -293,7 +294,8 @@ if($_SESSION['id'] == $sr_user_id){
                         <p class="card-text"><?php echo $res[0]['descr'] ?></p>
                         <p class="MRGT10PX"><b>Particulars</b></p>
                         <p>
-                            <div><i class="far fa-clock"></i> <?php echo $dateFromArr[1]." ".$dateFromArr[2]." - ".$dateToArr[1]." ".$dateToArr[2]; ?></div>
+                            <!-- <div><i class="far fa-clock"></i> <?php echo $dateFromArr[1]." ".$dateFromArr[2]." - ".$dateToArr[1]." ".$dateToArr[2]; ?></div> -->
+                            <div><i class="far fa-clock"></i> <span class="serreq_time"></span></div>
                             <div><i class="far fa-calendar-alt"></i> <?php echo $dateFromArr[0]." - ".$dateToArr[0];?></div>
                         </p>  
 
@@ -771,11 +773,11 @@ if($_SESSION['id'] == $sr_user_id){
                                     </div>
                                     <div class="tab-content">
                                         <div class="tab-pane fade show active p-3" id="bid-detail-agrm" role="tabpanel" aria-labelledby="one-tab">
-                                            <h5 class="MRGT20PX">Location&nbsp;<span class="FONTSIZE12px"><a href="edit_bid.php?job_id=<?php echo $res[0]['id']; ?>&tab=location"><i class="fa fa-pencil" aria-hidden="true"></i>
+                                            <h5 class="MRGT20PX">Location&nbsp;<span class="FONTSIZE12px"><a href="edit_bid_new.php?job_id=<?php echo $res[0]['id']; ?>&id=<?php echo $rowuserTypeInfo['ownerId'];?>&tab=location"><i class="fa fa-pencil" aria-hidden="true"></i>
                             &nbsp;Edit</a></span></h5>
                                             <P class="MRGT10PX"><b>Address: </b></p>
                                             <div class="MRGT10PX" id="bid_address_agrm"></div>
-                                            <h5 class="MRGT20PX">Job Details&nbsp;<span class="FONTSIZE12px"><a href="edit_bid.php?job_id=<?php echo $res[0]['id']; ?>&tab=jobdetails"><i class="fa fa-pencil" aria-hidden="true"></i>
+                                            <h5 class="MRGT20PX">Job Details&nbsp;<span class="FONTSIZE12px"><a href="edit_bid_new.php?job_id=<?php echo $res[0]['id']; ?>&id=<?php echo $rowuserTypeInfo['ownerId'];?>&tab=jobdetails"><i class="fa fa-pencil" aria-hidden="true"></i>
                             &nbsp;Edit</a></span></h5>
                                             <P class="MRGT10PX"><b>Comments: </b></p>
                                             <label id="bid_comment_agrm"></label>
@@ -784,7 +786,7 @@ if($_SESSION['id'] == $sr_user_id){
                                                 <label id="bid_duration_agrm"></label>
                                             </div>
 
-                                            <h5 class="MRGT20PX">Payment&nbsp;<span class="FONTSIZE12px"><a href="edit_bid.php?job_id=<?php echo $res[0]['id']; ?>&tab=payment"><i class="fa fa-pencil" aria-hidden="true"></i>
+                                            <h5 class="MRGT20PX">Payment&nbsp;<span class="FONTSIZE12px"><a href="edit_bid_new.php?job_id=<?php echo $res[0]['id']; ?>&id=<?php echo $rowuserTypeInfo['ownerId'];?>&tab=payment"><i class="fa fa-pencil" aria-hidden="true"></i>
                             &nbsp;Edit</a></span></h5>
                                             <div class="form-group MRGT10PX">
                                                 <label ><b>Amount:</b></label>
@@ -973,3 +975,13 @@ if($_SESSION['id'] == $sr_user_id){
      <?php  include_once("view_bid_new.php");?>
 
 <?php include("footer.php"); ?>  
+
+<script>
+$(document).ready(function() {
+    console.log("time From");
+    console.log("<?php echo $res[0]['timeFrom']; ?>");
+    var serreq_time_from = convertTo12Hour('<?php echo $res[0]['timeFrom']; ?>');
+    var serreq_time_to = convertTo12Hour('<?php echo $res[0]['timeTo']; ?>');
+    $(".serreq_time").text(serreq_time_from+ " - "+serreq_time_to);
+});
+</script>

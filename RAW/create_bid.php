@@ -4,6 +4,8 @@ require_once("/etc/helptimize/conf.php");
 
 $job_id = $_GET['job_id'];
 
+$job_address = $_sqlObj->query("SELECT `*` FROM `address` WHERE srId = $job_id ORDER BY id DESC LIMIT 1");
+
 $job_data = $_sqlObj->query("select * from serviceRequests where id=$job_id");
 /*echo $job_data[0]['title'];
 echo '<pre>';
@@ -37,6 +39,30 @@ $_sqlObj->query('delete from pics where userId='.$_SESSION['id'].' and srId is N
       
 
 $( document ).ready(function() {
+
+  showTab = '<?php echo $_GET['tab']; ?>';
+
+  if(showTab != ''){
+
+    if(showTab == "location"){
+      $("#"+showTab).prop("checked", true);
+      $(".super-widget-tab-info summary").hide();
+      $("."+showTab).show();
+    }else{
+      $("#"+showTab).parent().prev().children('input').prop("checked", true);
+      next();
+    }
+
+    if(showTab == "payment"){
+      $("#location").prop("checked", true);
+    }
+
+    /*next(showTab);
+    $(".super-widget-tab input[type=radio]").prop("checked", false);
+    $("#"+showTab).prop("checked",true);*/
+  }
+
+
 
   initMap();
 
@@ -230,7 +256,7 @@ var gLng=-122.3321;
                       <!-- <textarea id="newaddress"></textarea>
                       <input type="hidden" id="lat">
                       <input type="hidden" id="lng"> -->
-                      <?php include('create_new_service_request_address_selection_new.php');?>
+                      <?php include('create_new_bid_address_selection.php');?>
                    </div>
                 <!-- Replace the value of the key parameter with your own API key. -->
 
@@ -264,7 +290,7 @@ var gLng=-122.3321;
                   </div>
                   <iframe src="calendar.html" class="calendar-view"></iframe>
                   <p>&nbsp;</p>
-                  <?php include('create_new_service_request_take_pictures_new.php');?>
+                  <?php include('bidUploadImagenew.php');?>
 
               </summary>
               <summary class="payment WDTH90 MRGCenter" style="display: none">
@@ -306,12 +332,15 @@ var gLng=-122.3321;
                     <label>Total Amount</label>
                     <input id="totalamnt" class="form-input" type="text" readonly="true" value="$100" />
                   </div> -->
-                  <div class="form-group MRGT10PX notes">
+                  <div class="form-group MRGT10PX notes" style="display:none">
                     <label class="form-label" for="notes">Notes</label>
                     <textarea class="form-input" id="schedule_note"><?php echo $job_data[0]['schedule_note']; ?></textarea>
                     </div>
-                  
-                <div class="row">
+                  <div class="form-group MRGT10PX WDTH300PX cancelfee"> 
+                    <label class="form-label" for="cancelfee">Cancellation Fee</label>
+                    <input id="cancelfee" class="form-input" value="<?php echo $job_data[0]['cancel_penalty']; ?>" type="text" />
+                  </div>
+                <!-- <div class="row">
                     <div class="col-sm-4 col-md-4 col-lg-4">
                         <h2><b>Payment Method</b></h2>
                     </div>
@@ -322,7 +351,7 @@ var gLng=-122.3321;
                   <div class="account-details">
                   <input type="radio" name="bank" value="bank1" /> <label>My Bank Account</label><br/>
                   <input type="radio" name="bank" value="bank2" /> <label>My Bank Account</label>
-                </div>
+                </div> -->
 
                 <label for="checkAddMilestone" class="btn btn-success" style="margin-top: 30px;">Add Milestones</label>
                         <input type="checkbox" class="checkHideShowBare" id="checkAddMilestone" style="display: none;"></input>
@@ -339,21 +368,16 @@ else {$heading="Hours";$tot="Total Hours";}
                 <thead>
                 <tr>
                 <th colspan="3" id="titleHeaders" style="background: none; color: black; border-right: 0px;">Milestones (optional)</th>
-                <th style="text-align: right;">
-      <i class="material-icons addButton" onclick="rmNewRow(\'#milestoneBody\')" >
-      remove_circle_outline
-      </i>
-
-      <i class="material-icons addButton" onclick="addNewRow(\'#milestoneBody\')" >
-      control_point
-      </i>
+                <th style="text-align: right;color:#118ab2;font-size:20px;">
+      <i class="fa fa-minus-circle addButton" aria-hidden="true" onclick="rmNewRow(\'#milestoneBody\')"></i>
+      <i class="fa fa-plus-circle addButton" onclick="addNewRow(\'#milestoneBody\')" aria-hidden="true"></i>
     </th> 
                 </tr>
                 <tr class="colHeader">
                         <th style="width: 10%;">Name</th>
                         <th style="width: 20%;">Date</th>
                         <th>Description</th>
-                        <th style="width: 15%;" class="changehead">'.$heading.'</th>
+                        <th style="width: 21%;" class="changehead">'.$heading.'</th>
                         </tr>
                 </thead>
                 
@@ -368,7 +392,7 @@ else {$heading="Hours";$tot="Total Hours";}
         '.$tot.'
         </td>
         <td>
-        <input type="input" id="milestoneTotal" placeholder="total" value="" readonly />
+        <input type="input" id="milestoneTotal" class="form-control" placeholder="total" value="" readonly />
 
         </td>
       </tr>
@@ -396,23 +420,24 @@ else {$heading="Hours";$tot="Total Hours";}
                       </div>
                       <div class="col-sm-8 col-md-8 col-lg-8">
                          <div><i class="fas fa-map-marker-alt"></i> Address</div> 
-                         <span id="address"></span>
+                         <span id="address"><?php echo $job_address[0]['address']; ?></span>
                     </div>
                   </div>
                   <p class="MRGT20PX"><b>Amount</b></p>
                   <label>
-                    <span id="amnt"></span>
+                    <span id="amnt" style="text-transform: capitalize; "></span>
                   </label>
               </summary>
               <summary class="finish WDTH90 MRGCenter" style="display: none">
                   <h1><b>5. Finish!</b></h1>
                   <h2><b>Congratulations!</b></h2>
-                  <p class="MRGT20PX">Tour help requested has been posted. Sit back and relax.</p>
+                  <p class="MRGT20PX">Your bid has been posted. Sit back and relax.</p>
                   <a href="main.php">Go to Dashboard</a>
               </summary>
               <div class="flex-layout actions WDTH90 MRGCenter MRGT20PX">
                 <button onclick="create_bid_prev()" id="prev" class="button-secondary" style="visibility: hidden;">BACK</button>
                 <button onclick="create_bid_next()" id="next" class="button-primary">NEXT</button>
+                <button onclick="review()" id="review_btn" class="button-primary">Review</button>
             </div>
             </aside>
         </section>
@@ -423,7 +448,7 @@ function addNewRow( id )
 {
     var inc= $( id ).children().length + 1;
     //<input type=\'input\'  id="mileid"/>
-    $( id ).append('<tr><td><input type=\'input\' name=\'milestones['+inc+'][name]\' value="'+inc+'" readonly /></td><td><div class="input-group date" data-provide="datepicker"><input type="text" class="form-control datepicker" name=\'milestones['+inc+'][due_datetime]\'  data-date-format="mm-dd-yyyy" readonly><div class="input-group-addon"><span class="glyphicon glyphicon-th"></span></div></div></td><td><input type=\'input\' name=\'milestones['+inc+'][descr]\' /></td><td><input class="milestoneAmt" type=\'input\' name=\'milestones['+inc+'][amount]\' onkeypress="return isNumberKey(event)" onchange=\'milestoneTotalFunc(".milestoneAmt", "#milestoneTotal","'+inc+'")\' /><span class="tothouramt'+inc+'"></span></td></tr>');
+    $( id ).append('<tr><td><input type=\'input\' name=\'milestones['+inc+'][name]\' value="'+inc+'" readonly class="form-control" /></td><td><div class="input-group date" data-provide="datepicker"><input type="text" class="form-control datepicker" name=\'milestones['+inc+'][due_datetime]\'  data-date-format="mm-dd-yyyy" readonly><div class="input-group-addon"><span class="glyphicon glyphicon-th"></span></div></div></td><td><input type=\'input\' name=\'milestones['+inc+'][descr]\' class="form-control" /></td><td><input class="milestoneAmt form-control" type=\'input\' name=\'milestones['+inc+'][amount]\' onkeypress="return isNumberKey(event)" onchange=\'milestoneTotalFunc(".milestoneAmt", "#milestoneTotal","'+inc+'")\' /><span class="tothouramt'+inc+'"></span></td></tr>');
 }
 
 function rmNewRow( id )
@@ -466,6 +491,72 @@ $('#date_from .input-group.date').datepicker({
     todayBtn: "linked"
     
     
+});
+
+
+$(document).on("click", "#next", function(e)
+{
+     
+    var getId = $('.super-widget-tab input[type="radio"]:checked').last().parent().children('input').attr('id');
+
+    if(getId == 'payment')
+    {
+        
+        $(document).on("click", "#next", function(e)
+        {
+            var amount= parseFloat($("#amount").val());
+            var payType = $('input[name=pay]:checked').val();
+            var total= parseFloat($("#milestoneTotal").val());
+
+            console.log(total + 'Total');
+            var text="Milestone total amount must be equal to bid amount";
+            if(!isNaN(total))
+            {
+
+               if(payType == 'fixed' || payType == 'hourly')
+              {
+                 
+                 if(total !== amount)
+                 {
+                    swal({
+                      title: "Warning",
+                       type: "warning",
+                      text: text
+                    });
+                    jQuery('summary.location.WDTH90.MRGCenter').hide();
+                    jQuery('summary.jobdetails.WDTH90.MRGCenter').hide();
+                    jQuery('summary.payment.WDTH90.MRGCenter').show();
+                    jQuery('summary.finish.WDTH90.MRGCenter').hide();
+                    jQuery('summary.review.WDTH90.MRGCenter').hide();
+                    $('#review').prop('checked', false);
+                    $("button#next").html('Next');
+                    return false;
+                 }
+
+              } 
+            }
+           
+        });
+
+    }
+   /*console.log(getId + 'This is id');
+   if($('#payment').is(':checked'))
+   { 
+     alert("it's checked"); 
+   }*/
+
+      /*
+      console.log("I am here");
+
+      var text="Milestone total amount must be equal to bid amount";
+
+      swal({
+        title: "Warning",
+         type: "warning",
+        text: text
+      });
+       return false;*/
+
 });
 
 </script>

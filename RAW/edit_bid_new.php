@@ -1,6 +1,18 @@
 <?php
 include("header_main.php");
 require_once("/etc/helptimize/conf.php");
+
+$job_id = $_GET['job_id'];
+$job_address = $_sqlObj->query("SELECT `*` FROM `address` WHERE srId = $job_id ORDER BY id DESC LIMIT 1");
+
+$owner_id     = $_GET['id'];
+
+$bid_data = $_sqlObj->query("select * from bids where srId=$job_id AND ownerId=$owner_id");
+
+$milestone_data = $_sqlObj->query("select * from milestones where bidId=".$bid_data[0]['id']."");
+
+$milestone_size = sizeof($milestone_data);
+
 $categs=$_sqlObj->query("select * from categ where parent_id='' or parent_id is null");
 $cur=reset($categs);
 
@@ -16,9 +28,7 @@ while($addMrkrRes){
   $i++;
 }
 $addMrkrRes = json_encode($new);
-//echo "<pre>";
-//print_r($_SERVER);
-//echo "</pre>";
+
 
 $_sqlObj->query('delete from address where userId='.$_SESSION['id'].' and srId is NULL');
 $_sqlObj->query('delete from pics where userId='.$_SESSION['id'].' and srId is NULL');
@@ -28,6 +38,27 @@ $_sqlObj->query('delete from pics where userId='.$_SESSION['id'].' and srId is N
       
 
 $( document ).ready(function() {
+    showTab = '<?php echo $_GET['tab']; ?>';
+
+  if(showTab != ''){
+
+    if(showTab == "location"){
+      $("#"+showTab).prop("checked", true);
+      $(".super-widget-tab-info summary").hide();
+      $("."+showTab).show();
+    }else{
+      $("#"+showTab).parent().prev().children('input').prop("checked", true);
+      next();
+    }
+
+    if(showTab == "payment"){
+      $("#location").prop("checked", true);
+    }
+
+    /*next(showTab);
+    $(".super-widget-tab input[type=radio]").prop("checked", false);
+    $("#"+showTab).prop("checked",true);*/
+  }
 
   initMap();
 
@@ -200,9 +231,11 @@ var gLng=-122.3321;
             </aside>
             <aside class="super-widget-tab-info">
               <summary class="location WDTH90 MRGCenter">
+                <input type="hidden" id="service_id" value="<?php echo $job_id; ?>">
+                <input type="hidden" id="bid_id" value="<?php echo $bid_data[0]['id']; ?>">
                 <h1><b>1.Location</b></h1>
                 <h2><b>Job Title</b></h2>
-                <input type="text" id="jobtitle">
+                <input type="text" id="jobtitle" value="<?php echo $bid_data[0]['title'];?>" readonly>
                 <h2><b>Where do you need the help?</b></h2>
                 <!--<div class="flex-layout">
                     <input type="text" id="getaddr" name="getaddr"/>
@@ -220,7 +253,7 @@ var gLng=-122.3321;
                       <!-- <textarea id="newaddress"></textarea>
                       <input type="hidden" id="lat">
                       <input type="hidden" id="lng"> -->
-                      <?php include('create_new_service_request_address_selection_new.php');?>
+                      <?php include('create_new_bidref_address_selection.php');?>
                    </div>
                 <!-- Replace the value of the key parameter with your own API key. -->
 
@@ -229,11 +262,13 @@ var gLng=-122.3321;
               <summary class="jobdetails WDTH90 MRGCenter" style="display: none">
                   <h1><b>2.Job Details</b></h1>
                   <h2><b>Describe What you need</b></h2>
-                  <textarea id="desc"></textarea>
+                  <textarea id="desc"><?php echo $bid_data[0]['descr'];?></textarea>
                   <h2><b>Category</b></h2>
-                  <?php while ($cur) { ?>
+                  <?php while ($cur) { 
+                   
+                  ?>
                     
-                  <input type="radio" id="<?php echo $cur['id'];?>" value="<?php echo $cur['id'];?>" name="serv"/><label class="service" for="<?php echo $cur['id'];?>"><?php echo $cur['name'];?></label>
+                  <input type="radio" id="<?php echo $cur['id'];?>" value="<?php echo $cur['id'];?>" <?php if($cur['id'] == $bid_data[0]['categId']){echo 'checked'; }?> disabled name="serv"/><label class="service" for="<?php echo $cur['id'];?>"><?php echo $cur['name'];?></label>
                   <?php $cur=next($categs); } ?>
                   <div class="row">
                       <div class="col-sm-6 col-md-6 col-lg-6">
@@ -250,9 +285,6 @@ var gLng=-122.3321;
                         <!-- <input type="radio" class="recurring" id="recurring"/> <label for="recurring"><small>Recurring?</small></label> -->
                       </div>
                   </div>
-                  <!-- <div style="position: relative;height: 600px; overflow: scroll; overflow-x: hidden;">
-                  <?php //include('calendar.html');?>
-                  </div> -->
                   <iframe src="calendar.html" class="calendar-view"></iframe>
                   <p>&nbsp;</p>
                   <?php include('create_new_service_request_take_pictures_new.php');?>
@@ -263,31 +295,31 @@ var gLng=-122.3321;
 
                   <h2><b>How do you like to Pay?</b></h2>
                   <div style="font-weight: normal;">
-                    <input type="radio" id="fairMarket" name="pay" value="fair"/><label for="fairMarket">Fair Market</label>
-                    <input type="radio" checked id="fixed" name="pay" value="fixed" /><label for="fixed">Fixed</label>
-                    <input type="radio" id="hourly" name="pay" value="hourly" /><label for="hourly">Hourly</label>
+                    <input type="radio" id="fairMarket" <?php if($bid_data[0]['payType'] == 3){ echo 'checked';} ?> name="pay"/><label for="fairMarket">Fair Market</label>
+                    <input type="radio" <?php if($bid_data[0]['payType'] == 1){ echo 'checked';} ?> id="fixed" name="pay" value="fixed" /><label for="fixed">Fixed</label>
+                    <input type="radio" <?php if($bid_data[0]['payType'] == 2){ echo 'checked';} ?> id="hourly" name="pay" value="hourly" /><label for="hourly">Hourly</label>
                   </div>
                   <div class="row WDTH300PX actHourly">
                       <div class="col-sm-6 col-md-6 col-lg-6">
                         <div class="form-group MRGT10PX">
                           <label class="form-label" for="rateHour">Rate/Hour</label>
-                          <input id="rateHour" class="form-input" type="number" />
+                          <input id="rateHour" class="form-input" type="number" value="<?php echo $bid_data[0]['rateperhour']; ?>" />
                         </div>
                       </div>
                       <div class="col-sm-6 col-md-6 col-lg-6">
                         <div class="form-group MRGT10PX">
                             <label class="form-label" for="tHour">Total Hours</label>
-                            <input id="tHour" class="form-input" type="number" />
+                            <input id="tHour" class="form-input" type="number" value="<?php echo $bid_data[0]['totalhours']; ?>"/>
                         </div>
                       </div>
                   </div>
                   <div class="form-group MRGT10PX WDTH300PX ramount" id="recamnt" style="display:none">
-                      <label class="form-label" for="ramount">Amount</label>
+                      <label class="form-label" for="ramount">Recurrence Amount</label>
                       <input id="ramount" class="form-input" type="text" />
                    </div>       
                   <div class="form-group MRGT10PX WDTH300PX amount">
-                    <label class="form-label" for="amount">Total Amount</label>
-                    <input id="amount" class="form-input" type="text" />
+                    <label class="form-label" for="amount">Amount</label>
+                    <input id="amount" class="form-input" value="<?php echo $bid_data[0]['schedule_amount']; ?>" type="text" />
                   </div>           
                   <!-- <div class="form-group MRGT10PX">
                     <label class="form-label" for="first">Amount</label>
@@ -298,20 +330,15 @@ var gLng=-122.3321;
                     <input id="totalamnt" class="form-input" type="text" readonly="true" value="$100" />
                   </div> -->
                   <div class="form-group MRGT10PX notes" style="display:none">
-                    <label class="form-label" for="notes">Schedule Notes</label>
-                    <textarea class="form-input" id="schedule_note"></textarea>
-                  </div>
-
-
+                    <label class="form-label" for="notes">Notes</label>
+                    <textarea class="form-input" id="schedule_note"><?php echo $bid_data[0]['schedule_note']; ?></textarea>
+                    </div>
+                    
                   <div class="form-group MRGT10PX WDTH300PX cancelfee"> 
                     <label class="form-label" for="cancelfee">Cancellation Fee</label>
-                    <input id="cancelfee" class="form-input" value="0" type="text" />
+                    <input id="cancelfee" class="form-input" value="<?php echo $bid_data[0]['cancelFee']; ?>" type="text" />
                   </div>
-                  <div class="form-group MRGT10PX personanotes">
-                    <label class="form-label" for="personal_notes">Personal Notes</label>
-                    <textarea class="form-input" id="personal_notes"></textarea>
-                  </div>
-
+                  
                 <!-- <div class="row">
                     <div class="col-sm-4 col-md-4 col-lg-4">
                         <h2><b>Payment Method</b></h2>
@@ -324,6 +351,75 @@ var gLng=-122.3321;
                   <input type="radio" name="bank" value="bank1" /> <label>My Bank Account</label><br/>
                   <input type="radio" name="bank" value="bank2" /> <label>My Bank Account</label>
                 </div> -->
+
+                <label for="checkAddMilestone" class="btn btn-success" style="margin-top: 30px;">Add Milestones</label>
+                        <input type="checkbox" class="checkHideShowBare" id="checkAddMilestone" style="display: none;"></input>
+                        <div class="bidMilestone rmStyleOnCheck">
+
+    <?php
+    if($srArr['paytype'] != "hourly")
+    {
+$heading="% of Agreement Sum"; $tot="Sum";}
+else {$heading="Hours";$tot="Total Hours";}
+
+    $inOffTmpl='
+<table id="open_bid_milestone" class="table table-striped table-bordered" cellspacing="0" width="100%" style="border-radius: 8px 8px 0px 0px;">
+                <thead>
+                <tr>
+                <th colspan="3" id="titleHeaders" style="background: none; color: black; border-right: 0px;">Milestones (optional)</th>
+                <th style="text-align: right;color:#118ab2;font-size:20px;">
+      <i class="fa fa-minus-circle addButton" aria-hidden="true" onclick="rmNewRow(\'#milestoneBody\')" ></i>
+
+      <i class="fa fa-plus-circle addButton" aria-hidden="true" onclick="addNewRow(\'#milestoneBody\')" ></i>
+    </th> 
+                </tr>
+                <tr class="colHeader">
+                        <th style="width: 10%;">Name</th>
+                        <th style="width: 20%;">Date</th>
+                        <th>Description</th>
+                        <th style="width: 21%;" class="changehead">'.$heading.'</th>
+                        </tr>
+                </thead>
+                
+                <tbody class="tbodyBorder" id="milestoneBody">';
+      
+   if($milestone_size > 0)
+    {
+      
+    //$ms=$_sqlObj->escapeArr($_POST['milestones']);
+    $i = 0;
+    $bid_totalamnt = array();
+    while($i < $milestone_size )
+    {
+       
+       $bid_totalamnt[] = $milestone_data[$i]['amount'];
+      $inOffTmpl.='<tr><td><input type="input" name="milestones['.$milestone_data[$i]['name'].'][name]" value="'.$milestone_data[$i]['name'].'" class="form-control" /></td><td><div class="input-group date" data-provide="datepicker"><input type="text" class="form-control datepicker" name="milestones['.$milestone_data[$i]['name'].'][due_datetime]" value="'.$milestone_data[$i]['due_datetime'].'" data-date-format="mm-dd-yyyy" readonly><div class="input-group-addon"><span class="glyphicon glyphicon-th"></span></div></div></td><td><input type="input" name="milestones['.$milestone_data[$i]['name'].'][descr]" value="'.$milestone_data[$i]['descr'].'" class="form-control" /></td><td><input class="milestoneAmt form-control" type="input" name="milestones['.$milestone_data[$i]['name'].'][amount]" value="'.$milestone_data[$i]['amount'].'" onchange=milestoneTotalFunc(".milestoneAmt","#milestoneTotal","2")></td></tr>';
+      
+      $i++;
+      
+    }
+  }
+     $inOffTmpl.='</tbody>
+    <tfoot>
+      <tr>
+        <td colspan=3 class="changetotal">
+        '.$tot.'
+        </td>
+        <td>
+        <input type="input" id="milestoneTotal" placeholder="total" value="'.array_sum( $bid_totalamnt ).'" readonly />
+
+        </td>
+      </tr>
+    <tfoot>
+</table>';
+
+
+    echo $inOffTmpl;
+ 
+    
+    ?>
+      </div>
+
 
               </summary>
               <summary class="review WDTH90 MRGCenter" style="display: none">
@@ -339,27 +435,131 @@ var gLng=-122.3321;
                       </div>
                       <div class="col-sm-8 col-md-8 col-lg-8">
                          <div><i class="fas fa-map-marker-alt"></i> Address</div> 
-                         <span id="address"></span>
+                         <span id="address"><?php echo $job_address[0]['address']; ?></span>
                     </div>
                   </div>
                   <p class="MRGT20PX"><b>Amount</b></p>
                   <label>
-                    <span id="amnt"style="text-transform: capitalize; "></span>
+                    <span id="amnt"></span>
                   </label>
               </summary>
               <summary class="finish WDTH90 MRGCenter" style="display: none">
                   <h1><b>5. Finish!</b></h1>
                   <h2><b>Congratulations!</b></h2>
-                  <p class="MRGT20PX">Your requested has been posted. Sit back and relax.</p>
+                  <p class="MRGT20PX">Your change request has been posted. Sit back and relax.</p>
                   <a href="main.php">Go to Dashboard</a>
               </summary>
               <div class="flex-layout actions WDTH90 MRGCenter MRGT20PX">
-                <button onclick="prev()" id="prev" class="button-secondary" style="visibility: hidden;">BACK</button>
-                <button onclick="next()" id="next" class="button-primary">NEXT</button>
+                <button onclick="update_bid_prev()" id="prev" class="button-secondary" style="visibility: hidden;">BACK</button>
+                <button onclick="update_bid_next()" id="next" class="button-primary">NEXT</button>
+                <button onclick="update_review()" id="review" class="button-primary">Review</button>
             </div>
             </aside>
         </section>
+<script type="text/javascript" src="js/bootstrap-datepicker.min.js"></script>
+<script type="text/javascript">
 
+function addNewRow( id )
+{
+    var inc= $( id ).children().length + 1;
+    //<input type=\'input\'  id="mileid"/>
+    $( id ).append('<tr><td><input type=\'input\' name=\'milestones['+inc+'][name]\' value="'+inc+'" readonly class="form-control" /></td><td><div class="input-group date" data-provide="datepicker"><input type="text" class="form-control datepicker" name=\'milestones['+inc+'][due_datetime]\'  data-date-format="mm-dd-yyyy" readonly><div class="input-group-addon"><span class="glyphicon glyphicon-th"></span></div></div></td><td><input type=\'input\' name=\'milestones['+inc+'][descr]\' class="form-control" /></td><td><input class="milestoneAmt form-control" type=\'input\' name=\'milestones['+inc+'][amount]\' onkeypress="return isNumberKey(event)" onchange=\'milestoneTotalFunc(".milestoneAmt", "#milestoneTotal","'+inc+'")\' /><span class="tothouramt'+inc+'"></span></td></tr>');
+}
+
+function rmNewRow( id )
+{
+  if( $( id ).children().length >0)
+  {
+    
+  $( id + ' tr:last-child' ).remove();
+  var inc= $( id ).children().length;
+  if(inc==0 ) 
+    $("#milestoneTotal").val(""); 
+  else
+  milestoneTotalFunc(".milestoneAmt", "#milestoneTotal",inc);
+  }
+
+}
+
+$('#date_to .input-group.date').datepicker({
+    calendarWeeks: true,
+    autoclose: true,
+    format: "yyyy-mm-dd",
+    todayHighlight: true,
+    orientation: "top left",
+    todayBtn: "linked"
+    
+    
+});
+$.fn.datepicker.defaults.format = "yyyy-mm-dd";
+$.fn.datepicker.defaults.autoclose = true;
+$.fn.datepicker.defaults.todayHighlight = true;
+
+
+
+$('#date_from .input-group.date').datepicker({
+    calendarWeeks: true,
+    autoclose: true,
+    format: "yyyy-mm-dd",
+    todayHighlight: true,
+    orientation: "top left",
+    todayBtn: "linked"
+    
+    
+});
+
+
+$(document).on("click", "#next", function(e)
+{
+     
+    var getId = $('.super-widget-tab input[type="radio"]:checked').last().parent().children('input').attr('id');
+    console.log('Inside Consile');
+    if(getId == 'payment')
+    {
+        console.log('payment');
+        $(document).on("click", "#next", function(e)
+        {
+            var amount= parseFloat($("#amount").val());
+            var payType = $('input[name=pay]:checked').val();
+            var total= parseFloat($("#milestoneTotal").val());
+
+            console.log(total + 'Total');
+            var text="Milestone total amount must be equal to bid amount";
+            if(!isNaN(total))
+            {
+
+               if(payType == 'fixed' || payType == 'hourly')
+              {
+                 if(total !== amount)
+                 {
+                    swal({
+                      title: "Warning",
+                       type: "warning",
+                      text: text
+                    });
+                    jQuery('summary.location.WDTH90.MRGCenter').hide();
+                    jQuery('summary.jobdetails.WDTH90.MRGCenter').hide();
+                    jQuery('summary.payment.WDTH90.MRGCenter').show();
+                    jQuery('summary.finish.WDTH90.MRGCenter').hide();
+                    jQuery('summary.review.WDTH90.MRGCenter').hide();
+                    $('#review').prop('checked', false);
+                    $("button#next").html('Next');
+                    return false;
+                 }
+
+              } 
+            }
+
+        });
+
+    }
+ 
+
+});
+
+</script>
+
+<link rel="stylesheet" type="text/css" href="css/bootstrap-datepicker3.min.css">
 <?php
 include("footer.php");
 ?>

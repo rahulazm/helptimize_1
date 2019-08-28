@@ -14,11 +14,25 @@
     <link rel="stylesheet" type="text/css" href="./assets/css/tui-calendar.css" />
     <link rel="stylesheet" type="text/css" href="./assets/css/default.css"></link>
     <link rel="stylesheet" type="text/css" href="./assets/css/icons.css"></link>
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.11.1/themes/smoothness/jquery-ui.css" />
+    <link rel="stylesheet" type="text/css" href="css/bootstrap-clockpicker.min.css">
     <title>HELPTIMIZE</title>
   </head>
   <body class="calendar-page">
-<input type="hidden" id="start-date" value="">
-<input type="hidden" id="end-date" value="">
+    <style>
+    /*#modal-new-schedule{
+        display: none;
+        position: absolute;
+        top: 50%;
+        left: 30%;
+        width: 40%;
+        background-color: #ffffff;
+        border: solid #ededed 1px;
+        padding: 20px;
+        z-index: 99999;
+    }*/
+</style>
+
 
   <div id="lnb">
     <!-- <div class="lnb-new-schedule">
@@ -40,10 +54,10 @@
                 </div>
         </div> -->
         <div class="row">
-           <div class="col-sm-6 col-md-6 col-lg-6">
-                <div id="calendarList" class="lnb-calendars-d1"></div>
-            </div>
-            <div class="col-sm-6 col-md-6 col-lg-6 text-right">
+                <div class="col-sm-6 col-md-6 col-lg-6">
+                    <div id="calendarList" class="lnb-calendars-d1"></div>
+                </div>
+                <div class="col-sm-6 col-md-6 col-lg-6 text-right">
                     <label>Recurring?</label>
                     <select class="custom-drop-down" id="recurring">
                         <option value="One Time">One Time</option>
@@ -51,9 +65,11 @@
                         <option value="Twice Monthly">Twice Monthly</option>
                         <option value="Monthly">Monthly</option>
                         <option value="Every other month">Every other month</option>
+                        <option value="Yearly">Yearly</option>
                     </select>
                 </div>
         </div>
+        
     </div>
 </div>
 <div id="right">
@@ -125,11 +141,88 @@
         </div>
     </div>
 
-    <div id="calendar"></div>
+    <div id="calendar">
+        
+    </div>
+    <!-- Popup -->
+    <!-- <div id="modal-new-schedule" title="Dialog Title">
+        <input type="checkbox" id="new-schedule-allday" style="visibility: hidden;" />
+        <div>
+            From :<br/> <input id="from_date" />
+        </div>
+        <div>
+            To :<br/> <input id="to_date" />
+        </div>
+        <div>
+            <button id="btn-save-schedule">Submit</button>
+        </div>
+    </div> -->
+
+    <div id="modal-new-schedule" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-hidden="true" style="margin:0px;padding: 0px;">&times;</button>
+                    <h6 class="modal-title" style="color:#000000;width: 100%"><center><span>Add Your Schedule</span></center></h6>
+                </div>
+                <div class="modal-body">
+                    <input type="checkbox" id="new-schedule-allday" style="visibility: hidden;" />
+                    <input type="hidden" id="new-schedule-title" value="Your Schedule">
+                    <div class="form-group">
+                        <label><font color="black">From Date</font></label>
+                        <input type="text" class="form-control" id="from_date" autocomplete="off" />
+                    </div>
+                    <div class="form-group">
+                        <label><font color="black">To Date</font></label>
+                        <input type="text" class="form-control" id="to_date" autocomplete="off" />
+                    </div>
+                    <div class="form-group">
+                        <label><font color="black">Time Range</font></label>
+                        <select class="form-control" name="timeselect" id="timeselect">
+                            <option value="0">All Day (9:00AM - 9:00PM)</option>
+                            <option value="1">Morning (7:00AM - 12:00PM)</option>
+                            <option value="2">Afternoon (12:00PM - 5:00PM)</option>
+                            <option value="3">Evening (5:00PM - 10:00PM)</option>
+                            <option value="4">Custom Time</option>
+                        </select>
+                        <table class="showtime" style="display: none;width:100%">
+                            <tr>
+                                <td style="text-align: left;">
+                                    <div class="form-group time_from" data-align="top" data-placement="top">
+                                    <label style="margin-top: 10px;">From Time</label>
+                                    
+
+                                    <input type="text" class="form-control text_input_radius" id="time_from_value" name="time_from_value" value="09:00AM" autocomplete="off" >
+                                    <span class="input-group-addon text_input_radius timepicker_icon">
+                                        <i class="fa fa-clock-o fa-2" aria-hidden="true"></i>
+                                    </span>
+                                    </div>
+                                </td>
+                                <td style="text-align: left;">
+                                    <div class="form-group time_to" data-align="top" data-placement="top">
+                                    <label style="margin-top: 10px;">To Time</label>
+                                    
+                                    <input type="text" class="form-control text_input_radius" id="time_to_value" name="time_to_value" value="09:00PM" autocomplete="off" >
+                                    <span class="input-group-addon text_input_radius timepicker_icon">
+                                        <i class="fa fa-clock-o fa-2" aria-hidden="true"></i>
+                                    </span>
+                                    </div>
+                                </td>
+                              </tr>
+                            </table>
+                        </div>
+                    <center>
+                        <button class="btn btn-success" id="btn-save-schedule">Save</button>
+                    </center>
+                </div>
+
+            </div>
+        </div>
+    </div>
     
-    
-<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js" integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo" crossorigin="anonymous"></script>
-    <!-- <script src="js/jquery-3.4.1.js"></script> -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js" crossorigin="anonymous"></script>
+<script src="https://code.jquery.com/ui/1.12.1/jquery-ui.min.js"></script>
+<script type="text/javascript" src="js/bootstrap-clockpicker.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js" integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1" crossorigin="anonymous"></script>
     <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js" integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM" crossorigin="anonymous"></script>
     <script type="text/javascript" src="https://uicdn.toast.com/tui.code-snippet/latest/tui-code-snippet.min.js"></script>
@@ -138,13 +231,32 @@
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.20.1/moment.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/chance/1.0.13/chance.min.js"></script>
     <script src="https://uicdn.toast.com/tui-calendar/latest/tui-calendar.js"></script>
+    <script src='assets/js/tui-code-snippt.js'></script>
     <script src="./js/formValidation.min.js"></script>
+    <!-- <script src="./js/framework/bootstrap.min.js"></script>   -->
     <link rel="stylesheet" href="./css/formValidation.min.css">
-    <script src='assets/js/tui-code-snippet.js'></script>
+    <script src="https://use.fontawesome.com/a91275e4b2.js"></script>
     <script src="assets/js/calendars.js"></script>
     <script src="assets/js/schedules.js"></script>
     <script src="assets/js/plugin.js"></script>
     <script src="assets/js/app.js"></script>
-    <script src="assets/js/jquerysession.js"></script>
+<script>
+$(document).ready(function() {
+    $('.time_from').clockpicker({
+      twelvehour: true,
+      autoclose: true
+    });
+  
+  
+    $('.time_to').clockpicker({
+      twelvehour: true,
+      autoclose: true
+    });
+
+});
+function schedule() {
+    alert($('#from_date').val())
+}
+</script>
 </body>
 </html>

@@ -1,12 +1,14 @@
 <?php
-//ini_set('display_errors', 1);
-//error_reporting(E_ALL);
-
+/*ini_set('display_errors', 1);
+error_reporting(E_ALL);
+$_configs = include("/etc/helptimize/conf.php");*/
 require("common.inc.php");
 
 require_once "check_session.php";
 
 require_once("mysql_lib.php");
+
+require_once("en.lang.inc.php");
 
 
 
@@ -106,8 +108,11 @@ $db_count_unread_messages->close();
                     <span><input type="radio" id="provider" name="switch" onclick="getDetails('seller');"/><label for="provider">Provider</label></span>
                     </div>
                 </div>
-                <div class="col-sm-1 col-md-6 col-lg-1 col-xl-1 text-right">
-                    <div class="btn-group" role="group">
+                <div class="col-sm-1 col-md-6 col-lg-1 col-xl-1 text-right" style="padding: 0 10px">
+                    <span>
+                        <a href="message_list.php" class="btn btn-default message_button_background message_button_border" style="padding: 0"> <i class="fa fa-bell " aria-hidden="true" style="color:#ff9900"></i>  <span class="label label-danger message_counter"><?php echo $count_unread_messages; ?></span></a> 
+                    </span>
+                    <div class="btn-group" role="group" style="position: unset;">
                         <button id="btnGroupDrop1" type="button" class="btn btn-secondary dropdown-toggle profile" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                             <i class="fas fa-user"></i>
                         </button>
@@ -119,3 +124,98 @@ $db_count_unread_messages->close();
                 </div>
             </div>
         </header>
+<div id="modal_push_notification" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+                <h4 class="modal-title" style="width:100%"><center>
+                    <?php echo PUSH_NOTIFICATION_HEADER; ?></center></h4>
+              </div>
+                <div class="modal-body">
+                
+                <center>
+                <span id="modal_push_notification_icon"></span>
+                
+                <br>
+                <span id="modal_push_notification_text"></span>
+                <br>
+                
+                <a class="btn btn-success" href="" id="pushurl">View</a>
+                    <button class="btn btn-success" onclick="push_notification_close()"><?php echo CLOSE; ?></button>
+                
+                </center>
+                
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+Pusher.logToConsole = true;  
+
+    var account_id_pop_up = "<?php echo $_SESSION['id']; ?>";
+    console.log(account_id_pop_up);
+    var pusher = new Pusher("<?php echo $_configs['push_app_key']; ?>", {
+         cluster: "mt1",
+      encrypted: true
+    });
+    
+    var channel_pop_up = pusher.subscribe("pop_up_message");
+    channel_pop_up.bind(account_id_pop_up, function(data) {
+    
+       var message = data.message;
+       
+       var message = message.split("|");
+       
+       var message_text = message[0];
+       var message_type = message[1];
+       var message_url = message[2];
+       
+       console.log(message_text);
+         console.log(message_type);
+        localStorage.setItem("pushfrom", message_type);
+       if(message_type == "info" || message_type == "sr"|| message_type == "newbid"|| message_type == "award" || message_type == "shortlist"|| message_type == "accept"){
+       
+        $("#modal_push_notification_icon").html(" <i class=\'fa fa-info-circle fa-2\' aria-hidden=\'true\'></i>");
+          }
+          
+          if(message_type == "alert"){
+       
+        $("#modal_push_notification_icon").html(" <i class=\'fa fa-exclamation-triangle fa-2\' aria-hidden=\'true\'></i>");
+          }
+       
+      
+       
+      $("#modal_push_notification_text").html("<h5>" + message_text + "</h5>");
+      
+       
+
+
+$("#pushurl").attr("href", message_url);
+
+
+      $("#modal_push_notification").modal("show");
+    
+    
+    });
+    
+    
+    function push_notification_close(){
+   
+   $("#modal_push_notification").modal("hide");
+   
+  
+   
+};
+
+function push_notification_view(){
+   
+   $("#modal_push_notification").modal("hide");
+   
+   //location.reload();
+   window.location.href="main.php";
+   
+   
+};
+    </script>

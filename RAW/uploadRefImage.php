@@ -68,17 +68,14 @@ $types=$files['type'];
 $rtrn=array();
 	foreach($types as $key => $val){
 		//make sure it's of an approved type
-     	if($val == "")$val="image/jpg";
 		if(!array_key_exists(strtolower($val), $typeArr)){
-
-			$rtrn[$key]['status']=1;
-			$rtrn[$key]['msg']='File "'.$_FILES[$inputname]['name'][$key].'" not a type that\'s approved for upload. ['.$val.']';
+		$rtrn[$key]['status']=1;
+		$rtrn[$key]['msg']='File "'.$_FILES[$inputname]['name'][$key].'" not a type that\'s approved for upload. ['.$val.']';
 		}
 		if($_FILES[$inputname]['size'][$key]>=$_configs['upload_size_limit']){
-            $rtrn[$key]['status']=1;
-            $rtrn[$key]['msg']='File "'.$_FILES[$inputname]['name'][$key].'" not a size that\'s approved for upload. ['.$_FILES[$inputname]['size'][$key].' out of '.$_configs['upload_size_limit'].'] over by '.($_FILES[$inputname]['size'][$key]-$_configs['upload_size_limit']) ;
+                $rtrn[$key]['status']=1;
+                $rtrn[$key]['msg']='File "'.$_FILES[$inputname]['name'][$key].'" not a size that\'s approved for upload. ['.$_FILES[$inputname]['size'][$key].' out of '.$_configs['upload_size_limit'].'] over by '.($_FILES[$inputname]['size'][$key]-$_configs['upload_size_limit']) ;
 		}
-
 	} 
 
 	if(count($rtrn)<1){
@@ -87,8 +84,6 @@ $rtrn=array();
 
 return $rtrn;
 }
-
-
 
 // upload file
 //check against google safe search
@@ -127,30 +122,20 @@ but follows the convention that each upload input's name is <somestr>[]. example
 function upload(){
 $rtrn="";
 global $_configs;
-global $text_log;
 $files=reset($_FILES);
 $inputname=key($_FILES);
 $names=reset($files['name']);
 $i=0;
 $max=count($files['name']);
-	$text_log .= "\n\r\n\r\n\r file count: ".$max;
-
 $key = ini_get("session.upload_progress.prefix") . $_POST[ini_get("session.upload_progress.name")];
-	$text_log .= "\n\r\n\r session key: ".$key;	
 	while($i<$max){
-		$text_log .= "\n\r\n\r filename: ".$files['name'][$i];
-		$text_log .= "\n\r\n\r basename: ".basename($files['name'][$i]);
-		$timestamp = time();
-	$fn=$_configs['uploads_dir'] . $_SESSION['id']."_".$timestamp."_".basename($files['name'][$i]);
+	$fn=$_configs['uploads_dir'] . $_SESSION['id']."_".basename($files['name'][$i]);
 		if(move_uploaded_file($files['tmp_name'][$i], $fn)){
 			$_SESSION[$key]['files'][$i]['final_path']=$fn;
-			$text_log .= "\n\r fullpath: ".$fn;
 		}
 	$i++;
 	}
-	$fp = fopen("/var/www/helptimize/uploads/photo_upload_log.txt", "a+");
-	fwrite($fp, $text_log);
-	fclose($fp);
+
 return $_SESSION[$key];
 }
 
@@ -237,37 +222,23 @@ add the images to the users account.
     }
 -----------------------------------------*/
 function tagPics2UserDb($userId, $filePath, $num, $rates, $title, $srId=null){
-global $text_log;
-
 	if(!$userId || !file_exists($filePath)){
 	$rtrn['name']=$filePath;
 	$rtrn['msg']="userId not supplied to file doesn't exist";
 	$rtrn['status']=1;
-	
-		$text_log .= "\n\r msg:".$rtrn['msg'];
-		$fp = fopen("/var/www/helptimize/uploads/photo_upload_log.txt", "a+");
-		fwrite($fp, $text_log);
-		fclose($fp);
-	
 	return $rtrn;
 	}
 $rtrn="";
 global $_sqlObj;
 
-$findStr='select id from pics where userId="'.$userId.'" and url="'.$_sqlObj->escape($filePath).'"';
+$findStr='select id from pics_revision where userId="'.$userId.'" and url="'.$_sqlObj->escape($filePath).'"';
 $findRslt=$_sqlObj->query($findStr);
 	//most likely (unless you're using this as a one-off function), by the time you're here, you've ran the other two functions before it
 	// therefore, this is not an adult or violence picture, and needs to be overwritten and the db entry removed
 	if(count($findRslt)>=1){
 	//this deletes all entries withere both the $userId matches and the $filePath matches. It should only delete one entry as $filePath should be unique
 	//if it is not, it should be deleted anyways as, again, it should be unique.
-	$_sqlObj->query('delete from pics where userId="'.$userId.'" and url="'.$_sqlObj->escape($filePath).'"');
-
-		$text_log .= "\n\r msg:old pics deleted";
-		$fp = fopen("/var/www/helptimize/uploads/photo_upload_log.txt", "a+");
-		fwrite($fp, $text_log);
-		fclose($fp);	
-	
+	$_sqlObj->query('delete from pics_revision where userId="'.$userId.'" and url="'.$_sqlObj->escape($filePath).'"');
 	}
 
 	$rateStr="";
@@ -276,10 +247,10 @@ $findRslt=$_sqlObj->query($findStr);
 	}
 
 
-//$insrt='insert into pics(id, datetime, userId, orderNum, url, title, safeRate, notes) values(null, now(), "'.$userId.'","'.$num.'", "'.$_sqlObj->escape($filePath).'", "'.$_sqlObj->escape($title).'","'.$rateStr.'", "");';
+//$insrt='insert into pics(id, datetime, userId, orderNum, url, title, safeRate, notes) values(null, now(), "'.$userId.'","'.$num.'", "'.$_sqlObj->escape($filePath).'", "'.$_sqlObj->escape($title).'","'.$rateStr.'", "");';totalreview
 $srId=$srId?$_sqlObj->escape($srId):'null';
 
-$insrt='insert into pics(datetime, userId, srId, orderNum, url, title, safeRate, notes) values(now(), "'.$userId.'", '.$srId.', '.$num.', "'.$_sqlObj->escape($filePath).'", "'.$_sqlObj->escape($title).'","'.$rateStr.'", "");';
+$insrt='insert into pics_revision(datetime, userId, srId, orderNum, url, title, safeRate, notes,bidId,refno) values(now(), "'.$userId.'", '.$srId.', '.$num.', "'.$_sqlObj->escape($filePath).'", "'.$_sqlObj->escape($title).'","'.$rateStr.'", "", "'.$_POST['bidId'].'", "'.$_POST['totalreview'].'");';
 
 $insrtStatus=$_sqlObj->query($insrt);
 
@@ -287,24 +258,11 @@ $insrtStatus=$_sqlObj->query($insrt);
 	$rtrn['name']=$filePath;
 	$rtrn['filename']=basename($filePath);
 	$rtrn['status']=0;
-	
-
-		$text_log .= "\n\r msg: DB insert done";
-		$fp = fopen("/var/www/helptimize/uploads/photo_upload_log.txt", "a+");
-		fwrite($fp, $text_log);
-		fclose($fp);	
-	
 	}
 	else{	
 	$rtrn['msg']=$_sqlObj->error()."\n".$insrt;
 	$rtrn['name']=$filePath;
 	$rtrn['status']=1;
-	
-		$text_log .= "\n\r msg: DB insert failed";
-		$fp = fopen("/var/www/helptimize/uploads/photo_upload_log.txt", "a+");
-		fwrite($fp, $text_log);
-		fclose($fp);	
-	
 	}
 return $rtrn;
 }
@@ -318,25 +276,15 @@ function uploadMain(){
 global $_configs;
 global $_sqlObj;
 
-global $text_log;
 
 // check if logged in. (make sure id exists) if logged in and $_files exist, start logic
 	if(!$_SESSION['id']){
 	$rtrn['status']=1;
 	$rtrn['msg']="Not logged in.";
-	$text_log .= "\n\r msg: ".$rtrn['msg'];
-	$fp = fopen("/var/www/helptimize/uploads/photo_upload_log.txt", "a+");
-	fwrite($fp, $text_log);
-	fclose($fp);
 	return $rtrn;
 	}
 //checks files uploaded for size and type
 $imgChkRtrn=imgChecks($_configs['upload_types']);
-
-	$text_log .= "\n\r imgCheck Response: ".$imgChkRtrn;
-	$fp = fopen("/var/www/helptimize/uploads/photo_upload_log.txt", "a+");
-	fwrite($fp, $text_log);
-	fclose($fp);
 	if(!is_bool($imgChkRtrn) || $imgChkRtrn!=(bool)true){
 	return $imgChkRtrn;
 	}
@@ -346,10 +294,6 @@ $rtrn=upload();
 	if(count(reset($rtrn))<=0){
 	$rtrn['status']=1;
 	$rtrn['msg']="No image uploaded.";
-	$text_log .= "\n\r\n\r msg: ".$rtrn['msg'];
-	$fp = fopen("/var/www/helptimize/uploads/photo_upload_log.txt", "a+");
-	fwrite($fp, $text_log);
-	fclose($fp);
 	return $rtrn;
 	}
 // once uploaded, check each image for inappropriate conten.
@@ -359,36 +303,25 @@ $lvl["violence"]=$_configs["google_api_safe"]["vals"][$_configs["google_api_safe
 $rate=array();
 $dbResp=array();
 	foreach($rows as $i => $tmp){
-		
-		
+
 	$gglRsp=json_decode(adultCheck($tmp['final_path']), true);
 	$rate['adult']=$_configs["google_api_safe"]["vals"][$gglRsp["responses"][0]["safeSearchAnnotation"]["adult"]];
 	$rate['violence']=$_configs["google_api_safe"]["vals"][$gglRsp["responses"][0]["safeSearchAnnotation"]["violence"]];
 
-		$text_log .= "\n\r\n\r status: adultCheck Done";
-
 		//compare the rate 
 		if($rate['adult']<$lvl['adult'] && $rate['violence']<$lvl['violence'] && file_exists($tmp['final_path'])){
-		//if(1){
+	   //if(1){	
 		$image = new ImageResize($tmp['final_path']);
 		$image->resizeToBestFit(300, 300);
-		$text_log .= "\n\r\n\r status: Image resize done";
 		$str=smallPicName($tmp['final_path']);
 		$image->save($str);
 
-		$fp = fopen("/var/www/helptimize/uploads/photo_upload_log.txt", "a+");
-		fwrite($fp, $text_log);
-		fclose($fp);
-
 		//add to db
 		$dbResp[$i]=tagPics2UserDb($_SESSION['id'], $tmp['final_path'], $i, $rate, $_POST['title'][$i], $_POST['srId'][$i]);
-		
-
-		
 		}
 		else{
 		//blanket delete the image from the db
-		$_sqlObj->query('delete from pics where userId="'.$_SESSION['id'].'" and url="'.$_sqlObj->escape($tmp['final_path']).'"'); 
+		$_sqlObj->query('delete from pics_revision where userId="'.$_SESSION['id'].'" and url="'.$_sqlObj->escape($tmp['final_path']).'"'); 
 		$dbResp[$i]['status']=1;
 		$dbResp[$i]['name']=$tmp['final_path'];
 		$msgstr="Image inappropriate. \nAdult rating: ".$rate['adult'].'/'.$lvl["adult"]." \nViolence rating: ".$rate['violence'].'/'.$lvl["violence"];

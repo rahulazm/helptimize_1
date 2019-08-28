@@ -140,8 +140,8 @@ a[href^="https://maps.google.com/maps"]{display:none !important}
   <div class="panel-body">
   
 <center>
-<!-- <h4><font color="#000000"><?php echo SELECT_ADDRESS;?></font></h4>
- --> </center>
+<h4><font color="#000000"><?php echo SELECT_ADDRESS;?></font></h4>
+ </center>
 
   </div>
     </div>
@@ -218,8 +218,8 @@ a[href^="https://maps.google.com/maps"]{display:none !important}
         width: 100px;
       }
       #address {
-        /*border: 1px solid #000090;
-        background-color: #f0f0ff;*/
+        border: 1px solid #000090;
+        background-color: #f0f0ff;
         width: 480px;
         padding-right: 2px;
       }
@@ -243,10 +243,7 @@ a[href^="https://maps.google.com/maps"]{display:none !important}
         height: 20px;
         margin-bottom: 2px;
       }
-.collapse.in {
-    display: block !important;
-    height: auto !important;
-}
+      
       
       .panel {
     margin: 0 !important; 
@@ -278,7 +275,7 @@ a[href^="https://maps.google.com/maps"]{display:none !important}
 
 
 
-<div style="margin:10px">
+    <div style="margin:10px">
     
     <?php 
     
@@ -286,9 +283,9 @@ a[href^="https://maps.google.com/maps"]{display:none !important}
     ?>
     
     <div class="panel panel-default text_input_radius">
-      <div class="panel-body">
-        <?php echo NO_SR_LOCATION?></div>
-    </div>
+  <div class="panel-body">
+ <?php echo NO_SR_LOCATION?></div>
+</div>
     
     <?php
     }
@@ -297,65 +294,65 @@ a[href^="https://maps.google.com/maps"]{display:none !important}
     
    <br>
     
-<div class="panel-group" id="accordion">
+    <div class="panel-group" id="accordion">
   <div class="panel panel-default">
     <div class="panel-heading">
-      <h6 class="panel-title">
+      <h4 class="panel-title">
        
         <button class="btn btn-primary general_blue_button_border_radius general_blue_button_size general_blue_button_background general_blue_button_no_border" type="button" data-toggle="collapse" data-target="#collapseOne">Add</button>
           <?php echo SELECT_FROM_GPS_LOCATION?>
       
       
-      </h6>
+      </h4>
     </div>
-    <div id="collapseOne" class="panel-collapse collapse">
+    <div id="collapseOne" class="panel-collapse collapse out">
       <div class="panel-body">
     
     
-       <label><?php echo MY_CURRENT_LOCATION?></label>
+    <label><?php echo MY_CURRENT_LOCATION?></label>
     
  
   
-        <p id ='mapdiv' name='mapdiv'></p>
-        
-        <br>
-        <div class="form-group">
-          <label for="usr"><?php echo CURRENT_ADDRESS?></label>
-          <input type="text" class="form-control text_input_radius" id="curent_address"  name="curent_address">
-        </div>
-        
-        
-        <div class="form-group">
-          <label for="usr"><?php echo ENTER_PROJECT_ADDRESS_NAME?></label>
-          <input type="text" class="form-control text_input_radius" id="current_address_name"  name="current_address_name"  value="<?php echo $location_count+1; ?>">
-        </div>
+  <p id ='mapdiv' name='mapdiv'></p>
+  
+  <br>
+  <div class="form-group">
+  <label for="usr"><?php echo CURRENT_ADDRESS?></label>
+  <input type="text" class="form-control text_input_radius" id="curent_address"  name="curent_address">
+  </div>
   
   
-        <div class="form-group">
-          <label for="comment"><?php echo ENTER_PROJECT_ADDRESS_DESCRIPTION?></label>
-          <textarea placeholder="<?php echo ADRESS_DESCRIPTION;?>" class="form-control text_input_radius" rows="2" id="current_address_description" name="current_address_description"></textarea>
-        </div>
+   <div class="form-group">
+  <label for="usr"><?php echo ENTER_PROJECT_ADDRESS_NAME?></label>
+  <input type="text" class="form-control text_input_radius" id="current_address_name"  name="current_address_name"  value="<?php echo $location_count+1; ?>">
+</div>
   
-        <center>
-          <button class="btn btn-primary general_orange_button_border_radius general_orange_button_size general_orange_button_background general_orange_button_no_border" type="button" onclick="add_current_address()"><?php echo ADD_ADDRESS;?></button>
-        </center>
   
-      </div>
-    </div>
+   <div class="form-group">
+  <label for="comment"><?php echo ENTER_PROJECT_ADDRESS_DESCRIPTION?></label>
+  <textarea placeholder="<?php echo ADRESS_DESCRIPTION;?>" class="form-control text_input_radius" rows="2" id="current_address_description" name="current_address_description"></textarea>
+</div>
+  
+  <center>
+<button class="btn btn-primary general_orange_button_border_radius general_orange_button_size general_orange_button_background general_orange_button_no_border" type="button" onclick="add_current_address()"><?php echo ADD_ADDRESS;?></button>
+  </center>
+  
+  </div>
+   </div>
     </div>
     </div>
     
 <div class="panel-group" id="accordion3">
   <div class="panel panel-default">
     <div class="panel-heading">
-      <h6 class="panel-title">
+      <h4 class="panel-title">
       
         
          <button class="btn btn-primary general_blue_button_border_radius general_blue_button_size general_blue_button_background general_blue_button_no_border" type="button" data-toggle="collapse" data-target="#collapseThree">Add</button>
           <?php echo SELECT_NEW_LOCATION?>
-      </h6>
+      </h4>
     </div>
-    <div id="collapseThree" class="panel-collapse collapse">
+    <div id="collapseThree" class="panel-collapse collapse out">
       <div class="panel-body">
     
 		<div class="form-group">
@@ -387,15 +384,15 @@ a[href^="https://maps.google.com/maps"]{display:none !important}
     <div class="panel-group" id="accordion2">
   <div class="panel panel-default">
     <div class="panel-heading">
-      <h6 class="panel-title">
+      <h4 class="panel-title">
        
         
          <button class="btn btn-primary general_blue_button_border_radius general_blue_button_size general_blue_button_background general_blue_button_no_border" type="button" data-toggle="collapse" data-target="#collapseTwo">Add</button>
           <?php echo SELECT_FROM_STORED_LOCATION?>
         
-      </h6>
+      </h4>
     </div>
-    <div id="collapseTwo" class="panel-collapse collapse">
+    <div id="collapseTwo" class="panel-collapse collapse out">
       <div class="panel-body">
     
     
@@ -489,7 +486,7 @@ a[href^="https://maps.google.com/maps"]{display:none !important}
 
     
 <center>
-   <!-- <button onclick="go_back()" type="button" class="btn btn-primary general_orange_button_border_radius general_orange_button_size general_orange_button_background general_orange_button_no_border"><?php echo CONTINUE_BUTTON;?></button> -->
+   <button onclick="go_back()" type="button" class="btn btn-primary general_orange_button_border_radius general_orange_button_size general_orange_button_background general_orange_button_no_border"><?php echo CONTINUE_BUTTON;?></button>
    
   </center>
   
@@ -759,8 +756,8 @@ var latitude = "";
     </script>
     
     
-    <!-- <script src="https://maps.googleapis.com/maps/api/js?key=<?php echo $configs['google_map_api']; ?>&libraries=places&callback=initAutocomplete"
-        async defer></script> -->
+    <script src="https://maps.googleapis.com/maps/api/js?key=<?php echo $configs['google_map_api']; ?>&libraries=places&callback=initAutocomplete"
+        async defer></script>
         
        
  
@@ -851,8 +848,7 @@ function add_stored_address(){
   				closeOnConfirm: false
 				},
 				function(){
-  					//location.href = "create_new_service_request_address_selection.php?from="+from+"&sr_number=" + sr_number;
-            
+  					location.href = "create_new_service_request_address_selection.php?from="+from+"&sr_number=" + sr_number;
 				});
     		
 				
@@ -933,24 +929,7 @@ function add_new_address_modal(){
 				},
 				function(){
 				    
-  					 //location.href = "create_new_service_request_address_selection.php?from="+from+"&sr_number=" + sr_number;
-             $.ajax({
-                      url: "show_added_address.php", 
-                      type: "GET",             
-                      //data: new FormData(this), 
-                      contentType: false,       
-                      cache: false,
-                      async: true,             
-                      processData:false,      
-                      
-                      success: function(data)   
-                        {
-                          var result_alladdress = data;
-                          $("#sr_address_list").html(result_alladdress);
-                          //console.log(result_alladdress);
-                          swal.close();
-                        }
-                      })
+  					 location.href = "create_new_service_request_address_selection.php?from="+from+"&sr_number=" + sr_number;
 				});
     		
     
@@ -1051,9 +1030,6 @@ function add_new_address()
     			 var address_id = feedback;
     			 localStorage.setItem("latitude_address",latitude);
            localStorage.setItem("longitude_address",longitude);
-           gLat = latitude;
-           gLng = longitude;
-           initMap();
     			 swal({
   				title: address_saved_OK,
   				text: address_saved_OK_text,
@@ -1068,31 +1044,12 @@ function add_new_address()
 				},
 				function(isConfirm){
   				if (isConfirm) {
-              console.log("if");
   				    stored_address_during_add_address(address_id, formData);
     				
     				//location.href = "create_new_service_request_address_selection.php?sr_number=" + sr_number;
   				
   				} else {
-            console.log("else");
-    			//location.href = "create_new_service_request_address_selection.php?from="+from+"&sr_number=" + sr_number;
-          $.ajax({
-                      url: "show_added_address.php", 
-                      type: "GET",             
-                      //data: new FormData(this), 
-                      contentType: false,       
-                      cache: false,
-                      async: true,             
-                      processData:false,      
-                      
-                      success: function(data)   
-                        {
-                          var result_alladdress = data;
-                          $("#sr_address_list").html(result_alladdress);
-                          //console.log(result_alladdress);
-                          swal.close();
-                        }
-                      })
+    			location.href = "create_new_service_request_address_selection.php?from="+from+"&sr_number=" + sr_number;
   				
   				}
 
@@ -1200,29 +1157,9 @@ function add_current_address()
     				//location.href = "create_new_service_request_address_selection.php?sr_number=" + sr_number;
   				
   				} else {
-    			//location.href = "create_new_service_request_address_selection.php?from="+from+"&sr_number=" + sr_number;
-          $.ajax({
-                      url: "show_added_address.php", 
-                      type: "GET",             
-                      //data: new FormData(this), 
-                      contentType: false,       
-                      cache: false,
-                      async: true,             
-                      processData:false,      
-                      
-                      success: function(data)   
-                        {
-                          var result_alladdress = data;
-                          $("#sr_address_list").html(result_alladdress);
-                          //console.log(result_alladdress);
-                          swal.close();
-
-                        }
-                      })
+    			location.href = "create_new_service_request_address_selection.php?from="+from+"&sr_number=" + sr_number;
   				
   				}
-
-          //swal.close();
 
 				});
 
@@ -1272,24 +1209,7 @@ $(document).on("click", ".btn_detail_address_update", function(e) {
 				},
 				function(){
 				
-			//location.href = "create_new_service_request_address_selection.php?from="+from+"&sr_number=" + sr_number;
-      $.ajax({
-                      url: "show_added_address.php", 
-                      type: "GET",             
-                      //data: new FormData(this), 
-                      contentType: false,       
-                      cache: false,
-                      async: true,             
-                      processData:false,      
-                      
-                      success: function(data)   
-                        {
-                          var result_alladdress = data;
-                          $("#sr_address_list").html(result_alladdress);
-                          //console.log(result_alladdress);
-                          swal.close();
-                        }
-                      })
+			location.href = "create_new_service_request_address_selection.php?from="+from+"&sr_number=" + sr_number;
   
 				});
         				
@@ -1387,8 +1307,7 @@ function stored_address_during_add_address(address_id, formD){
 	'posLat'	: formD['latitude']
     	}
     	  
- console.log("stored_address_during_add_address : ");
- console.log(formData);
+ 
     var feedback = $.ajax({
     	type: "POST",
     	url: "service_request_address_store.php",
@@ -1409,32 +1328,12 @@ function stored_address_during_add_address(address_id, formD){
 			},
 				
 			function(){
-				//location.href = "create_new_service_request_address_selection.php?from="+from+"&sr_number=" + sr_number;
-        $.ajax({
-                      url: "show_added_address.php", 
-                      type: "GET",             
-                      //data: new FormData(this), 
-                      contentType: false,       
-                      cache: false,
-                      async: true,             
-                      processData:false,      
-                      
-                      success: function(data)   
-                        {
-                          var result_alladdress = data;
-                          $("#sr_address_list").html(result_alladdress);
-                          //console.log(result_alladdress);
-                          swal.close();
-                        }
-                      })
+				location.href = "create_new_service_request_address_selection.php?from="+from+"&sr_number=" + sr_number;
   
 		});
     		 		
     		
     });
-
-    console.log("add address feedback");
-    console.log(feedback);
   	
 }
 
@@ -1496,24 +1395,7 @@ $(document).on("click", ".stored_address", function(e) {
 				function(){
 				
 			
-				//location.href = "create_new_service_request_address_selection.php?from="+from+"&sr_number=" + sr_number;
-             $.ajax({
-                      url: "show_added_address.php", 
-                      type: "GET",             
-                      //data: new FormData(this), 
-                      contentType: false,       
-                      cache: false,
-                      async: true,             
-                      processData:false,      
-                      
-                      success: function(data)   
-                        {
-                          var result_alladdress = data;
-                          $("#sr_address_list").html(result_alladdress);
-                          //console.log(result_alladdress);
-                          swal.close();
-                        }
-                      })
+				location.href = "create_new_service_request_address_selection.php?from="+from+"&sr_number=" + sr_number;
   
 				});
     		
@@ -1580,24 +1462,7 @@ $(document).on("click", ".delete_stored_address", function(e) {
 				},
 				function(){
 				
-				  //location.href = "create_new_service_request_address_selection.php?from="+from+"&sr_number=" + sr_number;
-          $.ajax({
-                      url: "show_added_address.php", 
-                      type: "GET",             
-                      //data: new FormData(this), 
-                      contentType: false,       
-                      cache: false,
-                      async: true,             
-                      processData:false,      
-                      
-                      success: function(data)   
-                        {
-                          var result_alladdress = data;
-                          $("#sr_address_list").html(result_alladdress);
-                          //console.log(result_alladdress);
-                          swal.close();
-                        }
-                      })
+				location.href = "create_new_service_request_address_selection.php?from="+from+"&sr_number=" + sr_number;
   
 				});
     		
@@ -1668,24 +1533,7 @@ $(document).on("click", ".delete_address", function(e) {
 				},
 				function(){
 				
-				  //location.href = "create_new_service_request_address_selection.php?from="+from+"&sr_number=" + sr_number;
-          $.ajax({
-                      url: "show_added_address.php", 
-                      type: "GET",             
-                      //data: new FormData(this), 
-                      contentType: false,       
-                      cache: false,
-                      async: true,             
-                      processData:false,      
-                      
-                      success: function(data)   
-                        {
-                          var result_alladdress = data;
-                          $("#sr_address_list").html(result_alladdress);
-                          //console.log(result_alladdress);
-                          swal.close();
-                        }
-                      })
+				location.href = "create_new_service_request_address_selection.php?from="+from+"&sr_number=" + sr_number;
   
 				});
     		
@@ -2288,7 +2136,7 @@ var display_last = "<?php echo DISPLAY_LAST; ?>";
 
 
 $(document).ready(function() {
-  initAutocomplete();
+
 
     geoloc();
     $('#sr_address_list').dataTable( {
@@ -2313,26 +2161,17 @@ $(document).ready(function() {
             "infoFiltered": filtered
         }
     } );
-
-
-    $(".panel-title button").on("click", function(){
-      setTimeout(function(){
-        $(".panel-collapse").removeClass("show");
-        panelID = $(this).attr("data-target");
-        $("#".panelID).addClass("show");
-      }, 2000);
-
-    })
-
 } );
 
 
-$('#accordion').on('hidden.bs.collapse', function () {
-  geoloc();
-})
-$('#accordion').on('shown.bs.collapse', function () {
-  geoloc(); 
-})
+ $('#accordion').on('hidden.bs.collapse', function () {
+     
+      geoloc();
+    })
+    $('#accordion').on('shown.bs.collapse', function () {
+   
+      geoloc(); 
+    })
      
 
 </script>

@@ -14,7 +14,7 @@ if($_POST['service']=='bids'){
 
 	$bdrdetails[0]['address'] = "";
 	while($rowBdrAddress) {
-		$bdrdetails[0]['address'] .= "<p><i class='fas fa-map-marker-alt'></i>&nbsp;".$rowBdrAddress['address']."<span>";
+		$bdrdetails[0]['address'] .= "<p><i class='fas fa-map-marker-alt'></i>&nbsp;".$rowBdrAddress['address']."</p>";
 		$rowBdrAddress=next($bdrAddress);
 	}
 	$dateFrom = date("jS M Y-h:i A",strtotime($bdrdetails[0]['dateTimeTo']));

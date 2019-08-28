@@ -1,6 +1,6 @@
 <?php
 
-$configs = include("/etc/helptimize/conf.php");
+$_configs = include("/etc/helptimize/conf.php");
 require_once("./common.inc.php");
 require_once("./mysql_lib.php");
 require_once("./resize_image.php");
@@ -93,7 +93,7 @@ echo json_encode($rtrn);
 		
 		foreach ($result_get_account_details as $key => $value) {
 			 $userid = $value['id'];
-			  $url="work_bid.php?id=".$get['bidId'];
+			  $url="view_service_details.php?id=".$get['srId'];
 	 $today = date("Y-m-d H:i:s");  
 	   $Content='"'.$sr[0]['title'].'" awarded to '.$username;
 	 $sql_insert_message = "INSERT INTO message_list (message_id,sr_id,message_type,message_title,date_time,read_status,user_id,receiver_id,url) VALUES ('". $get['bidId'] ."','". $get['bidId'] ."','". $type ."','". $Content ."','". $today ."','0','". $_SESSION['id'] ."','". $userid ."','". $url ."')";
@@ -111,9 +111,9 @@ echo json_encode($rtrn);
 
 }
 	//////After creating service request call pusher notification to other users --- End
-$rtrn['status']=1;
+/*$rtrn['status']=1;
 $rtrn['msg']='SR: '.$sr[0]['bidAwardId'].' awarded to bid: '.$get['bidId'];
-echo json_encode($rtrn);
+echo json_encode($rtrn);*/
 //error_log('=============================+>>>>>>>>>>>>>>>>>>>>>>'.print_r($rtrn, true));
 exit;
 ?>

@@ -1,8 +1,13 @@
 localStorage.removeItem('recurring');
-
+//jQuery('button#review').hide(); 
+$("button#next").html('Next'); 
 function next() {
   //$('#amount, #ramount').val('')
+  //console.log("getId: "+getId.length);
+
+//  if(!getId.length){
     var getId = $('.super-widget-tab input[type="radio"]:checked').last().parent().next().children('input').attr('id');
+//  }  
     var address = $('#getaddr').val();
     var jobtitle = $('#jobtitle').val();
     var desc  = $('#desc').val();
@@ -11,11 +16,20 @@ function next() {
     var amount  = $('#amount').val();
     var bank  = $('input:radio[name=bank]:checked').val();
     var mapaddress = $('#pac-input').val();
-    var newaddress = $('#newaddress').val();
+    //var newaddress = $('#newaddress').val();
+    var newaddress = '';
+    if(!($("#sr_address_list").children("tbody").children("tr").children("td").hasClass("dataTables_empty"))){
+      $("#sr_address_list").children("tbody").children("tr").each(function(i){
+        adrs = $(this).children("td:nth-child(2)").html();
+        newaddress += "<p>"+i+". "+adrs+"</p>";
+      });
+    }
     var recurringtype = localStorage.getItem('recurring');
     var lat=$('#lat').val();
     var lng=$('#lng').val();
     var ramount=$('#ramount').val();
+    var cancelfee = $("#cancelfee").val();
+    var personalnote = $("#personal_notes").val();
 
     //var time = '10:15 AM';
     //var startdate = '10/10/2018';
@@ -24,6 +38,24 @@ function next() {
     var schedule_note = $('#schedule_note').val();
     var address;
     //alert(schedule_note);
+
+    if((getId=='jobdetails' || getId=='finish' ) && (jobtitle == "" || jobtitle == null)){
+      swal({
+        title: "Warning",
+         type: "warning",
+        text: "Please enter the job title!"
+      });
+      return false;
+    }
+
+    if((getId=='payment' || getId=='finish' ) && (serv == "" || serv == null)){
+      swal({
+        title: "Warning",
+         type: "warning",
+        text: "Please select the category!"
+      });
+      return false;
+    }
 
 
     if($('#description').length){
@@ -37,7 +69,11 @@ function next() {
 
 
     if($('#amnt').length){
-      var newtext = pay+", $"+ amount;
+      if(recurringtype == "One Time"){
+        var newtext = recurringtype + ", "+pay+", $"+ amount;
+      }else{
+        var newtext = recurringtype + " ($"+ramount+"), Total ($"+amount+"), "+pay;
+      }
       $('#amnt').text(newtext);
     }
 
@@ -47,12 +83,13 @@ function next() {
     }
 
     if(newaddress!=""){
-      $('#address').text(newaddress);
+      $('#address').html(newaddress);
       address = newaddress;
     }
 if(recurringtype!='One Time'){
   $('#recamnt').show();
-  $('#recamnt label').append(" ("+recurringtype+")");
+  $('#recamnt label').html("Amount ("+recurringtype+")");
+  $('.notes').show();
 }
 
 if(getId=='finish'){
@@ -62,6 +99,17 @@ if(getId=='finish'){
   var endMin    = localStorage.getItem('endMin') ; 
   var dbStartDate = localStorage.getItem('dbStartDate') ; 
   var dbEndDate   =localStorage.getItem('dbEndDate') ; 
+  var dbStartMin = localStorage.getItem('dbStartMin');
+  var dbEndMin = localStorage.getItem('dbEndMin');
+
+  console.log("Finish tab:");
+  console.log("startDate1: "+startDate1);
+  console.log("endDate1: "+endDate1);
+  console.log("startMin: "+startMin);
+  console.log("endMin: "+endMin);
+  console.log("dbStartDate: "+dbStartDate);
+  console.log("dbEndDate: "+dbEndDate);
+
  
 }
  
@@ -135,11 +183,13 @@ if(getId=='finish'){
     {
       title : jobtitle,
       descr : desc,
-      summ : desc,
+      summ : personalnote,
       bidDate : bid_bool,
       dateTimeBool: time,
       dateTimeFrom : dbStartDate,
       dateTimeTo : dbEndDate,
+      timeFrom: dbStartMin,
+      timeTo: dbEndMin,
       set_schedule : recurringtype,
       schedule_note : schedule_note,
       schedule_amount : ramount,
@@ -149,13 +199,14 @@ if(getId=='finish'){
       rateperhour : rateperhour,
       category : serv,
       is18 : is18,
+      cancelfee : cancelfee,
       provider_type : provider_type,
       reqstedBidId : selected_provider,
       imgs : imgs,
       addr : address,
       buttonstatus : buttonstatus,
-      current : "11",
-      sr_number : "108",
+      current : "submit",
+      sr_number : "",
       posLong:lng,
       posLat:lat
     },
@@ -179,7 +230,15 @@ if(getId=='finish'){
     if(getId == "payment"){
       //alert('test: '+ localStorage.getItem('recurring'))
       payTypeSetting();
+      $("#schedule_note").focus();
+      $("#amount").focus();
+      $("#cancelfee").focus();
+      $("#personalnote").focus();
+      if($("#recamnt").css("display") != 'none'){
+        $("#ramount").focus();
+      }
     }
+
 }
 
 function prev() {
@@ -193,6 +252,13 @@ function prev() {
     } 
     if(getId == "payment"){
       payTypeSetting();
+      $("#schedule_note").focus();
+      $("#amount").focus();
+      $("#cancelfee").focus();
+      $("#personalnote").focus();
+      if($("#recamnt").css("display") != 'none'){
+        $("#ramount").focus();
+      }
     }
 }
 
@@ -217,13 +283,21 @@ function create_bid_next() {
     var amount  = $('#amount').val();
     var bank  = $('input:radio[name=bank]:checked').val();
     var mapaddress = $('#pac-input').val();
-    var newaddress = $('#newaddress').val();
+    //var newaddress = $('#newaddress').val();
+    var newaddress = '';
+    if(!($("#sr_address_list").children("tbody").children("tr").children("td").hasClass("dataTables_empty"))){
+      $("#sr_address_list").children("tbody").children("tr").each(function(i){
+        adrs = $(this).children("td:nth-child(2)").html();
+        newaddress += "<p>"+i+". "+adrs+"</p>";
+      });
+    }
     var recurringtype = localStorage.getItem('recurring');
     var lat=$('#lat').val();
     var lng=$('#lng').val();
     var ramount=$('#ramount').val();
     var service_id=$('#service_id').val();
     var milestones = queryArr;
+    var cancelfee = $("#cancelfee").val();
 
     //var time = '10:15 AM';
     //var startdate = '10/10/2018';
@@ -245,7 +319,11 @@ function create_bid_next() {
 
 
     if($('#amnt').length){
-      var newtext = pay+", $"+ amount;
+      if(recurringtype == "One Time"){
+        var newtext = recurringtype + ", "+pay+", $"+ amount;
+      }else{
+        var newtext = recurringtype + " ($"+ramount+"), Total ($"+amount+"), "+pay;
+      }
       $('#amnt').text(newtext);
     }
 
@@ -255,12 +333,361 @@ function create_bid_next() {
     }
 
     if(newaddress!=""){
-      $('#address').text(newaddress);
+      $('#address').html(newaddress);
       address = newaddress;
     }
 if(recurringtype!='One Time'){
   $('#recamnt').show();
-  $('#recamnt label').append(" ("+recurringtype+")");
+  $('#recamnt label').html("Amount ("+recurringtype+")");
+  $('.notes').show();
+}
+
+if(getId=='finish'){
+  var startDate1 = localStorage.getItem('startDate1') ; 
+  var endDate1   = localStorage.getItem('endDate1') ; 
+  var startMin  = localStorage.getItem('startMin') ; 
+  var endMin    = localStorage.getItem('endMin') ; 
+  var dbStartDate = localStorage.getItem('dbStartDate') ; 
+  var dbEndDate   =localStorage.getItem('dbEndDate') ; 
+  var dbStartMin = localStorage.getItem('dbStartMin');
+  var dbEndMin = localStorage.getItem('dbEndMin');
+}
+ 
+if(startDate1!=""){
+      $('#startdate').text(localStorage.getItem('startDate1'));
+  }
+if(startMin!=""){
+  $('#startMin').text(localStorage.getItem('startMin'));
+}
+if(endDate1!=""){
+      $('#enddate').text(localStorage.getItem('endDate1'));
+    }
+if(endMin!=""){
+  $('#endMin').text(localStorage.getItem('endMin'));
+}
+
+
+//alert("desc----"+desc);
+//alert(address);
+/*if($('#start-date').length){
+  alert($('#start-date').val());
+}*/
+var bid_bool="";
+var totalhours="";
+var rateperhour="";
+var is18=1;
+var selected_provider="";
+var buttonstatus='submit';
+var provider_type="";
+var time="";
+
+var imgs=[];
+  $('#sr_imgs input[type="hidden"]').each(function(){
+  imgs[this.id]=this.value;
+   //alert(this.value);
+   console.log('images');
+  });
+
+if(getId=='finish'){
+  
+  /*
+  var tmp= {title : desc,
+      descr : desc,
+      summ : desc,
+      bidDate : bid_bool,
+      dateTimeBool: time,
+      dateTimeFrom : dbStartDate,
+      dateTimeTo : dbEndDate,
+      set_schedule : recurringtype,
+      schedule_note : schedule_note,
+      schedule_amount : ramount,
+      payAmt : amount,
+      payType : pay,
+      totalhours : totalhours,
+      rateperhour : rateperhour,
+      category : serv,
+      is18 : is18,
+      provider_type : provider_type,
+      reqstedBidId : selected_provider,
+      imgs : imgs,
+      addr : address,
+      buttonstatus : buttonstatus,
+      current : "11",
+      sr_number : "108",
+      posLong:lng,
+      posLat:lat};
+      console.log(tmp);
+  */
+
+  $.post("bid_submit_new.php",
+    {
+      title : jobtitle,
+      descr : desc,
+      summ : desc,
+      bidDate : bid_bool,
+      dateTimeBool: time,
+      dateTimeFrom : dbStartDate,
+      dateTimeTo : dbEndDate,
+      timeFrom: dbStartMin,
+      timeTo: dbEndMin,
+      set_schedule : recurringtype,
+      schedule_note : schedule_note,
+      schedule_amount : ramount,
+      payAmt : amount,
+      payType : pay,
+      totalhours : totalhours,
+      rateperhour : rateperhour,
+      category : serv,
+      is18 : is18,
+      cancelfee : cancelfee,
+      provider_type : provider_type,
+      reqstedBidId : selected_provider,
+      imgs : imgs,
+      addr : address,
+      buttonstatus : buttonstatus,
+      current : "11",
+      sr_number : "108",
+      service_id : service_id,
+      milestones : queryArr,
+      posLong:lng,
+      posLat:lat
+    },
+    function(data,status){
+      console.log("Data: " + data + "\nStatus: " + status);
+    });
+
+}
+
+    
+
+    $('.super-widget-tab input[type="radio"]:checked').last().parent().next().children('input').prop('checked', true);
+    $('.super-widget-tab-info summary').hide();
+    $('.'+getId).show();
+    if($('#prev').css('visibility') == 'hidden' && $('.super-widget-tab input[type="radio"]:checked').length > 1) { 
+        $('#prev').css('visibility', 'visible');
+    } else if(($('.super-widget-tab input[type="radio"]').last().is(':checked'))) {
+        $('#next').hide()
+    }
+
+   
+    if(getId == "jobdetails")
+    {
+      jQuery('button#review_btn').show(); 
+      $("button#next").html('Next'); 
+    }
+    else if(getId == "location")
+    {
+      jQuery('button#review_btn').show();  
+      $("button#next").html('Next'); 
+    }
+    else if(getId == "payment")
+    {
+      jQuery('button#review_btn').show();  
+      $("button#next").html('Next'); 
+    }
+    else if(getId == "review")
+    {
+      jQuery('button#review_btn').hide(); 
+      if($('#review').is(':checked')) 
+      { 
+        $("button#next").html('Create Bid'); 
+      }
+    }else
+    {
+      jQuery('button#review_btn').hide(); 
+      $("button#next").html('Next'); 
+    }
+
+    
+
+    if(getId == "payment"){
+      //alert('test: '+ localStorage.getItem('recurring'))
+      payTypeSetting();
+      $("#schedule_note").focus();
+      $("#amount").focus();
+      $("#cancelfee").focus();
+      $("#personalnote").focus();
+      if($("#recamnt").css("display") != 'none'){
+        $("#ramount").focus();
+      }
+    }
+}
+
+function create_bid_prev() {
+    var getId = $('.super-widget-tab input[type="radio"]:checked').last().parent().prev().children('input').attr('id');
+    $('.super-widget-tab input[type="radio"]:checked').last().prop('checked', false);
+    $('.super-widget-tab-info summary').hide();
+    $('.'+getId).show();
+    if($('.super-widget-tab input[type="radio"]:checked').length < 2) {
+        $('#prev').css('visibility', 'hidden');
+        $('#next').show();
+    } 
+    if(getId == "payment"){
+      payTypeSetting();
+      $("#schedule_note").focus();
+      $("#amount").focus();
+      $("#cancelfee").focus();
+      $("#personalnote").focus();
+      if($("#recamnt").css("display") != 'none'){
+        $("#ramount").focus();
+      }
+    }
+
+    if(getId == "jobdetails")
+    {
+      jQuery('button#review_btn').show(); 
+      $("button#next").html('Next'); 
+    }
+    else if(getId == "location")
+    {
+      jQuery('button#review_btn').show();  
+      $("button#next").html('Next'); 
+    }
+    else if(getId == "payment")
+    {
+      jQuery('button#review_btn').show();  
+      $("button#next").html('Next'); 
+    }
+    else
+    {
+      jQuery('button#review_btn').hide(); 
+    }
+
+    if(getId == "review")
+    {
+      $("button#next").html('Create Bid'); 
+    }
+
+}
+
+
+
+function review() 
+{
+    
+   $("button#next").html('Create Bid');
+   jQuery('summary.location.WDTH90.MRGCenter').hide();
+   jQuery('summary.jobdetails.WDTH90.MRGCenter').hide();
+   jQuery('summary.payment.WDTH90.MRGCenter').hide();
+   jQuery('summary.finish.WDTH90.MRGCenter').hide();
+   jQuery('summary.review.WDTH90.MRGCenter').show();
+   var getId = $('.super-widget-tab input[type="radio"]:checked').last().parent().next().children('input').attr('id');
+   if(getId == 'payment')
+    {
+        
+
+            var amount= parseFloat($("#amount").val());
+            var payType = $('input[name=pay]:checked').val();
+            var total= parseFloat($("#milestoneTotal").val());
+
+            var text="Milestone total amount must be equal to bid amount";
+            if(!isNaN(total))
+            {
+
+               if(payType == 'fixed' || payType == 'hourly')
+              {
+                 if(total !== amount)
+                 {
+                    swal({
+                      title: "Warning",
+                       type: "warning",
+                      text: text
+                    });
+                    jQuery('summary.location.WDTH90.MRGCenter').hide();
+                    jQuery('summary.jobdetails.WDTH90.MRGCenter').hide();
+                    jQuery('summary.payment.WDTH90.MRGCenter').show();
+                    jQuery('summary.finish.WDTH90.MRGCenter').hide();
+                    jQuery('summary.review.WDTH90.MRGCenter').hide();
+                    $('#review').prop('checked', false);
+                    return false;
+                 }
+
+              } 
+            }
+           
+          
+
+    }
+
+   $('#payment').prop('checked', true);
+   $('#review').prop('checked', true);
+   $('#jobdetails').prop('checked', true);
+   $('#location').prop('checked', true);
+   
+    var queryArr = [];
+   $('input[name^="milestones"]').each(function()
+    {   
+        
+        data = $(this).val();
+        queryArr.push(data);
+    });
+   console.log(queryArr);
+    
+    var address = $('#getaddr').val();
+    var jobtitle = $('#jobtitle').val();
+    var desc  = $('#desc').val();
+    var serv  = $('input:radio[name=serv]:checked').val();
+    var pay  = $('input:radio[name=pay]:checked').val();
+    var amount  = $('#amount').val();
+    var bank  = $('input:radio[name=bank]:checked').val();
+    var mapaddress = $('#pac-input').val();
+    //var newaddress = $('#newaddress').val();
+    var newaddress = '';
+    if(!($("#sr_address_list").children("tbody").children("tr").children("td").hasClass("dataTables_empty"))){
+      $("#sr_address_list").children("tbody").children("tr").each(function(i){
+        adrs = $(this).children("td:nth-child(2)").html();
+        newaddress += "<p>"+i+". "+adrs+"</p>";
+      });
+    }
+    var recurringtype = localStorage.getItem('recurring');
+    var lat=$('#lat').val();
+    var lng=$('#lng').val();
+    var ramount=$('#ramount').val();
+    var service_id=$('#service_id').val();
+    var milestones = queryArr;
+    var cancelfee = $("#cancelfee").val();
+
+    //var time = '10:15 AM';
+    //var startdate = '10/10/2018';
+    //var enddate = '11/10/2018';
+    var pic_id = $('#pic_id').val();
+    var schedule_note = $('#schedule_note').val();
+    var address;
+    //alert(schedule_note);
+
+
+    if($('#description').length){
+       $('#description').text(desc);
+    }
+    //alert($('#amnt').length);
+    //alert(pay+", "+ amount+" $");
+
+    //alert("startDate1" + localStorage.getItem('startDate1'));
+    //alert("endDate1" + localStorage.getItem('endDate1'));  
+
+
+    if($('#amnt').length){
+      if(recurringtype == "One Time"){
+        var newtext = recurringtype + ", "+pay+", $"+ amount;
+      }else{
+        var newtext = recurringtype + " ($"+ramount+"), Total ($"+amount+"), "+pay;
+      }
+      $('#amnt').text(newtext);
+    }
+
+    if(mapaddress!=""){
+      $('#address').text(mapaddress);
+      address = mapaddress;
+    }
+
+    if(newaddress!=""){
+      $('#address').html(newaddress);
+      address = newaddress;
+    }
+if(recurringtype!='One Time'){
+  $('#recamnt').show();
+  $('#recamnt label').html("Amount ("+recurringtype+")");
+  $('.notes').show();
 }
 
 if(getId=='finish'){
@@ -271,6 +698,115 @@ if(getId=='finish'){
   var dbStartDate = localStorage.getItem('dbStartDate') ; 
   var dbEndDate   =localStorage.getItem('dbEndDate') ; 
  
+}
+ 
+if(startDate1!=""){
+      $('#startdate').text(localStorage.getItem('startDate1'));
+  }
+if(startMin!=""){
+  $('#startMin').text(localStorage.getItem('startMin'));
+}
+if(endDate1!=""){
+      $('#enddate').text(localStorage.getItem('endDate1'));
+    }
+if(endMin!=""){
+  $('#endMin').text(localStorage.getItem('endMin'));
+}
+
+}
+
+
+
+
+
+
+function update_bid_next() {
+   
+    var queryArr = [];
+   $('input[name^="milestones"]').each(function()
+    {   
+        
+        data = $(this).val();
+        queryArr.push(data);
+    });
+   console.log(queryArr);
+    var getId = $('.super-widget-tab input[type="radio"]:checked').last().parent().next().children('input').attr('id');
+    var address = $('#getaddr').val();
+    var jobtitle = $('#jobtitle').val();
+    var desc  = $('#desc').val();
+    var serv  = $('input:radio[name=serv]:checked').val();
+    var pay  = $('input:radio[name=pay]:checked').val();
+    var amount  = $('#amount').val();
+    var bank  = $('input:radio[name=bank]:checked').val();
+    var mapaddress = $('#pac-input').val();
+    //var newaddress = $('#newaddress').val();
+    var newaddress = '';
+    if(!($("#sr_address_list").children("tbody").children("tr").children("td").hasClass("dataTables_empty"))){
+      $("#sr_address_list").children("tbody").children("tr").each(function(i){
+        adrs = $(this).children("td:nth-child(2)").html();
+        newaddress += "<p>"+i+". "+adrs+"</p>";
+      });
+    }
+    var recurringtype = localStorage.getItem('recurring');
+    var lat=$('#lat').val();
+    var lng=$('#lng').val();
+    var ramount=$('#ramount').val();
+    var service_id=$('#service_id').val();
+    var bid_id=$('#bid_id').val();
+    var milestones = queryArr;
+    var cancelfee = $("#cancelfee").val();
+    //var time = '10:15 AM';
+    //var startdate = '10/10/2018';
+    //var enddate = '11/10/2018';
+    var pic_id = $('#pic_id').val();
+    var schedule_note = $('#schedule_note').val();
+    var address;
+    //alert(schedule_note);
+
+
+    if($('#description').length){
+       $('#description').text(desc);
+    }
+    //alert($('#amnt').length);
+    //alert(pay+", "+ amount+" $");
+
+    //alert("startDate1" + localStorage.getItem('startDate1'));
+    //alert("endDate1" + localStorage.getItem('endDate1'));  
+
+
+    if($('#amnt').length){
+      if(recurringtype == "One Time"){
+        var newtext = recurringtype + ", "+pay+", $"+ amount;
+      }else{
+        var newtext = recurringtype + " ($"+ramount+"), Total ($"+amount+"), "+pay;
+      }
+      $('#amnt').text(newtext);
+    }
+
+    if(mapaddress!=""){
+      $('#address').text(mapaddress);
+      address = mapaddress;
+    }
+
+    if(newaddress!=""){
+      $('#address').html(newaddress);
+      address = newaddress;
+    }
+if(recurringtype!='One Time'){
+  $('#recamnt').show();
+  $('#recamnt label').html("Amount ("+recurringtype+")");
+  $('.notes').show();
+}
+
+if(getId=='finish'){
+  var startDate1 = localStorage.getItem('startDate1') ; 
+  var endDate1   = localStorage.getItem('endDate1') ; 
+  var startMin  = localStorage.getItem('startMin') ; 
+  var endMin    = localStorage.getItem('endMin') ; 
+  var dbStartDate = localStorage.getItem('dbStartDate') ; 
+  var dbEndDate   =localStorage.getItem('dbEndDate') ; 
+  var dbStartMin = localStorage.getItem('dbStartMin');
+  var dbEndMin = localStorage.getItem('dbEndMin');
 }
  
 if(startDate1!=""){
@@ -339,7 +875,7 @@ if(getId=='finish'){
       console.log(tmp);
   */
 
-  $.post("bid_submit_new.php",
+  $.post("update_bid_new.php",
     {
       title : jobtitle,
       descr : desc,
@@ -348,6 +884,8 @@ if(getId=='finish'){
       dateTimeBool: time,
       dateTimeFrom : dbStartDate,
       dateTimeTo : dbEndDate,
+      timeFrom: dbStartMin,
+      timeTo: dbEndMin,
       set_schedule : recurringtype,
       schedule_note : schedule_note,
       schedule_amount : ramount,
@@ -357,6 +895,7 @@ if(getId=='finish'){
       rateperhour : rateperhour,
       category : serv,
       is18 : is18,
+      cancelfee : cancelfee,
       provider_type : provider_type,
       reqstedBidId : selected_provider,
       imgs : imgs,
@@ -365,6 +904,7 @@ if(getId=='finish'){
       current : "11",
       sr_number : "108",
       service_id : service_id,
+      bid_id : bid_id,
       milestones : queryArr,
       posLong:lng,
       posLat:lat
@@ -386,13 +926,50 @@ if(getId=='finish'){
         $('#next').hide()
     }
 
+   
+    if(getId == "jobdetails")
+    {
+      jQuery('button#review_btn').show(); 
+      $("button#next").html('Next'); 
+    }
+    else if(getId == "location")
+    {
+      jQuery('button#review_btn').show();  
+      $("button#next").html('Next'); 
+    }
+    else if(getId == "payment")
+    {
+      jQuery('button#review_btn').show();  
+      $("button#next").html('Next'); 
+    }
+    else if(getId == "review")
+    {
+      jQuery('button#review_btn').hide(); 
+      $("button#next").html('Edit Bid'); 
+    }else
+    {
+      jQuery('button#review_btn').hide(); 
+      $("button#next").html('Next'); 
+    }
+
+    
+
     if(getId == "payment"){
       //alert('test: '+ localStorage.getItem('recurring'))
       payTypeSetting();
+      $("#schedule_note").focus();
+      $("#amount").focus();
+      $("#cancelfee").focus();
+      $("#personalnote").focus();
+      if($("#recamnt").css("display") != 'none'){
+        $("#ramount").focus();
+      }
     }
 }
 
-function create_bid_prev() {
+
+
+function update_bid_prev() {
     var getId = $('.super-widget-tab input[type="radio"]:checked').last().parent().prev().children('input').attr('id');
     $('.super-widget-tab input[type="radio"]:checked').last().prop('checked', false);
     $('.super-widget-tab-info summary').hide();
@@ -403,8 +980,197 @@ function create_bid_prev() {
     } 
     if(getId == "payment"){
       payTypeSetting();
+      $("#schedule_note").focus();
+      $("#amount").focus();
+      $("#cancelfee").focus();
+      $("#personalnote").focus();
+      if($("#recamnt").css("display") != 'none'){
+        $("#ramount").focus();
+      }
     }
+
+    if(getId == "jobdetails")
+    {
+      jQuery('button#review_btn').show(); 
+      $("button#next").html('Next'); 
+    }
+    else if(getId == "location")
+    {
+      jQuery('button#review_btn').show();  
+      $("button#next").html('Next'); 
+    }
+    else if(getId == "payment")
+    {
+      jQuery('button#review_btn').show();  
+      $("button#next").html('Next'); 
+    }
+    else
+    {
+      jQuery('button#review_btn').hide(); 
+    }
+
+    if(getId == "review")
+    {
+      $("button#next").html('Edit Bid'); 
+    }
+
 }
+
+
+
+function update_review() 
+{
+    
+   $("button#next").html('Create Bid');
+   jQuery('summary.location.WDTH90.MRGCenter').hide();
+   jQuery('summary.jobdetails.WDTH90.MRGCenter').hide();
+   jQuery('summary.payment.WDTH90.MRGCenter').hide();
+   jQuery('summary.finish.WDTH90.MRGCenter').hide();
+   jQuery('summary.review.WDTH90.MRGCenter').show();
+   var getId = $('.super-widget-tab input[type="radio"]:checked').last().parent().next().children('input').attr('id');
+   if(getId == 'payment')
+    {
+        
+
+            var amount= parseFloat($("#amount").val());
+            var payType = $('input[name=pay]:checked').val();
+            var total= parseFloat($("#milestoneTotal").val());
+
+            console.log(total + 'Total');
+            var text="Milestone total amount must be equal to bid amount";
+            if(!isNaN(total))
+            {
+
+               if(payType == 'fixed' || payType == 'hourly')
+              {
+                 if(total !== amount)
+                 {
+                    swal({
+                      title: "Warning",
+                       type: "warning",
+                      text: text
+                    });
+                    jQuery('summary.location.WDTH90.MRGCenter').hide();
+                    jQuery('summary.jobdetails.WDTH90.MRGCenter').hide();
+                    jQuery('summary.payment.WDTH90.MRGCenter').show();
+                    jQuery('summary.finish.WDTH90.MRGCenter').hide();
+                    jQuery('summary.review.WDTH90.MRGCenter').hide();
+                    $('#review').prop('checked', false);
+                    return false;
+                 }
+
+              } 
+            }
+           
+          
+
+    }
+
+   $('#payment').prop('checked', true);
+   $('#review').prop('checked', true);
+   $('#jobdetails').prop('checked', true);
+   $('#location').prop('checked', true);
+   
+    var queryArr = [];
+   $('input[name^="milestones"]').each(function()
+    {   
+        
+        data = $(this).val();
+        queryArr.push(data);
+    });
+   console.log(queryArr);
+    
+    var address = $('#getaddr').val();
+    var jobtitle = $('#jobtitle').val();
+    var desc  = $('#desc').val();
+    var serv  = $('input:radio[name=serv]:checked').val();
+    var pay  = $('input:radio[name=pay]:checked').val();
+    var amount  = $('#amount').val();
+    var bank  = $('input:radio[name=bank]:checked').val();
+    var mapaddress = $('#pac-input').val();
+    //var newaddress = $('#newaddress').val();
+    var newaddress = '';
+    if(!($("#sr_address_list").children("tbody").children("tr").children("td").hasClass("dataTables_empty"))){
+      $("#sr_address_list").children("tbody").children("tr").each(function(i){
+        adrs = $(this).children("td:nth-child(2)").html();
+        newaddress += "<p>"+i+". "+adrs+"</p>";
+      });
+    }
+    var recurringtype = localStorage.getItem('recurring');
+    var lat=$('#lat').val();
+    var lng=$('#lng').val();
+    var ramount=$('#ramount').val();
+    var service_id=$('#service_id').val();
+    var milestones = queryArr;
+
+    //var time = '10:15 AM';
+    //var startdate = '10/10/2018';
+    //var enddate = '11/10/2018';
+    var pic_id = $('#pic_id').val();
+    var schedule_note = $('#schedule_note').val();
+    var address;
+    //alert(schedule_note);
+
+
+    if($('#description').length){
+       $('#description').text(desc);
+    }
+    //alert($('#amnt').length);
+    //alert(pay+", "+ amount+" $");
+
+    //alert("startDate1" + localStorage.getItem('startDate1'));
+    //alert("endDate1" + localStorage.getItem('endDate1'));  
+
+
+    if($('#amnt').length){
+      if(recurringtype == "One Time"){
+        var newtext = recurringtype + ", "+pay+", $"+ amount;
+      }else{
+        var newtext = recurringtype + " ($"+ramount+"), Total ($"+amount+"), "+pay;
+      }
+      $('#amnt').text(newtext);
+    }
+
+    if(mapaddress!=""){
+      $('#address').text(mapaddress);
+      address = mapaddress;
+    }
+
+    if(newaddress!=""){
+      $('#address').html(newaddress);
+      address = newaddress;
+    }
+if(recurringtype!='One Time'){
+  $('#recamnt').show();
+  $('#recamnt label').html("Amount ("+recurringtype+")");
+  $('.notes').show();
+}
+
+if(getId=='finish'){
+  var startDate1 = localStorage.getItem('startDate1') ; 
+  var endDate1   = localStorage.getItem('endDate1') ; 
+  var startMin  = localStorage.getItem('startMin') ; 
+  var endMin    = localStorage.getItem('endMin') ; 
+  var dbStartDate = localStorage.getItem('dbStartDate') ; 
+  var dbEndDate   =localStorage.getItem('dbEndDate') ; 
+ 
+}
+ 
+if(startDate1!=""){
+      $('#startdate').text(localStorage.getItem('startDate1'));
+  }
+if(startMin!=""){
+  $('#startMin').text(localStorage.getItem('startMin'));
+}
+if(endDate1!=""){
+      $('#enddate').text(localStorage.getItem('endDate1'));
+    }
+if(endMin!=""){
+  $('#endMin').text(localStorage.getItem('endMin'));
+}
+
+}
+
 
 function getDetails(obj){
     //alert(obj);
@@ -430,6 +1196,17 @@ function getDetails(obj){
   return;
   }
 
+function convertTo12Hour (time) {
+  // Check correct time format and split into components
+  time = time.toString ().match (/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [time];
+
+  if (time.length > 1) { // If time format correct
+    time = time.slice (1);  // Remove full string match value
+    time[5] = +time[0] < 12 ? 'AM' : 'PM'; // Set AM/PM
+    time[0] = +time[0] % 12 || 12; // Adjust hours
+  }
+  return time.join (''); // return adjusted time or original string
+}
 
 function payTypeSetting(){
 
@@ -514,7 +1291,7 @@ $('input, textarea').focus(function(){
       // }
 
       localStorage.setItem('recurring', val.target.value);
-      //alert("Session value: "+localStorage.getItem('recurring'));
+      console.log("localstorage value: "+localStorage.getItem('recurring'));
       _recurring(val);
           //alert(val.target.value);
           
@@ -531,10 +1308,16 @@ $('input, textarea').focus(function(){
 
     $('#ramount').on('blur', function(val) {
 
-      var difDate = _getDateDiff(localStorage.getItem('startDate'), localStorage.getItem('endDate'))
+      console.log("localStorage Start Date : " + localStorage.getItem('startDate'));
+      console.log("localStorage End Date : " + localStorage.getItem('endDate'));
+      
+      //var difDate = _getDateDiff(localStorage.getItem('startDate'), localStorage.getItem('endDate'))
+      var difDate = localStorage.getItem('noofdays');
       var rval = localStorage.getItem('recurring');
       //alert(difDate);
       //alert(rval);
+      console.log("Dif Date : "+difDate);
+      console.log("localstorage noofdays : "+localStorage.getItem('noofdays'));
       if(rval === 'Weekly') {
         var math = Math.floor(difDate/7)
         var amnt = math*val.target.value;
@@ -548,6 +1331,7 @@ $('input, textarea').focus(function(){
         var math = Math.floor(difDate/60)
         var amnt = math*val.target.value;
       } 
+      console.log("Total Amount : "+amnt);
       $('#amount').val(amnt);
       $('#amount').focus();
 
@@ -559,6 +1343,7 @@ $('input, textarea').focus(function(){
         $('.actHourly').show();
         $('#amount, .amount').show().prop('readonly', true);
         $('.ramount').hide();
+        $('#schedule_note').hide();
       }else if($('#fixed').is(':checked')) {
         $('.amount').show();
         $('.actHourly').hide();
@@ -568,14 +1353,17 @@ $('input, textarea').focus(function(){
           $('.ramount').show();
           $('#ramount').prop('readonly', false);
           $('#amount').prop('readonly', true);
+          $('#schedule_note').show();
         }else{
           $('#amount').prop('readonly', false);
+          $('#schedule_note').hide();
         }
 
       }else if($('#fairMarket').is(':checked')) {
         $('.amount, .actHourly').hide();
         $('.ramount').hide();
         $('#ramount').prop('readonly', false);
+        $('#schedule_note').hide();
       }
     })
 
@@ -922,6 +1710,37 @@ $(document).ready(function() {
     _initCard(1, 'jobRequests');
     _initCard(1, 'recommended');
     _initCard(1, 'jobRequests2');
+
+
+
+    $("#timeselect").on("change", function(){
+      var time_v = $(this).val();
+      if(time_v == "4"){
+        $(".showtime").show();
+      }else
+      {
+        $(".showtime").hide(); 
+        if(time_v == "0"){
+          $("#time_from_value").val("09:00AM");
+          $("#time_to_value").val("09:00PM");
+        }
+        if(time_v == "1")
+        {
+            $("#time_from_value").val("07:00AM");
+            $("#time_to_value").val("12:00PM");
+        }
+        else if(time_v == "2")
+        {
+            $("#time_from_value").val("12:00PM");
+            $("#time_to_value").val("05:00PM");
+        }
+        else if(time_v == "3")
+        {
+            $("#time_from_value").val("05:00PM");
+            $("#time_to_value").val("10:00PM");
+        }
+      }
+    })
  
 
 $(document).on("click", ".requestpaypopup", function(e) {
@@ -1351,6 +2170,7 @@ $('#approve_payment').formValidation({
                 function(){
                                localStorage.setItem("pushfrom","award");
                                 //window.location.href="main.php";
+                                location.reload();
                 }
                 );
             

@@ -1,8 +1,9 @@
 <?php 
+
 session_start();
 require_once('./common.inc.php');
 require_once('./mysql_lib.php');
-
+require_once("./en.lang.inc.php");
 
 $configs=$_configs;
 

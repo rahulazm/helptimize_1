@@ -21,7 +21,7 @@
   src: url(../fonts/OpenSans-ExtraBold.ttf);
 }
 
-body    { background: #FAFAFA; font: 14px 'OpenSans-regular' }
+body    { background: #FAFAFA; font: 14px 'OpenSans-regular' ; overflow-x: hidden;}
 .calendar-page { background: transparent; }
 header  { padding: 10px 10px; background: #fff; box-shadow: 0 1px 2px rgba(50,50,93,.1), 0 2px 4px rgba(0,0,0,.07); }
 .align-header {  display: flex; align-items: baseline; }
@@ -34,11 +34,12 @@ h3, h4, h5, b{
 input[type = "text"], textarea { width: 100%; background: #F2F2F2; border: none; border-bottom: 1px solid rgb(184, 184, 184); padding: 8px; }
 .wrapper { display: flex; justify-content: center; flex-wrap: wrap; margin-top: 20px; }
 .disabled  { opacity: .5;}
+p{margin-bottom: 5px !important;}
 
 /* switch button */
 .switch-btn { border: 1px solid #118ab2; border-radius: 60px; display: flex; justify-content: space-between; align-items: center; }
 .switch-btn span { margin: 2px; }
-.switch-btn label { border-radius: 100px; margin: 0; padding: 6px 40px; }
+.switch-btn label { border-radius: 100px; margin: 0; padding: 6px 40px; cursor: pointer;}
 .switch-btn input[type="radio"]:checked+label { background: #118ab2; color: #fff; font-weight: bold; }
 .switch-btn input[type="radio"] { display: none; }
 
@@ -234,8 +235,37 @@ nav a, nav a:hover   { color: #000000; }
   text-overflow: ellipsis;
 }
 
+/*.modal-open .modal{
+  position: absolute;
+    height: auto;
+    z-index: 99999;
+    top: 25%;
+    margin: auto;
+    left: 33%;
+}
 
+.modal-header .close{
+      right: -5px;
+    position: absolute;
+    top: -33px;
+}*/
 
 #bidConfirm{
   display: none;
+}
+
+.message_counter{
+      font-size: 12px;
+    background-color: #E65825 !important;
+    border-radius: 25px;
+    padding: 2px 8px;
+    color: #ffffff;
+}
+
+.timepicker_icon{
+    position: absolute;
+    font-size: 20px;
+    color: #ababab;
+    top: 38px;
+    right: 13px;
 }

@@ -1,28 +1,40 @@
 <?php
 require_once("./header_main.php");
+$srid=$_sqlObj->escape($_GET['sr_id']);
 
+// find all images uploaded by this bidder for this SR.
+ $getstr='select * from view_pics where userId="'.$_SESSION['id'].'" and srId='.$srid.' order by datetime, orderNum;';
+$images=$_sqlObj->query($getstr);
+ $location_count = count($images);
 
-//preserve previously unsubmitted SR if it exists.
-if($_POST){
-$_SESSION['new_sr']=$_POST;
-}
+//--------------if there are no images for this sr from this bidder, copy over what the requestor has.----------------
+	if(count($images)<=0){
+	//copy the originals
+	$str='select * from view_serviceRequests where id='.$srid;
+	$srArr=reset($_sqlObj->query($str));
 
+	$str='select * from view_pics where srId='.$srid.' and userId='.$srArr['ownerId'].' order by datetime, orderNum';
+	$images=$_sqlObj->query($str);
 
-$db_get_all_sr_images = new mysqli("$host", "$username", "$password", "$db_name");
+	$row=reset($images);
+		while($row){
+		$fn=basename($row['url']);//original filename
+		$dir=dirname($row['url']); //directory of file
 
-if($db_get_all_sr_images ->connect_errno > 0){
-    die('Unable to connect to database [' . $db_get_all_sr_images ->connect_error . ']');
-}
+		$fnN=substr($fn, strlen($row['userId']) + 1, strlen($fn)-(strlen($row['userId']) + 1));
 
-$sql_get_all_sr_images = "SELECT * FROM service_requests_images WHERE service_request_id ='$sr_number'";
+		$fnN=$_SESSION['id'].'_'.$fnN;//new filename
 
-$result_get_all_sr_images = $db_get_all_sr_images->query($sql_get_all_sr_images);
-$count_all_sr_images = $result_get_all_sr_images->num_rows;
-$today=date("Y-m-d");
-$db_get_all_sr_images->close();
-$str="select * from view_pics where userId='".$_SESSION['id']."' and (srId is NULL or srId='') and datetime LIKE '%$today%'";
-$images=$_sqlObj->query($str);
-$location_count = $images->num_rows;
+		//copy the original into the new filename 	
+		    if(copy($row['url'], $dir.'/'.$fnN)){
+			copy($dir.'/small_'.$fn, $dir.'/small_'.$fnN);//copies the small version.
+			$str='insert into pics(id, datetime, userId, srId, bidId, orderNum, url, title, safeRate, notes) values(\'\', now(), '.$_SESSION['id'].', '.$srArr['id'].', null, '.$row['orderNum'].', "'.$dir.'/'.$fnN.'", "'.$row['title'].'", "'.$row['safeRate'].'", "'.$row['notes'].'");';
+			$_sqlObj->query($str); //inserting the image into this bidder's table of images.
+		    } 
+		$row=next($images);
+		}
+	$images=$_sqlObj->query($getstr);
+	}
 
 
 ?>
@@ -92,8 +104,7 @@ a[href^="https://maps.google.com/maps"]{display:none !important}
                 <label class="input-group-btn">
                     <span class="btn btn-primary">
                       Take/Select&hellip; 
-                        <!-- <input type="file"  name="img[]" id="file" accept=".heic,image/*,application/octet-stream" capture="camera"  style="display: none; " /> -->
-                        <input type="file"  name="img[]" id="file" accept=".heic,image/*,application/octet-stream"  style="display: none; " />
+                        <input type="file"  name="img[]" id="file" accept="image/*" capture="camera"  style="display: none; " />
                                        
                     </span>
                 </label>
@@ -106,16 +117,15 @@ a[href^="https://maps.google.com/maps"]{display:none !important}
             
             <div class="form-group">
     <label><?php echo PICTURE_TITEL;?></label> 
-    <input type="input" class="form-control text_input_radius" id="picture_titel" name="title[]" value="<?php echo $location_count+1; ?>">
+    <input type="input" class="form-control text_input_radius" id="picture_titel" name="title[]"  value="<?php echo $location_count+1; ?>">
+    <input type="hidden" class="form-control text_input_radius" name="srId[]" value="<?php echo $srid; ?>">
   </div>
   
              <br>
-              
              <center>
             <span id="picture_submit_button">
-            <input type="submit" id="picture_submit" name="picture_submit" value="<?php echo UPLOAD_PICTURE;?>" class = "btn btn-primary general_orange_button_border_radius general_orange_button_size general_orange_button_background general_orange_button_no_border" />
-				<img src="img/loader.gif" alt="loader1" style="display:none; height:30px; width:auto;" id="loaderImg">            
-            </div>
+            <input type="submit" id="picture_submit" name="picture_submit"value="<?php echo UPLOAD_PICTURE;?>" class = "btn btn-primary general_orange_button_border_radius general_orange_button_size general_orange_button_background general_orange_button_no_border" />
+            <img src="img/loader.gif" alt="loader1" style="display:none; height:30px; width:auto;" id="loaderImg">  </div>
              </center>
    </form>
 
@@ -126,14 +136,56 @@ a[href^="https://maps.google.com/maps"]{display:none !important}
 
 </div>
 
-<div style="margin:10px" id="existing_pics">
+<div style="margin:10px">
+<br>
+ <label><?php echo EXISTING_PICTURES;?></label> 
+ <div class="panel panel-default">
+  <div class="panel-body">
+  <table>
+  
+  <?php
+$row=reset($images); 
+  while ($row) {
+  echo "<tr>";
+   echo "<td><font size='3'>" . $row['title'] . "</font></td>";
+  
+  echo "</tr>";
+  echo "<tr>";
+   echo "<td><font size='2'>" . $row['datetime'] . "</font></td>";;
+  
+  echo "</tr>";
+  
+  echo "<tr>";
+   echo "<td>";
+  echo "<img onclick='show_big_image(" . $row['id'] . ")' src='".imgPath2Url(smallPicName($row['url'])). "' class='img-rounded' alt='Imag' style='width: 150px;'><br><br>";
+   echo "</td>";
+     echo "<td width='110px'>";
+     
+     
+  
+   echo "</td>";
+   echo "<td>";
+   echo "<button class='btn btn-danger general_orange_button_border_radius' type='button' onclick='delete_image(" . $row['id'] . ")'><i class='fa fa-trash' aria-hidden='true'></i> Delete</button>";
+   echo "</td>";
+   echo "</tr>";
+   
+  $row=next($images);
+  }
+  
+  ?>
+  
+    </table>
+    
+  </div>
+  </div>
+ 
  </div>
 
 
-<!--<center>
+<center>
    <button onclick="go_back()" type="button" class="btn btn-primary general_orange_button_border_radius general_orange_button_size general_orange_button_background general_orange_button_no_border"><?php echo CONTINUE_BUTTON;?></button>
    
-  </center>-->
+  </center>
   
   <br>
   <br>
@@ -185,7 +237,7 @@ function close_big_picture()
 
   function go_back()
 {
-     location.href = "create_new_service_request.php";
+     location.href = "bid_interested.php?id=<?php echo $_GET['sr_id']; ?>";
 } 
 
   function show_big_image(id)
@@ -217,7 +269,7 @@ function close_big_picture()
     $('#modal_datetime').html("<font size='2'>" + image_date_time + "</font>");
     		
      
-     $('#show_big_image_in_modal').html("<img src='uploads/" + image_link + "' class='img-rounded' alt='Image'>");
+     $('#show_big_image_in_modal').html("<img src='image_upload/" + image_link + "' class='img-rounded' alt='Image'>");
      
      $('#big_picture').modal('show'); 
      
@@ -248,41 +300,15 @@ function delete_image(id)
   					showCancelButton: true,
   					confirmButtonColor: "#5CB85C",
   					confirmButtonText: "",
-  					closeOnConfirm: true
+  					closeOnConfirm: false
 				},
 				function(){
-				 var formData1 = {
-             'id'     : id,
-            };
-        $.ajax({
-                type:"POST",
-                url: "delete_uploaded_sr_picture.php",
-                data: formData1,
-                async: false,    
-         
-                success: function(data)   
-                  {
-                    $.ajax({
-                      url: "show_existing_pics.php", 
-                      type: "GET",             
-                      //data: new FormData(this), 
-                      contentType: false,       
-                      cache: false,
-                      async: true,             
-                      processData:false,      
-                      
-                      success: function(data)   
-                        {
-                          var result_allpics = data;
-                          $("#existing_pics").html(result_allpics);
-                          console.log(result_allpics);
-                        }
-                      })
-
-                  }
-              });    
-            
-    	/*
+				
+	
+	              var formData = {
+        				'id'     : id,
+       			}
+    	
     	   var feedback = $.ajax({
     			type: "POST",
     			url: "delete_uploaded_sr_picture.php",
@@ -291,44 +317,43 @@ function delete_image(id)
     		    async: false,
     			
     		}).complete(function(){
-    		  		  
-            $.ajax({
-                url: "show_existing_pics.php", 
-                type: "GET",             
-                //data: new FormData(this), 
-                contentType: false,       
-                cache: false,
-                async: true,             
-                processData:false,      
-                
-                success: function(data)   
-                  {
-                    var result_allpics = data;
-                    $("#existing_pics").html(result_allpics);
-                    console.log(result_allpics);
-                  }
-                })
-
+    		
+    		
     			swal({
   					title: picture_delete_confirm_header_done,
- 					  text: picture_delete_confirm_text_done,
+ 					text: picture_delete_confirm_text_done,
   					type: "success",
   					showCancelButton: false,
   					confirmButtonColor: "#5CB85C",
   					confirmButtonText: "OK",
-  					closeOnConfirm: true
+  					closeOnConfirm: false
 				},
 				function(){
-	 			
+				
+				
+				location.href = "<?php echo $_SERVER['REQUEST_URI']; ?>";
+  
+				
 				});
     		
- 	    });
-
-   */     
+ 		
+    		
+    		});
 	
-	});
+				});
+
+
+
+
 
 } 
+
+
+
+
+
+
+
 
 $("#uploadimage").on('submit',(function(e) {
 
@@ -336,7 +361,11 @@ $("#uploadimage").on('submit',(function(e) {
     var sr_number = '<?php echo $sr_number; ?>';
     var picture_titel = $("#picture_titel").val();
     
+
     
+    
+
+
 	function formatFileSize(bytes,decimalPoint) {
    		if(bytes == 0) return '0 Bytes';
    			var k = 1000,
@@ -345,41 +374,43 @@ $("#uploadimage").on('submit',(function(e) {
        		i = Math.floor(Math.log(bytes) / Math.log(k));
    			return parseFloat((bytes / Math.pow(k, i)).toFixed(dm)) + ' ' + sizes[i];
 	}
-	console.log("1");
-   $("#picture_submit").prop("disabled",true);
-     $("#picture_submit").css("cursor", "not-allowed");
-$("#loaderImg").show(); 
+
+
+    $("#picture_submit").prop("disabled",true);
+    $("#picture_submit").css("cursor", "not-allowed");
+    $("#loaderImg").show();
+
     e.preventDefault();
-	console.log("2");
+
+
    	var filerequired = $("#filepath").val();
    	
    	var oops = '<?php echo OOPS; ?>';
    	var file_required = '<?php echo FILE_REQUIRED; ?>';
    	var title_required = '<?php echo FILE_TITLE_REQUIRED; ?>';
+   	
    	if(filerequired == ""){
-console.log("3");
+   	
    	  swal(oops, file_required, "error");
-			$("#picture_submit").prop("disabled",false);
-   	  $("#picture_submit").css("cursor","pointer");
-        $("#loaderImg").hide(); 
-        console.log("4");
+   	  $("#picture_submit").prop("disabled",false);
+      $("#picture_submit").css("cursor","pointer");
+      $("#loaderImg").hide(); 
    	  return;
    	
    	
    	}
    	
    	if(picture_titel == ""){
-   		console.log("5");
+   	
    		swal(oops, title_required, "error");
-		   $("#picture_submit").prop("disabled",false);
-    	  $("#picture_submit").css("cursor","pointer");
-        $("#loaderImg").hide();
-        console.log("5");
+   	$("#picture_submit").prop("disabled",false);
+      $("#picture_submit").css("cursor","pointer");
+      $("#loaderImg").hide();
    	  return;
    
    	
    	}
- $("#loaderImg").show(); 
+    $("#loaderImg").show(); 
   var result = "";
   $.ajax({
 	url: "uploadImage.php", 
@@ -388,85 +419,75 @@ console.log("3");
 	contentType: false,       
 	cache: false,
 	async: true,             
-	processData:false,      
-	
+	processData:false,        
 	success: function(data)   
 		{
-			console.log("6");
-      console.log(data);
 		    result = data;
-
-	
-	
-	  var oops = '<?php echo OOPS; ?>';
+		    
+		    var oops = '<?php echo OOPS; ?>';
    	var file_exist = '<?php echo FILE_EXIST; ?>';
    	var file_to_big = '<?php echo FILE_TO_BIG; ?>';
    	var file_to_big_2 = '<?php echo FILE_TO_BIG_2; ?>';
    	var porn_upload = '<?php echo FILE_PORN; ?>';
    	var success_upload = '<?php echo FILE_NO_PORN; ?>';
    	var done = '<?php echo DONE; ?>';
-//alert(result);
-console.log(result);
+
 	result=JSON.parse(result);
 	result=result[0]; //only uploading one at a time
-	//console.log(JSON.stringify(result));
-   			console.log("7");
+	console.log(JSON.stringify(result));
+
+   			
    	if(result['status'] == 1){
-   		console.log("8");
-   		$("#picture_submit").prop("disabled",false);
-   	  $("#picture_submit").css("cursor","pointer");
-        $("#loaderImg").hide();
+		   $("#picture_submit").prop("disabled",false);
+      $("#picture_submit").css("cursor","pointer");
+       $("#loaderImg").hide();
 	    swal(oops, result['msg'], "error");
-	        	console.log("9");
-	}else{
-		console.log("10");
-	    $("#picture_submit").prop("disabled",false);
-   	  $("#picture_submit").css("cursor","pointer");
-        $("#loaderImg").hide(); 
-	    var success_upload_header = '<?php echo SUCCESS_UPLOAD_HEADER; ?>';
-	    var success_upload_text = '<?php echo SUCCESS_UPLOAD_TEXT; ?>';
-
-	    $("#loaderImg").hide(); 
-	    swal({
-  					title: success_upload_header,
- 					  text: success_upload_text,
-  					type: "success",
-  					showCancelButton: false,
-  					confirmButtonColor: "#5CB85C",
-  					confirmButtonText: "OK",
-  					closeOnConfirm: true
-				},
-				function(){
-				$.ajax({
-            url: "show_existing_pics.php", 
-            type: "GET",             
-            //data: new FormData(this), 
-            contentType: false,       
-            cache: false,
-            async: true,             
-            processData:false,      
-            
-            success: function(data)   
-              {
-                //alert(data);
-                var result_allpics = data;
-                $("#existing_pics").html(result_allpics);
-                //console.log(result_allpics);
-              }
-            })
-				//location.href = "create_new_service_request_take_pictures.php?sr_number=" + sr_number;
-		
-				});
-	    
-
-	    
 	        	
 	}
 	
 	
+	if(result['status'] == 0){
+		
+	    
+	    $("#picture_submit").prop("disabled",false);
+      $("#picture_submit").css("cursor","pointer");
+        $("#loaderImg").hide(); 
+	    
+	    var success_upload_header = '<?php echo SUCCESS_UPLOAD_HEADER; ?>';
+	    var success_upload_text = '<?php echo SUCCESS_UPLOAD_TEXT; ?>';
+	    
+	    
+	    swal({
+  					title: success_upload_header,
+ 					text: success_upload_text,
+  					type: "success",
+  					showCancelButton: false,
+  					confirmButtonColor: "#5CB85C",
+  					confirmButtonText: "OK",
+  					closeOnConfirm: false
+				},
+				function(){
+				
+				
+				location.href = "<?php echo $_SERVER['REQUEST_URI']; ?>";
+  
+				
+				});
+	    
+  
+	    
+	        	
+	}
 		}
-	});		
+	});
 	
+
+	
+	
+	
+	
+		
+//	$("#picture_submit").prop("disabled",false);
 
 
 }));
@@ -488,9 +509,3 @@ $(document).on('change', ':file', function() {
 
 
 </script>
-<!-- <script src="js/heictojpg/libde265-selector.js"></script>
-<script src="js/heictojpg/heif-api.js"></script>
-<script src="js/heictojpg/heif-extension.js"></script>
-<script src="js/heictojpg/hevc-decoder.js"></script>
-<script src="js/heictojpg/image-provider.js"></script>
-<script src="js/heictojpg/footer.js"></script> -->
