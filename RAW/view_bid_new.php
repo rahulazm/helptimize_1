@@ -9,6 +9,9 @@ require_once("./mysql_lib.php");
 //ini_set('display_startup_errors', 1);
 //error_reporting(E_ALL);
 //$id=$_sqlObj->escape($_GET['id']);
+
+
+
 $bidArr=@reset($_sqlObj->query('select * from view_bids where srId='.$_GET['id'].' and ownerId='.$_SESSION['id'].' and bidstatus != "cancel";'));
 $srId=$bidArr['srId'];
 $srId=$_GET['id'];
@@ -16,6 +19,19 @@ $id=$bidArr['id'];
 #########Redirect to preview page if bid is edited
 if($bidArr['bidstatus'] =='editbid')
     header('Location: editbid_preview.php?id='.$id);
+
+##########Get total number of bids in thi SR
+$count=($_sqlObj->query('select count(id) as totbid from view_bids where srId='.$srId.';'));
+$totalbid_count=$count[0]["totbid"];
+##########Check bid is accepted in thi SR
+
+$qstr=($_sqlObj->query('
+select count(id) as totbid from view_bids where srId='.$srId.' and status != "awarded" and srBidAwardId is not null'));
+$accept_count= $qstr[0]["totbid"];
+
+##################################
+
+
 $srArr=@reset($_sqlObj->query('select * from view_serviceRequests where id='.$srId.';'));
 //"select * from view_pics where srId='".$bidArr['id']."' and userId=".$bidArr['ownerId']." order by datetime, orderNum"
 
@@ -289,7 +305,7 @@ $cols=5;
 
     <div style="width: 100%; text-align: right;">
       <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
-      <a href="javascript:void()"  data-status="cancel"  role="button" class="btn btn-default statusclick">I understand and accept</a>
+      <a href="javascript:void()"  data-status="cancel"  role="button" data-bidid="" data-srid="" class="btn btn-default statusclick">I understand and accept</a>
     </div>
 
         </div>
@@ -953,6 +969,128 @@ $html.='
             </div>
         </div>
     </div>
+<!-- Cancel and resubmit Bid -->
+    <div id="confCncModal" class="modal fade" role="dialog" style="top: 60% !important">
+    <div class="modal-dialog">
+
+      <!-- Modal content-->
+      <div class="modal-content" style="padding: 0px;">
+        <div class="alert alert-danger" style="margin: 0px;">
+
+    <div style="margin-bottom: 10px; font-weight: bold;">
+    Warning! 
+    </div>
+
+    <div style="margin-bottom: 15px;">Cancelling a  bid  will affect your rating and there will be a penalty charge of 5 USD</div>
+
+    <div style="width: 100%; text-align: right;">
+      <button type="button" class="btn grey-btn" data-dismiss="modal">Cancel</button>
+      <a href="javascript:;"  data-status="cancel"  role="button" data-from="" data-bidid="" data-srid="" class="btn orange-btn statusclick">I understand and accept</a>
+    </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Modal -->
+  <div id="confResModal" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+      <!-- Modal content-->
+      <div class="modal-content" style="padding: 0px;">
+        <div class="alert alert-danger" style="margin: 0px;">
+
+    <div style="margin-bottom: 10px; font-weight: bold;">
+    Warning! 
+    </div>
+
+    <div style="margin-bottom: 15px;">Cancelling and Resubmitting a  bid  will affect your rating and there will be a penalty charge of 5 USD</div>
+
+    <div style="width: 100%; text-align: right;">
+      <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+      <a href="javascript:void()"  data-status="cancel"  role="button" class="btn btn-default statusclick" data-from="resubmit">I understand and accept</a>
+    </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+<!-- Cancel and resubmit Bid - END -->
+<!-- Cancel and resubmit Service Request -->
+<div id="confReModalSR" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+      <!-- Modal content-->
+      <div class="modal-content" style="padding: 0px;">
+        <div class="alert alert-danger" style="margin: 0px;">
+
+    <div style="margin-bottom: 10px; font-weight: bold;">
+    Warning! 
+    </div>
+
+    <div style="margin-bottom: 15px;"><?php if ($totalbid_count>2) {    ?>
+    
+    A resubmission counts as cancelling the current service request. Cancelling a service request when there are 3 or more than bids for it will affect your rating and there will be a penalty charge of 5 USD. 
+   <?php  }
+     elseif($accept_count==1){ ?>
+     A resubmission counts as cancelling the current service request. Cancelling a service request when bid is already accepted will affect your rating and there will be a penalty charge of 5 USD. 
+     <?php } ?>
+
+     </div>
+
+    <div style="width: 100%; text-align: right;">
+      <button type="button" class="btn btn-default" data-dismiss="modal">Cancel</button>
+      <a href="javascript:;" role="button" class="btn btn-default resubmitclickSR" data-srid="">I understand and accept</a>
+    </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+
+  <!-- Modal -->
+  <div id="confCncModalSR" class="modal fade" role="dialog">
+    <div class="modal-dialog">
+
+      <!-- Modal content-->
+      <div class="modal-content" style="padding: 0px;">
+        <div class="alert alert-danger" style="margin: 0px;">
+
+    <div style="margin-bottom: 10px; font-weight: bold;">
+    Warning! 
+    </div>
+
+    <div style="margin-bottom: 15px;"><?php if ($totalbid_count>2) {    ?>
+    
+     Cancelling a service request when there are 3 or more than bids for it will affect your rating and there will be a penalty charge of 5 USD
+    <?php }
+     elseif($accept_count==1){ ?>
+    Cancelling a service request when bid is already accepted will affect your rating and there will be a penalty charge of 5 USD
+     <?php }else{ ?>
+        Cancelling a  service request  will affect your rating and there will be a penalty charge of 5 USD
+    <?php } ?>
+     </div>
+
+    <div style="width: 100%; text-align: right;">
+      <button type="button" class="btn btn-default grey-btn" data-dismiss="modal">Cancel</button>
+      <a href="javascript:;" data-from=""  data-srid="" data-status="cancel"  role="button" class="btn btn-default statusclickSR orange-btn">I understand and accept</a>
+    </div>
+
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <!-- Cancel and resubmit service request END -->
+
+
+
    
 <div id="modal_milestone_pay" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
         <div class="modal-dialog">
@@ -1001,6 +1139,49 @@ $html.='
         </div>
     </div>
 
+
+
+<div id="reject_change_request" class="modal fade" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+<div class="modal-dialog">
+<div class="modal-content">
+<div class="modal-header">
+<button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+<h4 class="modal-title" style="color:#000000";><center><i class="fa fa-info-circle fa-2x" aria-hidden="true"></i>Reject Change Request</center></h4>
+</div>
+<div class="modal-body">
+
+
+<form id="reject_change_request_form">
+
+
+<div class="form-group ">
+<label><font color="black">Notes</font></label>
+<textarea class="form-control" id="mnotes" name="notes">
+</textarea>
+
+</div> 
+
+
+
+
+
+
+
+<center>
+
+<button type="submit" class="btn btn-success" ><?php echo SUBMIT;?></button>
+
+</form>
+
+</center>
+
+</div>
+</div>
+</div>
+</div>
+
+
+
 <script src="./js/jquery-1.11.3.min.js"></script>
    <!--  <script src="./js/bootstrap.min.js"></script> -->
     <script src="./js/framework/bootstrap.min.js"></script>
@@ -1012,6 +1193,113 @@ $html.='
      <link rel="stylesheet" href="./css/formValidation.min.css">
     
 <script type="text/javascript" >
+
+$(document).on("click", ".rejectclick", function(e) 
+{
+    $("#reject_change_request").modal("show"); 
+});
+
+$(document).on("click", ".bidapproveclick", function(e) {
+    var refid = $("#refid").val();
+    var id = $("#bidid").val();
+   
+   swal({
+                                        title: "Approve Change Request",
+                                        text: "Are you sure you want to approve agreement changes requested?",
+                                        type: "warning",
+                                        showCancelButton: true,
+                                        cancelButtonText: "Cancel",
+                                        confirmButtonColor: "#5cb85c",
+                                        confirmButtonText: "Approve",
+                                        closeOnConfirm: true
+                                },
+
+                                function(conf){
+                    if(conf){
+                      
+                    //call here for request milestone payment                    
+           
+                 var rtrnObj=(urlCall("./bid_approve_request.php?refid="+refid+"&bidid="+id));
+          
+                 if(rtrnObj=="success"){
+                              swal.close();
+                             //window.location.href="work_bid.php?id="+id;
+                             location.reload();
+                    } }
+                    else
+                    {
+                      swal.close();
+                      
+                    
+                    }
+                    
+              
+                        }); 
+  
+
+});
+
+
+$('#reject_change_request_form').formValidation({
+        framework: 'bootstrap',
+        fields: {
+            notes: {
+                validators: {
+                    notEmpty: {
+                        message: "Please Enter notes"
+                    }
+                    
+                }
+            }            
+        }
+    }).on('success.form.fv', function(e) {
+    
+            e.preventDefault();
+       
+            
+            var refid = $("#refid").val();
+            var bidid = $("#bidid").val();
+            var notes = $("#mnotes").val();              
+                    
+           
+            
+            var formData = {
+                
+                'refid' : refid,
+                'bidid' : bidid,
+                'notes' : notes
+                
+            }
+    
+      
+            var feedback = $.ajax({
+                type: "POST",
+                url: "bid_reject_request.php",
+                data: formData,         
+                async: false,
+                
+            }).complete(function(){
+            
+            
+            }).responseText;
+        
+  
+            if(feedback == "success"){
+            
+              swal({
+                    type : "success",
+                    title: "Success",
+                    text: "Agreement Change Request Rejected successfully"
+               },
+                function(){
+                       $('#modal_milestone_pay').modal('hide');
+                      //window.location.href="work_bid.php?id="+bidid;
+                      location.reload();
+                }
+                );            
+            } 
+     });
+
   /**
 $( document ).ready(function() {
   <?php if($job == "yes"){ ?>
@@ -1283,7 +1571,8 @@ function doneMileStone( inObj , bidId, bidName,amount){
         
   if(rtrnObj=="success"){
     localStorage.setItem("milestonepayment", "yes");
-     window.location.href="view_bid.php?id="+bidId;
+     //window.location.href="view_bid.php?id="+bidId;
+     location.reload();
                     } }
                     
               

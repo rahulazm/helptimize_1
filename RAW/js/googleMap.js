@@ -59,7 +59,12 @@ var geocoder;
         //////Create sr page after add the address, corresponding address is marked
 		var Lat = localStorage.getItem("latitude_address"); 
 		var Lng = localStorage.getItem("longitude_address"); 
-		if(localStorage.getItem("latitude_address") && cId == 0)
+
+		console.log("Lat: "+Lat);
+		console.log("Lng: "+lng);
+		console.log("Cat ID: "+cId);
+		//if(localStorage.getItem("latitude_address") && cId == 0)
+		if(localStorage.getItem("latitude_address") != "")
 		{		
 			 newMark(parseFloat(gLat), parseFloat(gLng), urhere,'', '');
 			 centerMap(parseFloat(gLat), parseFloat(gLng));

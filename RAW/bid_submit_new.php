@@ -56,20 +56,10 @@ if($_POST['cancelFee'] == "")
 $rateperhour=0;$totalhours=0;
 if($_POST['payType'] == "hourly")
 {
-	$rateperhour=$_POST['payAmt'];
-	$rateperhours=$rateperhour;
+	$rateperhour=$_POST['rateperhour'];
 	$totalhours=$_POST['totalhours'];
-	$_POST['payAmt']=$rateperhour*$totalhours;
 }
 
-if($_POST['schedule_amount'] == '')
-{
-	$amount = $_POST['payAmt'];
-}
-else
-{
-	$amount = $_POST['schedule_amount'];	
-}
 
 $payType = $_sqlObj->query('select id from paytype where name="'.$_POST['payType'].'"');
 
@@ -79,12 +69,12 @@ $status =  $_sqlObj->query('select id from status where status="submitted"');
 	$sql_update_sr = "UPDATE serviceRequests SET last_updated=now() WHERE id='$sr_id'";
 	$sql_update_sr_Qry = $_sqlObj->query($sql_update_sr);
 
-    echo $str='insert into bids(srId, ownerId, create_datetime, title, descr, payType, payAmt, rateperhour, totalhours, advancePayment, dateTimeTo, dateTimeFrom, timeFrom, timeTo, categId, cancelFee, is18, ageApproved, status, last_updated, reviewedByRequest,set_schedule,schedule_note,schedule_amount) values('.$_POST['service_id'].', '.$_SESSION['id'].', now(), "'.$_POST['title'].'", "'.$_POST['descr'].'", '.$payType[0]['id'].', "'.$_POST['payAmt'].'", "'.$rateperhour.'", "'.$totalhours.'", "'.$_POST['advancePayment'].'", "'.$_POST['dateTimeTo'].'", "'.$_POST['dateTimeFrom'].'", "'.$_POST['timeFrom'].'", "'.$_POST['timeTo'].'", '.$_POST['category'].', "'.$_POST['cancelfee'].'", '.$is18.', 0, '.$status[0]['id'].', now(), 0, "'.$_POST['set_schedule'].'", "'.$_POST['schedule_note'].'", "'.$amount.'");';
+    echo $str='insert into bids(srId, ownerId, create_datetime, title, descr, payType, payAmt, rateperhour, totalhours, advancePayment, dateTimeTo, dateTimeFrom, timeFrom, timeTo, categId, cancelFee, is18, ageApproved, status, last_updated, reviewedByRequest,set_schedule,schedule_note,schedule_amount) values('.$_POST['service_id'].', '.$_SESSION['id'].', now(), "'.$_POST['title'].'", "'.$_POST['descr'].'", '.$payType[0]['id'].', "'.$_POST['payAmt'].'", "'.$rateperhour.'", "'.$totalhours.'", "'.$_POST['advancePayment'].'", "'.$_POST['dateTimeTo'].'", "'.$_POST['dateTimeFrom'].'", "'.$_POST['timeFrom'].'", "'.$_POST['timeTo'].'", '.$_POST['category'].', "'.$_POST['cancelfee'].'", '.$is18.', 0, '.$status[0]['id'].', now(), 0, "'.$_POST['set_schedule'].'", "'.$_POST['schedule_note'].'", "'.$_POST['schedule_amount'].'");';
 	if($_sqlObj->query($str)){
 	$id=$_sqlObj->lastId();
 	
 		################Insert Revised table for bid
-	$Rev_str='insert into bids_revision(bidid,refno,srId, ownerId, create_datetime, title, descr, payType, payAmt, rateperhour, totalhours, advancePayment, dateTimeTo, dateTimeFrom, timeFrom, timeTo categId, cancelFee, is18, ageApproved, status, last_updated, reviewedByRequest,set_schedule,schedule_note,schedule_amount) values('.$id.',"1",'.$_POST['service_id'].', '.$_SESSION['id'].', now(), "'.$_POST['title'].'", "'.$_POST['descr'].'", '.$payType[0]['id'].', "'.$_POST['payAmt'].'", "'.$rateperhour.'", "'.$totalhours.'", "'.$_POST['advancePayment'].'", "'.$_POST['dateTimeTo'].'", "'.$_POST['dateTimeFrom'].'", "'.$_POST['timeFrom'].'", "'.$_POST['timeTo'].'",'.$_POST['category'].', "'.$_POST['cancelfee'].'", '.$is18.', 0, '.$status[0]['id'].', now(), 0, "'.$_POST['set_schedule'].'", "'.$_POST['schedule_note'].'", "'.$amount.'");';
+	$Rev_str='insert into bids_revision(bidid,refno,srId, ownerId, create_datetime, title, descr, payType, payAmt, rateperhour, totalhours, advancePayment, dateTimeTo, dateTimeFrom, timeFrom, timeTo categId, cancelFee, is18, ageApproved, status, last_updated, reviewedByRequest,set_schedule,schedule_note,schedule_amount) values('.$id.',"1",'.$_POST['service_id'].', '.$_SESSION['id'].', now(), "'.$_POST['title'].'", "'.$_POST['descr'].'", '.$payType[0]['id'].', "'.$_POST['payAmt'].'", "'.$rateperhour.'", "'.$totalhours.'", "'.$_POST['advancePayment'].'", "'.$_POST['dateTimeTo'].'", "'.$_POST['dateTimeFrom'].'", "'.$_POST['timeFrom'].'", "'.$_POST['timeTo'].'",'.$_POST['category'].', "'.$_POST['cancelfee'].'", '.$is18.', 0, '.$status[0]['id'].', now(), 0, "'.$_POST['set_schedule'].'", "'.$_POST['schedule_note'].'", "'.$_POST['schedule_amount'].'");';
 	$Qry=$_sqlObj->query($Rev_str);
 	$refid=$_sqlObj->lastId();
 

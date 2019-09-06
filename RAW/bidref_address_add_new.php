@@ -1,6 +1,6 @@
 <?php
 require_once("./common.inc.php"); 
-require_once("/var/www/html/demo/clients/rajni/malar/helptimize-master/helptimize_app/etc/conf.php"); 
+require_once("/etc/helptimize/conf.php"); 
 require_once("./mysql_lib.php"); 
 require_once("./resize_image.php");
 session_start();

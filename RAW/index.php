@@ -234,7 +234,7 @@ $(".signupf").on("click",function(){
 
 </script>
 
-    <link rel="stylesheet" href="http://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
+    <link rel="stylesheet" href="https://code.jquery.com/ui/1.12.1/themes/base/jquery-ui.css">
 
       <script src="https://code.jquery.com/ui/1.12.1/jquery-ui.js"></script>
 
@@ -361,7 +361,7 @@ $('.parentName').hide();
 
 <div class="form-group">
     <label for="usr">Enter Date Of Birth</label>
-    <input type="text" id="customer_dob" class="form-control" name="customer_dob" />
+    <input type="text" id="customer_dob" class="form-control" name="customer_dob" readonly />
     <!--<p id="age"></p>         -->
 
 
@@ -1572,7 +1572,8 @@ console.log(feedback);
             },
             function(){
 
-                location.reload();
+                //location.reload();
+                swal.close();
             });
 
     			//$('#modal_activation_key').modal('show');

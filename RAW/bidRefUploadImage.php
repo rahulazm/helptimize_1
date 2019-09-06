@@ -1,40 +1,19 @@
 <?php
 require_once("./header_main.php");
 $srid=$_sqlObj->escape($_GET['sr_id']);
+$bidid=$_REQUEST["bidid"];
+
+##########Check Total bid in Review bid table
+$qstr=($_sqlObj->query('
+select count(id) as totbid from bids_revision where bidid='.$bidid));
+$total_count= $qstr[0]["totbid"]+1;
+
 
 // find all images uploaded by this bidder for this SR.
- $getstr='select * from view_pics where userId="'.$_SESSION['id'].'" and srId='.$srid.' order by datetime, orderNum;';
+$getstr='select * from pics_revision where userId="'.$_SESSION['id'].'" and bidId='.$bidid.'  and refno ="'.$total_count.'" order by datetime, orderNum;';
 $images=$_sqlObj->query($getstr);
- $location_count = count($images);
+$location_count = count($images);
 
-//--------------if there are no images for this sr from this bidder, copy over what the requestor has.----------------
-	if(count($images)<=0){
-	//copy the originals
-	$str='select * from view_serviceRequests where id='.$srid;
-	$srArr=reset($_sqlObj->query($str));
-
-	$str='select * from view_pics where srId='.$srid.' and userId='.$srArr['ownerId'].' order by datetime, orderNum';
-	$images=$_sqlObj->query($str);
-
-	$row=reset($images);
-		while($row){
-		$fn=basename($row['url']);//original filename
-		$dir=dirname($row['url']); //directory of file
-
-		$fnN=substr($fn, strlen($row['userId']) + 1, strlen($fn)-(strlen($row['userId']) + 1));
-
-		$fnN=$_SESSION['id'].'_'.$fnN;//new filename
-
-		//copy the original into the new filename 	
-		    if(copy($row['url'], $dir.'/'.$fnN)){
-			copy($dir.'/small_'.$fn, $dir.'/small_'.$fnN);//copies the small version.
-			$str='insert into pics(id, datetime, userId, srId, bidId, orderNum, url, title, safeRate, notes) values(\'\', now(), '.$_SESSION['id'].', '.$srArr['id'].', null, '.$row['orderNum'].', "'.$dir.'/'.$fnN.'", "'.$row['title'].'", "'.$row['safeRate'].'", "'.$row['notes'].'");';
-			$_sqlObj->query($str); //inserting the image into this bidder's table of images.
-		    } 
-		$row=next($images);
-		}
-	$images=$_sqlObj->query($getstr);
-	}
 
 
 ?>
@@ -120,15 +99,17 @@ a[href^="https://maps.google.com/maps"]{display:none !important}
             
             <div class="form-group">
     <label><?php echo PICTURE_TITEL;?></label> 
-    <input type="input" class="form-control text_input_radius" id="picture_titel" name="title[]"  value="<?php echo $location_count+1; ?>">
+    <input type="input" class="form-control text_input_radius" id="picture_titel" name="title[]" value="<?php echo $location_count+1; ?>">
     <input type="hidden" class="form-control text_input_radius" name="srId[]" value="<?php echo $srid; ?>">
+     <input type="hidden" class="form-control text_input_radius" name="bidId" value="<?php echo $bidid; ?>">
+     <input type="hidden" class="form-control text_input_radius" name="totalreview" value="<?php echo $total_count; ?>">
   </div>
   
              <br>
              <center>
             <span id="picture_submit_button">
             <input type="submit" id="picture_submit" name="picture_submit"value="<?php echo UPLOAD_PICTURE;?>" class = "btn btn-primary general_orange_button_border_radius general_orange_button_size general_orange_button_background general_orange_button_no_border" />
-            <img src="img/loader.gif" alt="loader1" style="display:none; height:30px; width:auto;" id="loaderImg">  </div>
+           <img src="img/loader.gif" alt="loader1" style="display:none; height:30px; width:auto;" id="loaderImg">  </div>
              </center>
    </form>
 
@@ -240,7 +221,8 @@ function close_big_picture()
 
   function go_back()
 {
-     location.href = "bid_interested.php?id=<?php echo $_GET['sr_id']; ?>";
+    
+     location.href = "bid_reupdate.php?id=<?php echo $bidid; ?>";
 } 
 
   function show_big_image(id)
@@ -314,7 +296,7 @@ function delete_image(id)
     	
     	   var feedback = $.ajax({
     			type: "POST",
-    			url: "delete_uploaded_sr_picture.php",
+    			url: "delete_uploaded_bid_picture.php",
     		    data: formData,
     		
     		    async: false,
@@ -395,9 +377,9 @@ $("#uploadimage").on('submit',(function(e) {
    	if(filerequired == ""){
    	
    	  swal(oops, file_required, "error");
-   	  $("#picture_submit").prop("disabled",false);
+   	 $("#picture_submit").prop("disabled",false);
       $("#picture_submit").css("cursor","pointer");
-      $("#loaderImg").hide(); 
+      $("#loaderImg").hide();
    	  return;
    	
    	
@@ -416,7 +398,7 @@ $("#uploadimage").on('submit',(function(e) {
     $("#loaderImg").show(); 
   var result = "";
   $.ajax({
-	url: "uploadImage.php", 
+	url: "uploadRefImage.php", 
 	type: "POST",             
 	data: new FormData(this), 
 	contentType: false,       
@@ -427,7 +409,7 @@ $("#uploadimage").on('submit',(function(e) {
 		{
 		    result = data;
 		    
-		    var oops = '<?php echo OOPS; ?>';
+	var oops = '<?php echo OOPS; ?>';
    	var file_exist = '<?php echo FILE_EXIST; ?>';
    	var file_to_big = '<?php echo FILE_TO_BIG; ?>';
    	var file_to_big_2 = '<?php echo FILE_TO_BIG_2; ?>';
@@ -441,9 +423,9 @@ $("#uploadimage").on('submit',(function(e) {
 
    			
    	if(result['status'] == 1){
-		   $("#picture_submit").prop("disabled",false);
+		  $("#picture_submit").prop("disabled",false);
       $("#picture_submit").css("cursor","pointer");
-       $("#loaderImg").hide();
+      $("#loaderImg").hide();
 	    swal(oops, result['msg'], "error");
 	        	
 	}
@@ -481,12 +463,11 @@ $("#uploadimage").on('submit',(function(e) {
 	    
 	        	
 	}
+	
 		}
 	});
 	
 
-	
-	
 	
 	
 		

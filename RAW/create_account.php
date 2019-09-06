@@ -1,8 +1,9 @@
 <?php
-/*ini_set('display_errors', 1);
+ini_set('display_errors', 1);
 ini_set('display_startup_errors', 1);
-error_reporting(E_ALL);*/
+error_reporting(E_ALL);
 $configs = include("/etc/helptimize/conf.php");
+$_configs = $configs;
 $username = $configs["username"];
 $password = $configs["password"];
 $host = $configs["host"];
@@ -88,7 +89,7 @@ if(!$result_insert_payment = $db_insert_account->query($sql_insert_account)){
 
 $new_id = $db_insert_account->insert_id;
 
-$db_insert_account->close();
+//$db_insert_account->close();
 
 
 // create ZOHO contact information
@@ -191,6 +192,41 @@ $url = "https://invoice.zoho.com/api/v3/contacts/contactpersons";
 		curl_setopt($ch, CURLOPT_RETURNTRANSFER, true);
 		$response = curl_exec($ch);*/
 		
+
+
+//////After creating account call pusher notification to corresponding parent (if user age less than 18) --- Start
+
+  if($guard_username != ""){
+  require __DIR__ . '/vendor/autoload.php';
+  $options = array(
+      'cluster' => $_configs["push_cluster"],
+      'useTLS' => true
+    );
+    $pusher = new Pusher\Pusher(
+      $_configs["push_app_key"],
+      $_configs["push_app_secret"],
+      $_configs["push_app_id"],
+      $options
+    );
+    $type="newchildaccount";
+
+    $id = 1;
+      
+   $userid = $guardId;
+   $url="guardian_agreement.php?childid=".$new_id;
+   $Content="Verify and agree to the guardian agreement for ".$firstname." ".$familyname."'s user account";
+   $Content1="Verify and agree to the guardian agreement for ".$firstname." ".$familyname."'s user account";
+   $today = date("Y-m-d H:i:s");  
+   $sql_insert_message = "INSERT INTO message_list (message_id,sr_id,message_type,message_title,date_time,read_status,user_id,receiver_id,url) VALUES ('". $id ."','0','". $type ."','". $Content1 ."','". $today ."','0','". $new_id ."','". $userid ."','". $url ."')";
+   $result_insert_message = $db_insert_account->query($sql_insert_message);
+   
+  
+    $data['message'] = $Content . "|" . $type. "|" . $url;
+    $pusher->trigger('pop_up_message',$userid, $data);
+
+  }
+  //////After creating service request call pusher notification to other users --- End
+
 		
 echo $new_id;	
 

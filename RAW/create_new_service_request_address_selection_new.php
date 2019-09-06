@@ -1177,9 +1177,18 @@ function add_current_address()
 
   		     }).responseText;
   		     
-  		    localStorage.setItem("latitude_address",current_latitude);
-         localStorage.setItem("longitude_address",current_longitude);
+
   		     var address_id = feedback;
+           console.log("current_latitude: "+current_latitude);
+           console.log("current_longitude: "+current_longitude);
+           localStorage.setItem("latitude_address",current_latitude);
+           localStorage.setItem("longitude_address",current_longitude);
+           console.log("Lat: "+localStorage.getItem("latitude_address"));
+           console.log("Lng: "+localStorage.getItem("longitude_address"));
+           gLat = current_latitude;
+           gLng = current_longitude;
+           initMap();
+           centerMap(gLat, gLng);
   		     
   		     swal({
   				title: address_saved_OK,
@@ -2178,8 +2187,8 @@ function showPosition(position) {
 		
 		google.maps.event.addListener(googleMarker, 'dragend', function(evt){
 
- 				//alert("New Latitute: " + evt.latLng.lat());
- 				//alert("New Longitude: " + evt.latLng.lng());
+ 				console.log("New Latitute: " + evt.latLng.lat());
+ 				console.log("New Longitude: " + evt.latLng.lng());
  				
  				current_longitude = evt.latLng.lng();
 				current_latitude = evt.latLng.lat();

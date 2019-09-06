@@ -76,9 +76,11 @@ a[href^="https://maps.google.com/maps"]{display:none !important}
 
 <br>
 
-
+<h2><b>
 
  <label><?php echo ADD_TAKE_NEW_PICTURE;?></label> 
+
+</b></h2>
 <div class="panel panel-default">
   <div class="panel-body">
 

@@ -10,7 +10,7 @@ if($db_count_unread_messages ->connect_errno > 0){
     die('Unable to connect to database [' . $db_count_unread_messages ->connect_error . ']');
 }
 
-$sql_count_unread_messages = "SELECT * FROM message_list WHERE receiver_id='".$_SESSION['id']."' AND read_status='0' order by id desc";
+$sql_count_unread_messages = "SELECT * FROM message_list WHERE receiver_id='".$_SESSION['id']."' order by id desc";
 
 $result_count_unread_messages = $db_count_unread_messages->query($sql_count_unread_messages);
 $count_unread_messages = $result_count_unread_messages->num_rows;

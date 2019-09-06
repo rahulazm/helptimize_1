@@ -7,7 +7,15 @@ $job_address = $_sqlObj->query("SELECT `*` FROM `address` WHERE srId = $job_id O
 
 $owner_id     = $_GET['id'];
 
-$bid_data = $_sqlObj->query("select * from bids where srId=$job_id AND ownerId=$owner_id");
+$bid_data = $_sqlObj->query("select * from bids where srId=$job_id AND ownerId=$owner_id and bidstatus != 'cancel'");
+
+if($_SESSION['id'] == $bid_data[0]['ownerId']){
+  $statususer = "seller";
+}else{
+  $statususer = "buyer";
+}
+
+$recurrence_type = $bid_data[0]['set_schedule'];
 
 $milestone_data = $_sqlObj->query("select * from milestones where bidId=".$bid_data[0]['id']."");
 
@@ -42,7 +50,7 @@ $( document ).ready(function() {
 
   if(showTab != ''){
 
-    if(showTab == "location"){
+    if(showTab == "jobdetails"){
       $("#"+showTab).prop("checked", true);
       $(".super-widget-tab-info summary").hide();
       $("."+showTab).show();
@@ -58,6 +66,25 @@ $( document ).ready(function() {
     /*next(showTab);
     $(".super-widget-tab input[type=radio]").prop("checked", false);
     $("#"+showTab).prop("checked",true);*/
+
+    localStorage.setItem('recurring', "<?php echo $recurrence_type; ?>");
+    setTimeDate("<?php echo $bid_data[0]['dateTimeFrom']; ?>", "<?php echo $bid_data[0]['dateTimeTo'];?>", "<?php echo $bid_data[0]['timeFrom'];?>", "<?php echo $bid_data[0]['timeTo'];?>");
+
+    if(showTab == "payment"){
+      payTypeSetting();
+      $("#schedule_note").focus();
+      $("#amount").focus();
+      $("#cancelfee").focus();
+      $("#personalnote").focus();
+      if($("#recamnt").css("display") != 'none'){
+        $("#ramount").focus();
+      }
+      if($('input:radio[name=pay]:checked').val() == "hourly"){
+        $(".actHourly").css("display","flex");
+        $("#rateHour").focus();
+        $("#tHour").focus()
+      }
+    }
   }
 
   initMap();
@@ -223,19 +250,58 @@ var gLng=-122.3321;
                 </script>
 <section class="wrapper">
             <aside class="super-widget-tab">
-                <div><input type="radio" id="location" name="location" checked/><label for="location">1.Location</label></div>
-                <div><input type="radio" id="jobdetails" name="jobdetails" disabled/><label for="jobdetails">2.Job Details</label></div>
+                <div><input type="radio" id="jobdetails" name="jobdetails" checked/><label for="jobdetails">1.Job Details</label></div>
+                <div><input type="radio" id="location" name="location" disabled/><label for="location">2.Location</label></div>                
                 <div><input type="radio" id="payment" name="payment" disabled/><label for="payment">3.Payment</label></div>
                 <div><input type="radio" id="review" name="review" disabled/><label for="review">4.Review</label></div>
                 <div><input type="radio" id="finish" name="finish" disabled/><label for="finish">5.Finish!</label></div>
             </aside>
             <aside class="super-widget-tab-info">
-              <summary class="location WDTH90 MRGCenter">
-                <input type="hidden" id="service_id" value="<?php echo $job_id; ?>">
-                <input type="hidden" id="bid_id" value="<?php echo $bid_data[0]['id']; ?>">
-                <h1><b>1.Location</b></h1>
-                <h2><b>Job Title</b></h2>
-                <input type="text" id="jobtitle" value="<?php echo $bid_data[0]['title'];?>" readonly>
+              
+              <summary class="jobdetails WDTH90 MRGCenter">
+                  <input type="hidden" id="service_id" value="<?php echo $job_id; ?>">
+                  <input type="hidden" id="bid_id" value="<?php echo $bid_data[0]['id']; ?>">
+                  <input type="hidden" id="sr_recurrence_type" value="<?php echo $recurrence_type; ?>">
+                  <input type="hidden" id="statususer" value="<?php echo $statususer; ?>">
+                  <h1><b>1.Job Details</b></h1>
+                  <h2><b>Job Title</b></h2>
+                  <input type="text" id="jobtitle" value="<?php echo $bid_data[0]['title'];?>" readonly>
+                  <h2><b>Describe What you need</b></h2>
+                  <textarea id="desc"><?php echo $bid_data[0]['descr'];?></textarea>
+                  <h2><b>Category</b></h2>
+                  <?php while ($cur) { 
+                   
+                  ?>
+                    
+                  <input type="radio" id="<?php echo $cur['id'];?>" value="<?php echo $cur['id'];?>" <?php if($cur['id'] == $bid_data[0]['categId']){echo 'checked'; }?> disabled name="serv"/><label class="service" for="<?php echo $cur['id'];?>"><?php echo $cur['name'];?></label>
+                  <?php $cur=next($categs); } ?>
+                  
+                  <?php include('create_new_service_request_take_pictures_new.php');?>
+
+              </summary>
+              <summary class="location WDTH90 MRGCenter" style="display: none">
+                <h1><b>2.Location</b></h1>            
+                <div class="row">
+                    <div class="col-sm-6 col-md-6 col-lg-6">
+                        <h2><b>When do you need it?</b></h2>
+                    </div>
+                    <div class="col-sm-6 col-md-6 col-lg-6 text-right">
+                      <!-- Recurring? <select class="custom-drop-down" id="recurring">
+                        <option>One Time</option>
+                        <option>Weekly</option>
+                        <option>Twice Monthly</option>
+                        <option>Monthly</option>
+                        <option>Every Other Month</option>
+                      </select>
+                      <!-- <input type="radio" class="recurring" id="recurring"/> <label for="recurring"><small>Recurring?</small></label> -->
+                    </div>
+                </div>
+                <div class="time-date-radio" style="font-weight: normal;">
+                  <input type="radio" checked id="urgent" name="timedate" value="urgent"/><label for="urgent">Urgent</label>
+                  <input type="radio" id="choose" name="timedate" value="choose" /><label for="choose">Select</label>
+                </div>
+                <iframe id="scheduler_iframe" src="calendar.html" class="calendar-view" style="display:none"></iframe>
+                <p>&nbsp;</p>    
                 <h2><b>Where do you need the help?</b></h2>
                 <!--<div class="flex-layout">
                     <input type="text" id="getaddr" name="getaddr"/>
@@ -259,43 +325,12 @@ var gLng=-122.3321;
 
 
               </summary>
-              <summary class="jobdetails WDTH90 MRGCenter" style="display: none">
-                  <h1><b>2.Job Details</b></h1>
-                  <h2><b>Describe What you need</b></h2>
-                  <textarea id="desc"><?php echo $bid_data[0]['descr'];?></textarea>
-                  <h2><b>Category</b></h2>
-                  <?php while ($cur) { 
-                   
-                  ?>
-                    
-                  <input type="radio" id="<?php echo $cur['id'];?>" value="<?php echo $cur['id'];?>" <?php if($cur['id'] == $bid_data[0]['categId']){echo 'checked'; }?> disabled name="serv"/><label class="service" for="<?php echo $cur['id'];?>"><?php echo $cur['name'];?></label>
-                  <?php $cur=next($categs); } ?>
-                  <div class="row">
-                      <div class="col-sm-6 col-md-6 col-lg-6">
-                          <h2><b>When do you need it?</b></h2>
-                      </div>
-                      <div class="col-sm-6 col-md-6 col-lg-6 text-right">
-                        <!-- Recurring? <select class="custom-drop-down" id="recurring">
-                          <option>One Time</option>
-                          <option>Weekly</option>
-                          <option>Twice Monthly</option>
-                          <option>Monthly</option>
-                          <option>Every Other Month</option>
-                        </select>
-                        <!-- <input type="radio" class="recurring" id="recurring"/> <label for="recurring"><small>Recurring?</small></label> -->
-                      </div>
-                  </div>
-                  <iframe src="calendar.html" class="calendar-view"></iframe>
-                  <p>&nbsp;</p>
-                  <?php include('create_new_service_request_take_pictures_new.php');?>
-
-              </summary>
               <summary class="payment WDTH90 MRGCenter" style="display: none">
                   <h1><b>3. Payment</b></h1>
 
                   <h2><b>How do you like to Pay?</b></h2>
                   <div style="font-weight: normal;">
-                    <input type="radio" id="fairMarket" <?php if($bid_data[0]['payType'] == 3){ echo 'checked';} ?> name="pay"/><label for="fairMarket">Fair Market</label>
+                    <input type="radio" id="fairMarket" <?php if($bid_data[0]['payType'] == 3){ echo 'checked';} ?> name="pay" value="fair" /><label for="fairMarket">Fair Market</label>
                     <input type="radio" <?php if($bid_data[0]['payType'] == 1){ echo 'checked';} ?> id="fixed" name="pay" value="fixed" /><label for="fixed">Fixed</label>
                     <input type="radio" <?php if($bid_data[0]['payType'] == 2){ echo 'checked';} ?> id="hourly" name="pay" value="hourly" /><label for="hourly">Hourly</label>
                   </div>
@@ -313,13 +348,13 @@ var gLng=-122.3321;
                         </div>
                       </div>
                   </div>
-                  <div class="form-group MRGT10PX WDTH300PX ramount" id="recamnt" style="display:none">
+                  <div class="form-group MRGT10PX WDTH300PX ramount" id="recamnt" <?php if($bid_data[0]['set_schedule'] == "One Time"){ ?>style="display:none"<?php }else{?> style="display:block"<?php } ?>>
                       <label class="form-label" for="ramount">Recurrence Amount</label>
-                      <input id="ramount" class="form-input" type="text" />
+                      <input id="ramount" class="form-input" value="<?php echo $bid_data[0]['schedule_amount']; ?>" type="text" />
                    </div>       
                   <div class="form-group MRGT10PX WDTH300PX amount">
                     <label class="form-label" for="amount">Amount</label>
-                    <input id="amount" class="form-input" value="<?php echo $bid_data[0]['schedule_amount']; ?>" type="text" />
+                    <input id="amount" class="form-input" value="<?php echo $bid_data[0]['payAmt']; ?>" type="text" />
                   </div>           
                   <!-- <div class="form-group MRGT10PX">
                     <label class="form-label" for="first">Amount</label>

@@ -139,9 +139,9 @@ a[href^="https://maps.google.com/maps"]{display:none !important}
   <div class="panel panel-default">
   <div class="panel-body">
   
-<center>
+<!-- <center>
 <h4><font color="#000000"><?php echo SELECT_ADDRESS;?></font></h4>
- </center>
+ </center> -->
 
   </div>
     </div>
@@ -243,7 +243,10 @@ a[href^="https://maps.google.com/maps"]{display:none !important}
         height: 20px;
         margin-bottom: 2px;
       }
-      
+      .collapse.in {
+    display: block !important;
+    height: auto !important;
+}
       
       .panel {
     margin: 0 !important; 
@@ -297,15 +300,15 @@ a[href^="https://maps.google.com/maps"]{display:none !important}
     <div class="panel-group" id="accordion">
   <div class="panel panel-default">
     <div class="panel-heading">
-      <h4 class="panel-title">
+      <h6 class="panel-title">
        
         <button class="btn btn-primary general_blue_button_border_radius general_blue_button_size general_blue_button_background general_blue_button_no_border" type="button" data-toggle="collapse" data-target="#collapseOne">Add</button>
           <?php echo SELECT_FROM_GPS_LOCATION?>
       
       
-      </h4>
+      </h6>
     </div>
-    <div id="collapseOne" class="panel-collapse collapse out">
+    <div id="collapseOne" class="panel-collapse collapse">
       <div class="panel-body">
     
     
@@ -345,14 +348,14 @@ a[href^="https://maps.google.com/maps"]{display:none !important}
 <div class="panel-group" id="accordion3">
   <div class="panel panel-default">
     <div class="panel-heading">
-      <h4 class="panel-title">
+      <h6 class="panel-title">
       
         
          <button class="btn btn-primary general_blue_button_border_radius general_blue_button_size general_blue_button_background general_blue_button_no_border" type="button" data-toggle="collapse" data-target="#collapseThree">Add</button>
           <?php echo SELECT_NEW_LOCATION?>
-      </h4>
+      </h6>
     </div>
-    <div id="collapseThree" class="panel-collapse collapse out">
+    <div id="collapseThree" class="panel-collapse collapse">
       <div class="panel-body">
     
 		<div class="form-group">
@@ -384,13 +387,13 @@ a[href^="https://maps.google.com/maps"]{display:none !important}
     <div class="panel-group" id="accordion2">
   <div class="panel panel-default">
     <div class="panel-heading">
-      <h4 class="panel-title">
+      <h6 class="panel-title">
        
         
          <button class="btn btn-primary general_blue_button_border_radius general_blue_button_size general_blue_button_background general_blue_button_no_border" type="button" data-toggle="collapse" data-target="#collapseTwo">Add</button>
           <?php echo SELECT_FROM_STORED_LOCATION?>
         
-      </h4>
+      </h6>
     </div>
     <div id="collapseTwo" class="panel-collapse collapse out">
       <div class="panel-body">
@@ -803,6 +806,7 @@ function add_stored_address(){
     var description = $('#existing_address_description').val();	
 	var id = $('#select_stored_address').val();
 	var addr_descr=$('#existing_address_description').val();
+  var service_id = $('#service_id').val();
 	
 	if(id > 0){
 /*---------- descided descr is not required
@@ -848,7 +852,24 @@ function add_stored_address(){
   				closeOnConfirm: false
 				},
 				function(){
-  					location.href = "create_new_bid_address_selection.php?from=" + from+"&bidid=" + bid_id+"&sr_number=" + sr_number;
+  					//location.href = "create_new_bid_address_selection.php?from=" + from+"&bidid=" + bid_id+"&sr_number=" + sr_number;
+
+             $.ajax({
+                      url: "show_added_address_bids.php?sr_number="+service_id, 
+                      type: "GET", 
+                      contentType: false,       
+                      cache: false,
+                      async: true,             
+                      processData:false,      
+                      
+                      success: function(data)   
+                        {
+                          var result_alladdress = data;
+                          $("#sr_address_list").html(result_alladdress);
+                          //console.log(result_alladdress);
+                          swal.close();
+                        }
+                      })
 				});
     		
 				
@@ -862,6 +883,7 @@ function add_stored_address(){
 function add_new_address_modal(){
 	var address = $('#autocomplete2').val();
 	var name = $('#new_address_name_modal').val();	
+  var service_id = $('#service_id').val();
 	
 	
 	if(address == ""){
@@ -929,7 +951,23 @@ function add_new_address_modal(){
 				},
 				function(){
 				    
-  					 location.href = "create_new_bid_address_selection.php?from=" + from+"&bidid=" + bid_id+"&sr_number=" + sr_number;
+  					 //location.href = "create_new_bid_address_selection.php?from=" + from+"&bidid=" + bid_id+"&sr_number=" + sr_number;
+             $.ajax({
+                      url: "show_added_address_bids.php?sr_number="+service_id, 
+                      type: "GET", 
+                      contentType: false,       
+                      cache: false,
+                      async: true,             
+                      processData:false,      
+                      
+                      success: function(data)   
+                        {
+                          var result_alladdress = data;
+                          $("#sr_address_list").html(result_alladdress);
+                          //console.log(result_alladdress);
+                          swal.close();
+                        }
+                      })
 				});
     		
     
@@ -1028,6 +1066,11 @@ function add_new_address()
     			}).responseText;
     			
     			 var address_id = feedback;
+           localStorage.setItem("latitude_address",latitude);
+           localStorage.setItem("longitude_address",longitude);
+           gLat = latitude;
+           gLng = longitude;
+           initMap();
     			 
     			 swal({
   				title: address_saved_OK,
@@ -1048,7 +1091,24 @@ function add_new_address()
     				//location.href = "create_new_bid_address_selection.php?sr_number=" + sr_number;
   				
   				} else {
-    			location.href = "create_new_bid_address_selection.php?from=" + from+"&bidid=" + bid_id+"&sr_number=" + sr_number;
+    			//location.href = "create_new_bid_address_selection.php?from=" + from+"&bidid=" + bid_id+"&sr_number=" + sr_number;
+
+             $.ajax({
+                      url: "show_added_address_bids.php?sr_number="+service_id, 
+                      type: "GET",
+                      contentType: false,       
+                      cache: false,
+                      async: true,             
+                      processData:false,      
+                      
+                      success: function(data)   
+                        {
+                          var result_alladdress = data;
+                          $("#sr_address_list").html(result_alladdress);
+                          //console.log(result_alladdress);
+                          swal.close();
+                        }
+                      })
   				
   				}
 
@@ -1066,6 +1126,7 @@ function add_current_address()
 	var address = $('#curent_address').val();
 	var name = $('#current_address_name').val();	
 	var description = $('#current_address_description').val();
+  var service_id = $('#service_id').val();
 	
 	if(address == ""){
 	
@@ -1110,7 +1171,7 @@ function add_current_address()
 	// store address in service_request_addresses
 	
 	var formData = {
-        'sr_number'     : sr_number,
+        'sr_number'     : service_id,
         'name'     : name,
         'address'     : address,
         'description'     : description,
@@ -1135,6 +1196,16 @@ function add_current_address()
   		     
   		  
   		     var address_id = feedback;
+           console.log("current_latitude: "+current_latitude);
+           console.log("current_longitude: "+current_longitude);
+           localStorage.setItem("latitude_address",current_latitude);
+           localStorage.setItem("longitude_address",current_longitude);
+           console.log("Lat: "+localStorage.getItem("latitude_address"));
+           console.log("Lng: "+localStorage.getItem("longitude_address"));
+           gLat = current_latitude;
+           gLng = current_longitude;
+           initMap();
+           centerMap(gLat, gLng);
   		     
   		     swal({
   				title: address_saved_OK,
@@ -1155,7 +1226,23 @@ function add_current_address()
     				//location.href = "create_new_bid_address_selection.php?sr_number=" + sr_number;
   				
   				} else {
-    			location.href = "create_new_bid_address_selection.php?from=" + from+"&bidid=" + bid_id+"&sr_number=" + sr_number;
+    			//location.href = "create_new_bid_address_selection.php?from=" + from+"&bidid=" + bid_id+"&sr_number=" + sr_number;
+             $.ajax({
+                      url: "show_added_address_bids.php?sr_number="+service_id, 
+                      type: "GET", 
+                      contentType: false,       
+                      cache: false,
+                      async: true,             
+                      processData:false,      
+                      
+                      success: function(data)   
+                        {
+                          var result_alladdress = data;
+                          $("#sr_address_list").html(result_alladdress);
+                          //console.log(result_alladdress);
+                          swal.close();
+                        }
+                      })
   				
   				}
 
@@ -1173,6 +1260,7 @@ $(document).on("click", ".btn_detail_address_update", function(e) {
     var name =  $('#address_name_detail_text').val();
     var address =  $('#address_detail_text').val();
     var description =  $('#address_detail_description_text').val();
+    var service_id = $('#service_id').val();
     
     
     var address_update_ok = '<?php echo ADDRESS_UPDATE_OK; ?>';
@@ -1207,7 +1295,23 @@ $(document).on("click", ".btn_detail_address_update", function(e) {
 				},
 				function(){
 				
-				location.href = "create_new_bid_address_selection.php?from=" + from+"&bidid=" + bid_id+"&sr_number=" + sr_number;
+				//location.href = "create_new_bid_address_selection.php?from=" + from+"&bidid=" + bid_id+"&sr_number=" + sr_number;
+             $.ajax({
+                      url: "show_added_address_bids.php?sr_number="+service_id, 
+                      type: "GET", 
+                      contentType: false,       
+                      cache: false,
+                      async: true,             
+                      processData:false,      
+                      
+                      success: function(data)   
+                        {
+                          var result_alladdress = data;
+                          $("#sr_address_list").html(result_alladdress);
+                          //console.log(result_alladdress);
+                          swal.close();
+                        }
+                      })
   
 				});
         				
@@ -1280,6 +1384,7 @@ function stored_address_during_add_address(address_id, formD){
 
 
 	var account_id =  '<?php echo $account_id; ?>';
+  var service_id = $('#service_id').val();
   
  	var store_address_confirm = '<?php echo SR_ADDRESS_STORE_CONFIRM; ?>';
   	var store_address_confirm_text = '<?php echo SR_ADDRESS_STORE_CONFIRM_TEXT; ?>';
@@ -1326,7 +1431,24 @@ function stored_address_during_add_address(address_id, formD){
 			},
 				
 			function(){
-				location.href = "create_new_bid_address_selection.php?from=" + from+"&bidid=" + bid_id+"&sr_number=" + sr_number;
+				//location.href = "create_new_bid_address_selection.php?from=" + from+"&bidid=" + bid_id+"&sr_number=" + sr_number;
+
+             $.ajax({
+                      url: "show_added_address_bids.php?sr_number="+service_id, 
+                      type: "GET", 
+                      contentType: false,       
+                      cache: false,
+                      async: true,             
+                      processData:false,      
+                      
+                      success: function(data)   
+                        {
+                          var result_alladdress = data;
+                          $("#sr_address_list").html(result_alladdress);
+                          //console.log(result_alladdress);
+                          swal.close();
+                        }
+                      })
   
 		});
     		 		
@@ -1342,6 +1464,7 @@ $(document).on("click", ".stored_address", function(e) {
 	var address_id = ($(this).attr('address_id_store'));
 	
 	var account_id =  '<?php echo $account_id; ?>';
+  var service_id = $('#service_id').val();
 
 
 	
@@ -1393,7 +1516,23 @@ $(document).on("click", ".stored_address", function(e) {
 				function(){
 				
 			
-				location.href = "create_new_bid_address_selection.php?from=" + from+"&bidid=" + bid_id+"&sr_number=" + sr_number;
+				//location.href = "create_new_bid_address_selection.php?from=" + from+"&bidid=" + bid_id+"&sr_number=" + sr_number;
+             $.ajax({
+                      url: "show_added_address_bids.php?sr_number="+service_id,
+                      type: "GET", 
+                      contentType: false,       
+                      cache: false,
+                      async: true,             
+                      processData:false,      
+                      
+                      success: function(data)   
+                        {
+                          var result_alladdress = data;
+                          $("#sr_address_list").html(result_alladdress);
+                          //console.log(result_alladdress);
+                          swal.close();
+                        }
+                      })
   
 				});
     		
@@ -1418,6 +1557,7 @@ $(document).on("click", ".delete_stored_address", function(e) {
 
     var address_delete_success = '<?php echo SR_ADDRESS_DELETE_SUCCESS; ?>';
     var address_delete_success_text = '<?php echo SR_ADDRESS_DELETE_SUCCESS_TEXT; ?>';
+    var service_id = $('#service_id').val();
 
 	var address_id = ($(this).attr('address_id'));
 	
@@ -1460,7 +1600,24 @@ $(document).on("click", ".delete_stored_address", function(e) {
 				},
 				function(){
 				
-				location.href = "create_new_bid_address_selection.php?from=" + from+"&bidid=" + bid_id+"&sr_number=" + sr_number;
+				//location.href = "create_new_bid_address_selection.php?from=" + from+"&bidid=" + bid_id+"&sr_number=" + sr_number;
+ 
+             $.ajax({
+                      url: "show_added_address_bids.php?sr_number="+service_id, 
+                      type: "GET",  
+                      contentType: false,       
+                      cache: false,
+                      async: true,             
+                      processData:false,      
+                      
+                      success: function(data)   
+                        {
+                          var result_alladdress = data;
+                          $("#sr_address_list").html(result_alladdress);
+                          //console.log(result_alladdress);
+                          swal.close();
+                        }
+                      })
   
 				});
     		
@@ -1484,6 +1641,7 @@ $(document).on("click", ".delete_address", function(e) {
 
     var address_delete_success = '<?php echo SR_ADDRESS_DELETE_SUCCESS; ?>';
     var address_delete_success_text = '<?php echo SR_ADDRESS_DELETE_SUCCESS_TEXT; ?>';
+    var service_id = $('#service_id').val();
 
 	var address_id = ($(this).attr('address_id'));
 	
@@ -1531,8 +1689,24 @@ $(document).on("click", ".delete_address", function(e) {
 				},
 				function(){
 				
-				location.href = "create_new_bid_address_selection.php?from=" + from+"&bidid=" + bid_id+"&sr_number=" + sr_number;
+				//location.href = "create_new_bid_address_selection.php?from=" + from+"&bidid=" + bid_id+"&sr_number=" + sr_number;
   
+             $.ajax({
+                      url: "show_added_address_bids.php?sr_number="+service_id, 
+                      type: "GET", 
+                      contentType: false,       
+                      cache: false,
+                      async: true,             
+                      processData:false,      
+                      
+                      success: function(data)   
+                        {
+                          var result_alladdress = data;
+                          $("#sr_address_list").html(result_alladdress);
+                          //console.log(result_alladdress);
+                          swal.close();
+                        }
+                      })
 				});
     		
     		

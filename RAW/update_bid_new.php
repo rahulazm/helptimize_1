@@ -52,32 +52,22 @@ if($_POST['cancelFee'] == "")
 $rateperhour=0;$totalhours=0;
 if($_POST['payType'] == "hourly")
 {
-	$rateperhour=$_POST['payAmt'];
-	$rateperhours=$rateperhour;
+	$rateperhour=$_POST['rateperhour'];
 	$totalhours=$_POST['totalhours'];
-	$_POST['payAmt']=$rateperhour*$totalhours;
 }
 
-if($_POST['schedule_amount'] == '')
-{
-	$amount = $_POST['payAmt'];
-}
-else
-{
-	$amount = $_POST['schedule_amount'];	
-}
 
 $payType = $_sqlObj->query('select id from paytype where name="'.$_POST['payType'].'"');
 
 $status =  $_sqlObj->query('select id from status where status="submitted"');
 
 
-    $str='update bids set create_datetime=now(), title="'.$_POST['title'].'", descr="'.$_POST['descr'].'", payType='.$payType[0]['id'].', payAmt='.$_POST['payAmt'].', rateperhour='.$rateperhour.', totalhours='.$totalhours.', advancePayment='.$_POST['advancePayment'].', dateTimeTo="'.$_POST['dateTimeTo'].'", dateTimeFrom="'.$_POST['dateTimeFrom'].'", timeFrom = "'.$_POST['timeFrom'].'", timeTo = "'.$_POST['timeTo'].'", categId='.$_POST['category'].', cancelFee='.$_POST['cancelfee'].', is18='.$is18.', ageApproved=0, status='.$status[0]['id'].', last_updated=now(), reviewedByRequest=0,set_schedule="'.$_POST['set_schedule'].'",schedule_note="'.$_POST['schedule_note'].'",schedule_amount='.$amount.' WHERE id='.$_POST['bid_id'].' AND srId='.$_POST['service_id'].' AND ownerId='.$_SESSION['id'].'';
+    echo $str='update bids set create_datetime=now(), title="'.$_POST['title'].'", descr="'.$_POST['descr'].'", payType='.$payType[0]['id'].', payAmt='.$_POST['payAmt'].', rateperhour='.$rateperhour.', totalhours='.$totalhours.', advancePayment='.$_POST['advancePayment'].', dateTimeTo="'.$_POST['dateTimeTo'].'", dateTimeFrom="'.$_POST['dateTimeFrom'].'", timeFrom = "'.$_POST['timeFrom'].'", timeTo = "'.$_POST['timeTo'].'", categId='.$_POST['category'].', cancelFee='.$_POST['cancelfee'].', is18='.$is18.', ageApproved=0, status='.$status[0]['id'].', last_updated=now(), bidstatus="editbid",statususer="'.$_POST['statususer'].'",reviewedByRequest=0,set_schedule="'.$_POST['set_schedule'].'",schedule_note="'.$_POST['schedule_note'].'",schedule_amount='.$_POST['schedule_amount'].' WHERE id='.$_POST['bid_id'].' AND srId='.$_POST['service_id'].' AND ownerId='.$_SESSION['id'].'';
 	if($_sqlObj->query($str)){
 	$id=$_sqlObj->lastId();
 	
 		################Insert Revised table for bid
-	$Rev_str='update bids set create_datetime=now(), title="'.$_POST['title'].'", descr="'.$_POST['descr'].'", payType='.$payType[0]['id'].', payAmt='.$_POST['payAmt'].', rateperhour='.$rateperhour.', totalhours='.$totalhours.', advancePayment='.$_POST['advancePayment'].', dateTimeTo="'.$_POST['dateTimeTo'].'", dateTimeFrom="'.$_POST['dateTimeFrom'].'", timeFrom = "'.$_POST['timeFrom'].'", timeTo = "'.$_POST['timeTo'].'", categId='.$_POST['category'].', cancelFee='.$_POST['cancelfee'].', is18='.$is18.', ageApproved=0, status='.$status[0]['id'].', last_updated=now(), reviewedByRequest=0,set_schedule="'.$_POST['set_schedule'].'",schedule_note="'.$_POST['schedule_note'].'",schedule_amount='.$amount.' WHERE bidid='.$_POST['bid_id'].' AND srId='.$_POST['service_id'].' AND ownerId='.$_SESSION['id'].'';
+	$Rev_str='update bids set create_datetime=now(), title="'.$_POST['title'].'", descr="'.$_POST['descr'].'", payType='.$payType[0]['id'].', payAmt='.$_POST['payAmt'].', rateperhour='.$rateperhour.', totalhours='.$totalhours.', advancePayment='.$_POST['advancePayment'].', dateTimeTo="'.$_POST['dateTimeTo'].'", dateTimeFrom="'.$_POST['dateTimeFrom'].'", timeFrom = "'.$_POST['timeFrom'].'", timeTo = "'.$_POST['timeTo'].'", categId='.$_POST['category'].', cancelFee='.$_POST['cancelfee'].', is18='.$is18.', ageApproved=0, status='.$status[0]['id'].', last_updated=now(), bidstatus="editbid",statususer="'.$_POST['statususer'].'",reviewedByRequest=0,set_schedule="'.$_POST['set_schedule'].'",schedule_note="'.$_POST['schedule_note'].'",schedule_amount='.$_POST['schedule_amount'].' WHERE bidid='.$_POST['bid_id'].' AND srId='.$_POST['service_id'].' AND ownerId='.$_SESSION['id'].'';
 
 	$Qry=$_sqlObj->query($Rev_str);
 	$refid=$_sqlObj->lastId();

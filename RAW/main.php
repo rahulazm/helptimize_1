@@ -90,10 +90,50 @@ $( document ).ready(function() {
     
        <section class="wrapper" style="width: 80%;margin: auto;">
       <div id="seller" style="/*width: 1070px;*/">    
-            <aside class="">
+            <!-- <aside class=""> -->
+              <aside class="MRGT20PX recommended">
+            <div class="flex-layout" style="/*width: 1070px;*/">
+              <h1>Incoming Jobs</h1>
+            </div>
+            
+            <div class="row MRGB10PX" style="/*width:1090px*/">
+                <?php for($i=0;$i<count($resReqtrAllJobs);$i++){ ?>
+                  <div class="col-sm-12 col-md-6 col-lg-4 col-xl-4">
+                    <div class="card">
+                      <div class="card-body">
+
+                          <p class="card-text">#JR<?php echo $resReqtrAllJobs[$i]['id']?>SR-000</p>
+                          <div class="card-title">
+                              <h5 class="ellipsis" title="<?php echo $resReqtrAllJobs[$i]['title']?>"><?php echo $resReqtrAllJobs[$i]['title']?></h5>
+                              <div>
+                                  <span class="badge badge-secondary"><?php echo $resReqtrAllJobs[$i]['bidcnt']?></span>
+                              </div>
+                          </div>
+                          <label class="post-date">Posted: <?php echo date("jS M Y h:i A", strtotime($resReqtrAllJobs[$i]['create_dateTime']))?></label>
+                          <p class="card-info"><?php 
+                          if($resReqtrAllJobs[$i]['descr'] != "null"){
+                          echo $resReqtrAllJobs[$i]['descr'];
+                          } ?></p>
+                          <div class="text-right"><a href="view_service_details.php?id=<?php echo $resReqtrAllJobs[$i]['id'];?>&new=1">View Details</a></div>
+                      </div>
+                    </div>
+                  </div>
+                <?php } ?>
+            </div>
+          </aside>
+              <nav aria-label="Page navigation example">
+                <ul class="pagination justify-content-end" id="recommended">
+                  <li class="page-item disabled" onclick="prevPagerB('recommended', 'recommended')">
+                    <a class="page-link" href="javascript:;" tabindex="-1" aria-disabled="true">Previous</a>
+                  </li>
+                  <li class="page-item" onclick="nextPageB('recommended', 'recommended')">
+                    <a class="page-link" href="javascript:;">Next</a>
+                  </li>
+                </ul>
+              </nav>
               <aside class="jobRequests">
               <div class="flex-layout" style="/*width: 1070px;*/">
-                  <div><h1>Job Requests</h1></div>
+                  <div><h1>My Offers</h1></div>
                   <div>
                       <button class="btn-orange">Search Jobs</button>
                       <div class="btn-group dropdown-btn" role="group">
@@ -150,46 +190,7 @@ $( document ).ready(function() {
                   </li>
                 </ul>
               </nav>
-          <aside class="MRGT20PX recommended">
-            <div class="flex-layout" style="/*width: 1070px;*/">
-              <h1>Recommended Jobs</h1>
-            </div>
-            
-            <div class="row MRGB10PX" style="/*width:1090px*/">
-                <?php for($i=0;$i<count($resReqtrAllJobs);$i++){ ?>
-                  <div class="col-sm-12 col-md-6 col-lg-4 col-xl-4">
-                    <div class="card">
-                      <div class="card-body">
-
-                          <p class="card-text">#JR<?php echo $resReqtrAllJobs[$i]['id']?>SR-000</p>
-                          <div class="card-title">
-                              <h5 class="ellipsis" title="<?php echo $resReqtrAllJobs[$i]['title']?>"><?php echo $resReqtrAllJobs[$i]['title']?></h5>
-                              <div>
-                                  <span class="badge badge-secondary"><?php echo $resReqtrAllJobs[$i]['bidcnt']?></span>
-                              </div>
-                          </div>
-                          <label class="post-date">Posted: <?php echo date("jS M Y h:i A", strtotime($resReqtrAllJobs[$i]['create_dateTime']))?></label>
-                          <p class="card-info"><?php 
-                          if($resReqtrAllJobs[$i]['descr'] != "null"){
-                          echo $resReqtrAllJobs[$i]['descr'];
-                          } ?></p>
-                          <div class="text-right"><a href="view_service_details.php?id=<?php echo $resReqtrAllJobs[$i]['id'];?>&new=1">View Details</a></div>
-                      </div>
-                    </div>
-                  </div>
-                <?php } ?>
-            </div>
-          </aside>
-              <nav aria-label="Page navigation example">
-                <ul class="pagination justify-content-end" id="recommended">
-                  <li class="page-item disabled" onclick="prevPagerB('recommended', 'recommended')">
-                    <a class="page-link" href="javascript:;" tabindex="-1" aria-disabled="true">Previous</a>
-                  </li>
-                  <li class="page-item" onclick="nextPageB('recommended', 'recommended')">
-                    <a class="page-link" href="javascript:;">Next</a>
-                  </li>
-                </ul>
-              </nav>
+          
      </div>
         <!--SECTION requester1 STARTS-->
      <div id="requester1" style="/*width: 1070px;*/">

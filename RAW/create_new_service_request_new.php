@@ -29,6 +29,9 @@ $_sqlObj->query('delete from pics where userId='.$_SESSION['id'].' and srId is N
 
 $( document ).ready(function() {
 
+  localStorage.setItem("latitude_address","");
+  localStorage.setItem("longitude_address","");
+
   initMap();
 
 
@@ -192,17 +195,55 @@ var gLng=-122.3321;
                 </script>
 <section class="wrapper">
             <aside class="super-widget-tab">
-                <div><input type="radio" id="location" name="location" checked/><label for="location">1.Location</label></div>
-                <div><input type="radio" id="jobdetails" name="jobdetails" disabled/><label for="jobdetails">2.Job Details</label></div>
+                <div><input type="radio" id="jobdetails" name="jobdetails" checked/><label for="jobdetails">1.Job Details</label></div>
+                <div><input type="radio" id="location" name="location" disabled/><label for="location">2.Location</label></div>                
                 <div><input type="radio" id="payment" name="payment" disabled/><label for="payment">3.Payment</label></div>
                 <div><input type="radio" id="review" name="review" disabled/><label for="review">4.Review</label></div>
                 <div><input type="radio" id="finish" name="finish" disabled/><label for="finish">5.Finish!</label></div>
             </aside>
             <aside class="super-widget-tab-info">
-              <summary class="location WDTH90 MRGCenter">
-                <h1><b>1.Location</b></h1>
-                <h2><b>Job Title</b></h2>
-                <input type="text" id="jobtitle">
+              <summary class="jobdetails WDTH90 MRGCenter">
+                  <h1><b>1.Job Details</b></h1>
+                  <h2><b>Job Title</b></h2>
+                  <input type="text" id="jobtitle">
+                  <h2><b>Describe What you need</b></h2>
+                  <textarea id="desc"></textarea>
+                  <h2><b>Category</b></h2>
+                  <?php while ($cur) { ?>
+                    
+                  <input type="radio" id="<?php echo $cur['id'];?>" value="<?php echo $cur['id'];?>" name="serv"/><label class="service" for="<?php echo $cur['id'];?>"><?php echo $cur['name'];?></label>
+                  <?php $cur=next($categs); } ?>
+                  
+                  <?php include('create_new_service_request_take_pictures_new.php');?>
+
+              </summary>
+              <summary class="location WDTH90 MRGCenter" style="display: none">
+                <h1><b>2.Location</b></h1>
+                <div class="row">
+                    <div class="col-sm-6 col-md-6 col-lg-6">
+                        <h2><b>When do you need it?</b></h2>
+                    </div>
+                    <div class="col-sm-6 col-md-6 col-lg-6 text-right">
+                      <!-- Recurring? <select class="custom-drop-down" id="recurring">
+                        <option>One Time</option>
+                        <option>Weekly</option>
+                        <option>Twice Monthly</option>
+                        <option>Monthly</option>
+                        <option>Every Other Month</option>
+                      </select>
+                      <!-- <input type="radio" class="recurring" id="recurring"/> <label for="recurring"><small>Recurring?</small></label> -->
+                    </div>
+                </div>
+
+                <div class="time-date-radio" style="font-weight: normal;">
+                    <input type="radio" checked id="urgent" name="timedate" value="urgent"/><label for="urgent">Urgent</label>
+                    <input type="radio" id="choose" name="timedate" value="choose" /><label for="choose">Select</label>
+                </div>
+                <!-- <div style="position: relative;height: 600px; overflow: scroll; overflow-x: hidden;">
+                <?php //include('calendar.html');?>
+                </div> -->
+                <iframe id="scheduler_iframe" src="calendar.html" class="calendar-view" style="display:none"></iframe>
+                <p>&nbsp;</p>
                 <h2><b>Where do you need the help?</b></h2>
                 <!--<div class="flex-layout">
                     <input type="text" id="getaddr" name="getaddr"/>
@@ -224,38 +265,6 @@ var gLng=-122.3321;
                    </div>
                 <!-- Replace the value of the key parameter with your own API key. -->
 
-
-              </summary>
-              <summary class="jobdetails WDTH90 MRGCenter" style="display: none">
-                  <h1><b>2.Job Details</b></h1>
-                  <h2><b>Describe What you need</b></h2>
-                  <textarea id="desc"></textarea>
-                  <h2><b>Category</b></h2>
-                  <?php while ($cur) { ?>
-                    
-                  <input type="radio" id="<?php echo $cur['id'];?>" value="<?php echo $cur['id'];?>" name="serv"/><label class="service" for="<?php echo $cur['id'];?>"><?php echo $cur['name'];?></label>
-                  <?php $cur=next($categs); } ?>
-                  <div class="row">
-                      <div class="col-sm-6 col-md-6 col-lg-6">
-                          <h2><b>When do you need it?</b></h2>
-                      </div>
-                      <div class="col-sm-6 col-md-6 col-lg-6 text-right">
-                        <!-- Recurring? <select class="custom-drop-down" id="recurring">
-                          <option>One Time</option>
-                          <option>Weekly</option>
-                          <option>Twice Monthly</option>
-                          <option>Monthly</option>
-                          <option>Every Other Month</option>
-                        </select>
-                        <!-- <input type="radio" class="recurring" id="recurring"/> <label for="recurring"><small>Recurring?</small></label> -->
-                      </div>
-                  </div>
-                  <!-- <div style="position: relative;height: 600px; overflow: scroll; overflow-x: hidden;">
-                  <?php //include('calendar.html');?>
-                  </div> -->
-                  <iframe src="calendar.html" class="calendar-view"></iframe>
-                  <p>&nbsp;</p>
-                  <?php include('create_new_service_request_take_pictures_new.php');?>
 
               </summary>
               <summary class="payment WDTH90 MRGCenter" style="display: none">
@@ -303,10 +312,10 @@ var gLng=-122.3321;
                   </div>
 
 
-                  <div class="form-group MRGT10PX WDTH300PX cancelfee"> 
+                  <!-- <div class="form-group MRGT10PX WDTH300PX cancelfee"> 
                     <label class="form-label" for="cancelfee">Cancellation Fee</label>
                     <input id="cancelfee" class="form-input" value="0" type="text" />
-                  </div>
+                  </div> -->
                   <div class="form-group MRGT10PX personanotes">
                     <label class="form-label" for="personal_notes">Personal Notes</label>
                     <textarea class="form-input" id="personal_notes"></textarea>

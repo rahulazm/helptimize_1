@@ -67,7 +67,7 @@ if($_SESSION['id']){
 			}
 		}
 
-	        $sqlStr='insert into serviceRequests values(null, "'.$post['title'].'", "'.$post['descr'].'", "'.$post['summ'].'", (select id from status where status="'.$post['status'].'"), "'.$post['bidDate'].'", now(),now(), (select id from paytype where name="'.$post['payType'].'"), "'.$post['payAmt'].'", "'.$post['totalhours'].'", "'.$post['rateperhour'].'", "'.$post['dateTimeTo'].'", "'.$post['dateTimeFrom'].'", "'.$post['timeFrom'].'", "'.$post['timeTo'].'", '. $post['reqstedBidId'].', null, '.$post['category'].', '.$_SESSION['id'].', '.$post['is18'].', '.$post['guardApproval'].', "'.$post['externId'].'", 0, "", "'.$post['buttonstatus'].'", "'.$post['cancelfee'].'","'.$post['set_schedule'].'", "'.$post['schedule_note'].'", "'.$post['schedule_amount'].'");';
+	        $sqlStr='insert into serviceRequests values(null, "'.$post['title'].'", "'.$post['descr'].'", "'.$post['summ'].'", (select id from status where status="'.$post['status'].'"), "'.$post['bidDate'].'", now(),now(), (select id from paytype where name="'.$post['payType'].'"), "'.$post['payAmt'].'", "'.$post['totalhours'].'", "'.$post['rateperhour'].'", "'.$post['dateTimeTo'].'", "'.$post['dateTimeFrom'].'", "'.$post['timeFrom'].'", "'.$post['timeTo'].'", '. $post['reqstedBidId'].', null, '.$post['category'].', '.$_SESSION['id'].', '.$post['is18'].', '.$post['guardApproval'].', "'.$post['externId'].'", 0, "", "'.$post['buttonstatus'].'", 0,"'.$post['set_schedule'].'", "'.$post['schedule_note'].'", "'.$post['schedule_amount'].'");';
 
 	 //echo($sqlStr);
 	 $rtrn=$_sqlObj->query($sqlStr);

@@ -1,6 +1,6 @@
 <?php
 require_once("./common.inc.php"); 
-require_once("/var/www/html/demo/clients/rajni/malar/helptimize-master/helptimize_app/etc/conf.php"); 
+require_once("/etc/helptimize/conf.php"); 
 require_once("./mysql_lib.php"); 
 require_once("./resize_image.php");
 session_start();
@@ -22,6 +22,10 @@ $qBool=$_sqlObj->query($sql_insert_service_request_address);
 $lId=$_sqlObj->lastId();
 
 echo $lId;
+
+$sql_insert_service_request_address = "INSERT INTO address_revision ( userId,srId, datetime, title, descr, address, posLong, posLat) VALUES ( '".$_SESSION['id']."', '".$_POST['srId']."', now(), '".$_POST['name']."', '".$_POST['description']."', '".$_POST['address']."', '".$_POST['longitude']."', '".$_POST['latitude']."')";
+
+$qBool=$_sqlObj->query($sql_insert_service_request_address);
 
 }
 

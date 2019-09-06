@@ -14,8 +14,11 @@ if($id==''){
 ///////////////////////////////Details section///////////////////////////////////
 $servID=$_GET['id']; 
 $sqlServ="select a.*, b.address from view_serviceRequests as a left join address as b on a.id=b.srId where a.id='$servID'";
-//echo $sqlServ;
 $res=$_sqlObj->query($sqlServ);
+
+$sr_attachments = "SELECT * FROM `pics` WHERE srId=".$servID." AND userId=".$res[0]['ownerId']."";
+$images = $_sqlObj->query($sr_attachments);
+ 
 $dateFrom = date("jS M Y-h:i A",strtotime($res[0]['dateTimeTo']));
 //echo $dateFrom;
 $dateTo = date("jS M Y-h:i A",strtotime($res[0]['dateTimeFrom']));
@@ -248,10 +251,38 @@ if($_SESSION['id'] == $sr_user_id){
                     <?php } ?>
                         <!-- <p class="MRGT20PX"><b>Title</b> : <?php echo $res[0]['title'] ?></p> -->
                         <h5  class="MRGT20PX">Location</h5>
+                        <?php if(($res[0]['ownerId'] == $id) || (($res[0]['bidAwardId'] != NULL) && ($rowuserTypeInfo['id'] != ''))) { ?>
                         <div class="MRGT10PX"><i class="fas fa-map-marker-alt"></i> 
                             <span><?php echo $res[0]['address'] ?></span>
                         </div>
+                        <?php } ?>
 
+                         <!-- <p class="MRGT20PX"><b>Title</b> : <?php echo $res[0]['title'] ?></p> -->
+                        <p class="MRGT10PX"><b>Pictures</b></p>
+                        <div class="attachment_container" style="width:100%;float:left;">
+                        <?php
+
+                        $row=@reset($images);
+                        if(!empty($row))
+                        {
+                            while ($row) 
+                            {
+                                $imgurl =  imgPath2Url(smallPicName($row["url"]));
+                            ?>
+                            <div class="sr_pics" style="float:left;">
+                            <img onclick='show_big_image(<?php echo $row['id'];?>)' src='<?php echo $imgurl;?>' class='img-rounded' alt='Imag' style='width: 150px;'>
+                            </div>
+                            <?php  
+                              $row=next($images);
+                            }
+                            
+                        }
+                        else
+                        {
+                            echo 'No Images Available';
+                        } 
+                        ?>
+                        </div>
                         <h5 class="MRGT20PX">Job Details</h5>
                         <p class="MRGT10PX"><b>Description</b></p>
                         <p class="card-text"><?php echo $res[0]['descr'] ?></p>
@@ -270,8 +301,8 @@ if($_SESSION['id'] == $sr_user_id){
                         <p class="card-text"><?php echo $res[0]['summ'] ?></p>
 
 
-                        <button class="button-secondary">Cancel Job</button>&nbsp;
-                        <button class="button-secondary">Cancel & Re-Submit Job</button>
+                        <button class="button-secondary cancelSR float-right" data-srid="<?php echo $res[0]['id'] ?>" data-from="" data-btnstatus="cancel" style="border:solid red 1px; color: red;margin-left:15px"><i class="fa fa-ban" aria-hidden="true"></i>&nbsp;Cancel Job</button>&nbsp;
+                        <button class="button-secondary cancelSR float-right" data-srid="<?php echo $res[0]['id'] ?>" data-from="resubmit" data-btnstatus="cancel" style="border:solid orange 1px; color: orange;"><i class="fa fa-ban" aria-hidden="true"></i>&nbsp;Cancel & Re-Submit Job</button>
                         <?php }else if($res[0]['bidAwardId'] == NULL && $_GET['new'] == 1){ ?>
 <!--                         <a  href="create_bid.php?job_id=<?php echo $_GET['id']; ?>"><button class="button-secondary">Place Your Bid</button></a> -->
                         <?php } ?>        
@@ -284,9 +315,11 @@ if($_SESSION['id'] == $sr_user_id){
                         <!-- <p class="MRGT20PX"><b>Title</b> : <?php echo $res[0]['title'] ?></p> -->
                         <h5 class="MRGT20PX">Location &nbsp;<span class="FONTSIZE12px"><a href="create_bid.php?job_id=<?php echo $res[0]['id']; ?>&tab=location"><i class="fa fa-pencil" aria-hidden="true"></i>
                             &nbsp;Edit</a></span></h5>
+                        <?php if(($res[0]['ownerId'] == $id) || (($res[0]['bidAwardId'] != NULL) && ($rowuserTypeInfo['id'] != ''))) { ?>          
                         <p><i class="fas fa-map-marker-alt"></i> 
                             <span><?php echo $res[0]['address'] ?></span>
                         </p>
+                        <?php } ?>
 
                         <h5 class="MRGT20PX">Job Details &nbsp;<span class="FONTSIZE12px"><a href="create_bid.php?job_id=<?php echo $res[0]['id']; ?>&tab=jobdetails"><i class="fa fa-pencil" aria-hidden="true"></i>
                             &nbsp;Edit</a></span></h5>
@@ -303,6 +336,9 @@ if($_SESSION['id'] == $sr_user_id){
                             &nbsp;Edit</a></span></h5>
                         <p class="MRGT20PX"><b>Amount</b></p>
                         <p style="text-transform: capitalize; "><?php echo $res[0]['paytype'] ?>, $<?php echo $res[0]['payAmt'] ?> </p> 
+                        <a href="create_bid.php?job_id=<?php echo $res[0]['id']; ?>&tab=payment"><button class="button-secondary">Add Milestones</button></a>
+                        <a href="create_bid.php?job_id=<?php echo $res[0]['id']; ?>&tab=payment"><button class="button-secondary">Add Cancellation Fee</button></a>
+                        <a href="create_bid.php?job_id=<?php echo $res[0]['id']; ?>&tab=review"><button class="button-secondary">Make Offer</button></a>
                         <?php if($res[0]['ownerId'] == $id){ ?>
                         <p class="MRGT20PX"><b>Personal Note</b></p>
                         <p class="card-text"><?php echo $res[0]['summ'] ?></p>
@@ -383,8 +419,22 @@ if($_SESSION['id'] == $sr_user_id){
                                                 <label><b>Duration:</b> </label>
                                                 <label id="bid_duration"></label>
                                             </div>
-                                            <div id="bid_milestone" class="form-group MRGT10PX">
+
+                                            <div class="form-group MRGT10PX">
+                                                <label ><b>Location:</b></label>
+                                                <label id="location" style="text-transform: capitalize;"></label>
                                             </div>
+
+                                             <div class="form-group MRGT10PX">
+                                                <label><b>Pictures:</b></label>
+                                                <label id="bid_attachment" style="text-transform: capitalize;"></label>
+                                            </div>
+
+                                            <div class="form-group MRGT10PX" id="milestones">
+                                    
+                                            </div>
+
+                                           
                                             <div class="MRGT20PX">
                                                 <?php if($res[0]['bidAwardId'] == NULL){ ?>
                                                 <button class="orange-btn" id="hire" data-bidid=""
@@ -590,8 +640,15 @@ if($_SESSION['id'] == $sr_user_id){
                                                 <label><b>Duration:</b> </label>
                                                 <label id="bid_duration_stl"></label>
                                             </div>
+
+                                            <label ><b>Pictures:</b></label>
+                                            <div id="bid_attachment_stl" class="form-group MRGT10PX">
+                                            </div>
+
                                             <div id="bid_milestone_stl" class="form-group MRGT10PX">
                                             </div>
+                                          
+
                                             <div class="MRGT20PX">
                                                 <?php if($res[0]['bidAwardId'] == NULL){ ?>
                                                 <button class="orange-btn" data-bidid="" id="hire_stl"
@@ -773,6 +830,8 @@ if($_SESSION['id'] == $sr_user_id){
                                     </div>
                                     <div class="tab-content">
                                         <div class="tab-pane fade show active p-3" id="bid-detail-agrm" role="tabpanel" aria-labelledby="one-tab">
+                                            <div id="approve_recject_buttons">
+                                                </div>
                                             <h5 class="MRGT20PX">Location&nbsp;<span class="FONTSIZE12px"><a href="edit_bid_new.php?job_id=<?php echo $res[0]['id']; ?>&id=<?php echo $rowuserTypeInfo['ownerId'];?>&tab=location"><i class="fa fa-pencil" aria-hidden="true"></i>
                             &nbsp;Edit</a></span></h5>
                                             <P class="MRGT10PX"><b>Address: </b></p>
@@ -793,13 +852,19 @@ if($_SESSION['id'] == $sr_user_id){
                                                 <label id="bid_amnt_agrm" style="text-transform: capitalize;"></label>
                                             </div>
 
-                                           
-                                            <div id="bid_milestone_agrm" class="form-group MRGT10PX">
-                                                
-                                                
-
+                                            <label ><b>Pictures:</b></label>
+                                            <div id="bid_attachment_agrm" class="form-group MRGT10PX">
                                             </div>
+
+                                            <div id="bid_milestone_agrm" class="form-group MRGT10PX">
+                                            </div>
+
+                                            <input type="hidden" value="" id="refid">
+                                            <input type="hidden" value="" id="bidid">                                         
+
                                             <div class="MRGT20PX">
+
+                                                
 
                                                 <input id="accept_agreement_btn" type="button" value="ACCEPT AGREEMENT" data-status="16" name="accept_agreement_btn" data-bidid="" data-userid="" class="changeinwork btn btn-primary general_orange_button_border_radius general_orange_button_size general_orange_button_background general_orange_button_no_border" style="background-color:red; border-color: red;font-weight:bold;">
 
@@ -815,6 +880,12 @@ if($_SESSION['id'] == $sr_user_id){
 
                                                 
                                                 <button id="make_pay" class="button-secondary requestpaypopup" data-bidamount="" data-paidamt=""><i class="fa fa-money"></i> Make Payment</button>
+
+                                                <button id="cancel_agreement" class="button-secondary cancelAgreement float-right" data-from="" data-srid="" data-bidid="" style="border:solid red 1px; color: red;margin-left:15px;"><i class="fa fa-ban" aria-hidden="true"></i>&nbsp;Cancel Agreement</button>
+
+                                                <!-- &nbsp;
+
+                                                <button id="cancel_resubmit_agreement" class="button-secondary cancelAgreement float-right" data-from="resubmit" data-srid="" data-bidid="" style="border:solid orange 1px; color: orange;"><i class="fa fa-ban" aria-hidden="true"></i>&nbsp;Cancel & Resubmit Agreement</button> -->
 
                                                 <!-- <?php if($rowbidInfoAgremnt['status'] == "awarded" && $rowbidInfoAgremnt['ownerId'] == $_SESSION['id']){ ?>
                                                     <input type="button" value="ACCEPT AGREEMENT" id="accept_agreement_btn" data-status="16" name="accept_agreement_btn" data-bidid="" data-userid="" class="changeinwork btn btn-primary general_orange_button_border_radius general_orange_button_size general_orange_button_background general_orange_button_no_border" style="background-color:red; border-color: red;font-weight:bold;">
