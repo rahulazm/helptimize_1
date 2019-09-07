@@ -28,7 +28,7 @@ function next() {
     var lat=$('#lat').val();
     var lng=$('#lng').val();
     var ramount=$('#ramount').val();
-    //var cancelfee = $("#cancelfee").val();
+    var cancelfee = $("#cancelfee").val();
     var personalnote = $("#personal_notes").val();
 
     //var time = '10:15 AM';
@@ -39,22 +39,7 @@ function next() {
     var address;
     //alert(schedule_note);
 
-    var bid_bool="";
-    var totalhours="";
-    var rateperhour="";
-    var is18=1;
-    var selected_provider="";
-    var buttonstatus='submit';
-    var provider_type="";
-    var time="";
-
-    if(pay == "hourly"){
-      rateperhour = $('#rateHour').val();
-      totalhours = $('#tHour').val();
-    }
-
-
-    if((getId=='location' || getId=='finish' ) && (jobtitle == "" || jobtitle == null)){
+    if((getId=='jobdetails' || getId=='finish' ) && (jobtitle == "" || jobtitle == null)){
       swal({
         title: "Warning",
          type: "warning",
@@ -63,7 +48,7 @@ function next() {
       return false;
     }
 
-    if((getId=='location' || getId=='finish' ) && (serv == "" || serv == null)){
+    if((getId=='payment' || getId=='finish' ) && (serv == "" || serv == null)){
       swal({
         title: "Warning",
          type: "warning",
@@ -88,9 +73,6 @@ function next() {
         var newtext = recurringtype + ", "+pay+", $"+ amount;
       }else{
         var newtext = recurringtype + " ($"+ramount+"), Total ($"+amount+"), "+pay;
-      }
-      if(pay = "hourly"){
-        var newtext = recurringtype + " ($"+rateperhour+" / Hour), Total ($"+amount+") for "+totalhours+" Hours";
       }
       $('#amnt').text(newtext);
     }
@@ -150,7 +132,14 @@ if(endMin!=""){
 /*if($('#start-date').length){
   alert($('#start-date').val());
 }*/
-
+var bid_bool="";
+var totalhours="";
+var rateperhour="";
+var is18=1;
+var selected_provider="";
+var buttonstatus='submit';
+var provider_type="";
+var time="";
 
 var imgs=[];
   $('#sr_imgs input[type="hidden"]').each(function(){
@@ -210,6 +199,7 @@ if(getId=='finish'){
       rateperhour : rateperhour,
       category : serv,
       is18 : is18,
+      cancelfee : cancelfee,
       provider_type : provider_type,
       reqstedBidId : selected_provider,
       imgs : imgs,
@@ -242,33 +232,12 @@ if(getId=='finish'){
       payTypeSetting();
       $("#schedule_note").focus();
       $("#amount").focus();
-      //$("#cancelfee").focus();
+      $("#cancelfee").focus();
       $("#personalnote").focus();
       if($("#recamnt").css("display") != 'none'){
         $("#ramount").focus();
       }
-
-
-
-      if($('#urgent').is(':checked')) {
-        var st = Date.now();
-        var en = Date.now();
-        var st_ti = "09:00AM";
-        var en_ti = "09:00PM";
-        setTimeDate(st, en, st_ti, en_ti);
-      }
-        
-
-
     }
-    if(getId == "review"){
-      $('#next').text("Submit");
-    }
-    else{
-      $('#next').text("Next"); 
-    }
-
-
 
 }
 
@@ -285,70 +254,15 @@ function prev() {
       payTypeSetting();
       $("#schedule_note").focus();
       $("#amount").focus();
-      //$("#cancelfee").focus();
+      $("#cancelfee").focus();
       $("#personalnote").focus();
       if($("#recamnt").css("display") != 'none'){
         $("#ramount").focus();
       }
     }
-    if(getId == "review"){
-      $('#next').text("Submit");
-    }
-    else{
-      $('#next').text("Next"); 
-    }
 }
 
-function setTimeDate(start, end, startMin, endMin){
 
-  $('#start-date').val(JSON.stringify(start));
-  $('#end-date').val(JSON.stringify(end));
-  var utcStartDate =  moment(start).utc().local();
-  var utcEndDate =  moment(end).utc().local();
-
-  console.log("utcStartDate : "+utcStartDate);
-  console.log("utcEndDate : "+utcEndDate);
-  
-  var dbStartMin = convertTo24Hour(startMin);
-  var dbEndMin = convertTo24Hour(endMin);
-
-  var dbStartDate = utcStartDate.format('YYYY-MM-DD HH:mm:ss');
-  var dbEndDate = utcEndDate.format('YYYY-MM-DD HH:mm:ss');
-
-  /*utcStartDate = utcStartDate.format('DD/MM/YYYY');
-  utcEndDate = utcEndDate.format('DD/MM/YYYY');*/
-  utcStartDate = utcStartDate.format('DD MMM YYYY');
-  utcEndDate = utcEndDate.format('DD MMM YYYY');
-
-  console.log("After formating....");
-  console.log("utcStartDate : "+utcStartDate);
-  console.log("utcEndDate : "+utcEndDate);
-
-  console.log("time_from_value : "+startMin);
-  console.log("time_to_value : "+endMin);
-
-  localStorage.setItem('startDate', JSON.stringify(start));
-  localStorage.setItem('endDate', JSON.stringify(end));
-  localStorage.setItem('startDate1', utcStartDate);
-  localStorage.setItem('endDate1', utcEndDate);
-  localStorage.setItem('startMin', startMin);
-  localStorage.setItem('endMin', endMin);
-  localStorage.setItem('dbStartDate', dbStartDate);
-  localStorage.setItem('dbEndDate', dbEndDate);           
-  localStorage.setItem('dbStartMin', dbStartMin);
-  localStorage.setItem('dbEndMin', dbEndMin);
-  
-  var diD = _getDateDiff(start, end);
-  localStorage.setItem('noofdays', diD);
-  
-  /*$('#recurring option').prop('disabled', true);
-  $('#recurring option[value="One Time"]').prop('disabled', false);*/
-
-  if(localStorage.getItem('recurring') == "" || localStorage.getItem('recurring') == null || localStorage.getItem('recurring') == undefined){
-    localStorage.setItem('recurring', "One Time");  
-  }
-  
-}
 
 function create_bid_next() {
    
@@ -393,21 +307,6 @@ function create_bid_next() {
     var address;
     //alert(schedule_note);
 
-    var bid_bool="";
-    var totalhours="";
-    var rateperhour="";
-    var is18=1;
-    var selected_provider="";
-    var buttonstatus='submit';
-    var provider_type="";
-    var time="";
-
-    if(pay == "hourly"){
-      rateperhour = $('#rateHour').val();
-      totalhours = $('#tHour').val();
-    }
-
-
 
     if($('#description').length){
        $('#description').text(desc);
@@ -424,9 +323,6 @@ function create_bid_next() {
         var newtext = recurringtype + ", "+pay+", $"+ amount;
       }else{
         var newtext = recurringtype + " ($"+ramount+"), Total ($"+amount+"), "+pay;
-      }
-      if(pay = "hourly"){
-        var newtext = recurringtype + " ($"+rateperhour+" / Hour), Total ($"+amount+") for "+totalhours+" Hours";
       }
       $('#amnt').text(newtext);
     }
@@ -476,7 +372,14 @@ if(endMin!=""){
 /*if($('#start-date').length){
   alert($('#start-date').val());
 }*/
-
+var bid_bool="";
+var totalhours="";
+var rateperhour="";
+var is18=1;
+var selected_provider="";
+var buttonstatus='submit';
+var provider_type="";
+var time="";
 
 var imgs=[];
   $('#sr_imgs input[type="hidden"]').each(function(){
@@ -628,11 +531,6 @@ function create_bid_prev() {
       if($("#recamnt").css("display") != 'none'){
         $("#ramount").focus();
       }
-      if($('input:radio[name=pay]:checked').val() == "hourly"){
-        $(".actHourly").css("display","flex");
-        $("#rateHour").focus();
-        $("#tHour").focus()
-      }
     }
 
     if(getId == "jobdetails")
@@ -774,9 +672,6 @@ function review()
       }else{
         var newtext = recurringtype + " ($"+ramount+"), Total ($"+amount+"), "+pay;
       }
-      if(pay = "hourly"){
-        var newtext = recurringtype + " ($"+rateperhour+" / Hour), Total ($"+amount+") for "+totalhours+" Hours";
-      }
       $('#amnt').text(newtext);
     }
 
@@ -834,7 +729,7 @@ function update_bid_next() {
         data = $(this).val();
         queryArr.push(data);
     });
-   //console.log(queryArr);
+   console.log(queryArr);
     var getId = $('.super-widget-tab input[type="radio"]:checked').last().parent().next().children('input').attr('id');
     var address = $('#getaddr').val();
     var jobtitle = $('#jobtitle').val();
@@ -860,8 +755,6 @@ function update_bid_next() {
     var bid_id=$('#bid_id').val();
     var milestones = queryArr;
     var cancelfee = $("#cancelfee").val();
-    var statususer = $("#statususer").val();
-
     //var time = '10:15 AM';
     //var startdate = '10/10/2018';
     //var enddate = '11/10/2018';
@@ -869,21 +762,6 @@ function update_bid_next() {
     var schedule_note = $('#schedule_note').val();
     var address;
     //alert(schedule_note);
-    var bid_bool="";
-    var totalhours="";
-    var rateperhour="";
-    var is18=1;
-    var selected_provider="";
-    var buttonstatus='submit';
-    var provider_type="";
-    var time="";
-
-    if(pay == "hourly"){
-      rateperhour = $('#rateHour').val();
-      totalhours = $('#tHour').val();
-    }
-
-
 
 
     if($('#description').length){
@@ -901,9 +779,6 @@ function update_bid_next() {
         var newtext = recurringtype + ", "+pay+", $"+ amount;
       }else{
         var newtext = recurringtype + " ($"+ramount+"), Total ($"+amount+"), "+pay;
-      }
-      if(pay = "hourly"){
-        var newtext = recurringtype + " ($"+rateperhour+" / Hour), Total ($"+amount+") for "+totalhours+" Hours";
       }
       $('#amnt').text(newtext);
     }
@@ -932,7 +807,6 @@ if(getId=='finish'){
   var dbEndDate   =localStorage.getItem('dbEndDate') ; 
   var dbStartMin = localStorage.getItem('dbStartMin');
   var dbEndMin = localStorage.getItem('dbEndMin');
- 
 }
  
 if(startDate1!=""){
@@ -954,6 +828,14 @@ if(endMin!=""){
 /*if($('#start-date').length){
   alert($('#start-date').val());
 }*/
+var bid_bool="";
+var totalhours="";
+var rateperhour="";
+var is18=1;
+var selected_provider="";
+var buttonstatus='submit';
+var provider_type="";
+var time="";
 
 var imgs=[];
   $('#sr_imgs input[type="hidden"]').each(function(){
@@ -1019,7 +901,6 @@ if(getId=='finish'){
       imgs : imgs,
       addr : address,
       buttonstatus : buttonstatus,
-      statususer: statususer,
       current : "11",
       sr_number : "108",
       service_id : service_id,
@@ -1082,11 +963,6 @@ if(getId=='finish'){
       $("#personalnote").focus();
       if($("#recamnt").css("display") != 'none'){
         $("#ramount").focus();
-      }
-      if($('input:radio[name=pay]:checked').val() == "hourly"){
-        $(".actHourly").css("display","flex");
-        $("#rateHour").focus();
-        $("#tHour").focus()
       }
     }
 }
@@ -1252,9 +1128,6 @@ function update_review()
       }else{
         var newtext = recurringtype + " ($"+ramount+"), Total ($"+amount+"), "+pay;
       }
-      if(pay = "hourly"){
-        var newtext = recurringtype + " ($"+rateperhour+" / Hour), Total ($"+amount+") for "+totalhours+" Hours";
-      }
       $('#amnt').text(newtext);
     }
 
@@ -1323,19 +1196,6 @@ function getDetails(obj){
   return;
   }
 
-function convertTo24Hour(time) {
-    time = time.toLowerCase();
-    var hours = parseInt(time.substr(0, 2));
-    if(time.indexOf('am') != -1 && hours == 12) {
-        time = time.replace('12', '0');
-    }
-    if(time.indexOf('pm')  != -1 && hours < 12) {
-        time = time.replace(hours, (hours + 12));
-    }
-    return time.replace(/(am|pm)/, '');
-}  
-
-
 function convertTo12Hour (time) {
   // Check correct time format and split into components
   time = time.toString ().match (/^([01]\d|2[0-3])(:)([0-5]\d)(:[0-5]\d)?$/) || [time];
@@ -1352,7 +1212,7 @@ function payTypeSetting(){
 
   recurringType = localStorage.getItem('recurring');
   noOfDays = localStorage.getItem('noofdays');
-console.log("recurringType: "+recurringType);
+
   //alert("tab change recurring: "+recurringType);
   switch (recurringType) {
     case 'One Time':
@@ -1417,19 +1277,9 @@ $('input, textarea').focus(function(){
       window.location.href='create_new_service_request_new.php';
   }
 
-    rec_hid_val = $("#sr_recurrence_type").val();
-    if(rec_hid_val != undefined){
-        $('#recurring [value="'+rec_hid_val+'"]').attr('selected', 'true');
-        localStorage.setItem('recurring', rec_hid_val);
-
-    } 
-
     if(localStorage.getItem('recurring') == undefined){
       localStorage.setItem('recurring', "One Time");
     }
-    
-    console.log("test: "+localStorage.getItem('recurring'));
-
     $('#recurring').on('change', function(val) {
       // if(val.target.value !== 'One Time'){
       //   $('#amount').prop('readonly', true)
@@ -1515,46 +1365,26 @@ $('input, textarea').focus(function(){
         $('#ramount').prop('readonly', false);
         $('#schedule_note').hide();
       }
-    });
+    })
 
     $('#rateHour, #tHour').keyup(function(){
       var amt = $('#rateHour').val() * $('#tHour').val();
       $('#amount').val(amt)
-    });
-
-    $(".time-date-radio input[type=radio]").on("click", function(){
-
-      if($('#urgent').is(':checked')) {
-        $('#scheduler_iframe').hide();
-        var st = Date.now();
-        var en = Date.now();
-        var st_ti = "09:00AM";
-        var en_ti = "09:00PM";
-        setTimeDate(st, en, st_ti, en_ti);
-      }
-      if($('#choose').is(':checked')){
-        $('#scheduler_iframe').show();
-      }
-
-    });
-
+    })
 
    function getUserDetails(obj,srid,type) {
            
-      if(obj==0 && type=='stl')
-      {
+      if(obj==0 && type=='stl'){
         //alert("test");
           $('#three').html("No bids shortlised yet!");
         return;
       }
-      if(obj==0 && type=='bids')
-      {
+      if(obj==0 && type=='bids'){
         //alert("test");
           $('#two').html("No bids received!");
         return;
       }
-      if(obj==0 && type=='agrm')
-      {
+      if(obj==0 && type=='agrm'){
         //alert("test");
           $('#four').html("No records found");
         return;
@@ -1570,37 +1400,22 @@ $('input, textarea').focus(function(){
         },
         function(data,status){
          // alert("Data: " + data + "\nStatus: " + status);
-          console.log(jsonData);
-          
           var jsonData = JSON.parse(data);   
           var hrlypay; 
           var fixedpay;
 
-          if(jsonData.paytype=='hourly')
-          {
+          if(jsonData.paytype=='hourly'){
             hrlypay = jsonData.payAmt;
           }
-          if(jsonData.paytype=='fixed')
-          {
+          if(jsonData.paytype=='fixed'){
             fixedpay = jsonData.payAmt;
           }
-          
-          $('#refid').val(jsonData.refid);
-          $('#bidid').val(jsonData.id);
-          $('#approve_recject_buttons').html(jsonData.buttons);
-          $('#milestones').html(jsonData.milestone);
-          $('#bid_milestone_agrm').html(jsonData.milestone);
-          $('#bid_milestone_stl').html(jsonData.milestone);
-          
+
           $('#bid_comment_stl').html(jsonData.descr);
           $('#bid_comment').html(jsonData.descr);
-          $('#location').html(jsonData.address);          
-          $('#bid_attachment_agrm').html(jsonData.bid_pics);
-          $('#bid_attachment').html(jsonData.bid_pics);
           $('#bid_comment_agrm').html(jsonData.descr);
           $('#bid_amnt').html(jsonData.paytype+", $"+jsonData.payAmt);
           $('#bid_amnt_stl').html(jsonData.paytype+", $"+jsonData.payAmt);
-          $('#bid_attachment_stl').html(jsonData.bid_pics);
           $('#bid_amnt_agrm').html(jsonData.paytype+", $"+jsonData.payAmt);
           $('#bid_duration').html(jsonData.dtFrm+" "+jsonData.timeFrm+" - "+ jsonData.dtTo+" "+jsonData.timeTo);
           $('#bid_duration_stl').html(jsonData.dtFrm+" "+jsonData.timeFrm+" - "+ jsonData.dtTo+" "+jsonData.timeTo);
@@ -1664,14 +1479,9 @@ $('input, textarea').focus(function(){
           $('#make_pay').attr('data-bidamount',jsonData.payAmt);
           $('#make_pay').attr('data-paidamt',jsonData.paid_amnt);
 
-          $('#cancel_agreement').attr('data-bidid',jsonData.id);
-          $('#cancel_agreement').attr('data-srid',jsonData.srId);
-          
-          //$('#cancel_resubmit_agreement').attr('data-bidid',jsonData.id);
-          //$('#cancel_resubmit_agreement').attr('data-srid',jsonData.srId);
-
-
           $('#bid_address_agrm').html(jsonData.address);
+
+          $('#bid_milestone_agrm').html(jsonData.milestones);
 
           if(jsonData.shortlist == "yes"){
             $("#shortlist").hide();
@@ -1686,7 +1496,6 @@ $('input, textarea').focus(function(){
           $('#make_pay').hide();
           $('#approve_pay').hide();
           $('#accept_agreement_btn').hide();
-          $('#cancel_agreement').show();
 
           if(jsonData.loggedin_user_id == jsonData.ownerId || jsonData.loggedin_user_id == jsonData.srOwnerId){
              
@@ -1698,13 +1507,11 @@ $('input, textarea').focus(function(){
                   if(jsonData.loggedin_user_id == jsonData.ownerId){
                     $('#accept_agreement_btn').show();
                   }
-                  $('#cancel_agreement').show();
                   break;
               case 'request for payment':
                   if(jsonData.loggedin_user_id == jsonData.srOwnerId){
                       $('#approve_pay').show();
                   }
-                  $('#cancel_agreement').show();
                   break;
               case 'approved payment':
               case 'payment rejected':
@@ -1713,7 +1520,6 @@ $('input, textarea').focus(function(){
                 }else if(jsonData.loggedin_user_id == jsonData.srOwnerId){
                       $('#make_pay').show();
                 }
-                $('#cancel_agreement').show();
               break;
               case 'in work':
                 if(jsonData.loggedin_user_id == jsonData.ownerId){
@@ -1721,7 +1527,6 @@ $('input, textarea').focus(function(){
                 }else if(jsonData.loggedin_user_id == jsonData.srOwnerId){
                       $('#make_pay').show();
                 }
-                $('#cancel_agreement').show();
               break;  
             }
           }
@@ -1862,7 +1667,6 @@ function shortlist(elm) {
               },
               function(){
                 //location.href = "service_request_saved_list.php";
-                location.reload();
               });
              //console.log(jsonData);
          }
@@ -1887,7 +1691,7 @@ function hire(elm, serv_id) {
             swal({
                 title: "Status",
                 text: obj.msg,
-                type: "success",
+                //type: "success",
                 showCancelButton: false,
                 confirmButtonColor: "#5CB85C",
                 confirmButtonText: "OK",
@@ -1901,45 +1705,12 @@ function hire(elm, serv_id) {
       });
     }      
       
-
-
-    function child_account_update(childid){
-
-       if($('#agreed').is(':checked')) {
-
-        $.get("activate_child_account.php",
-        {
-          childId : childid
-        },
-        function(data,status){
-         
-         console.log("Ajax activate_child_account")
-         console.log("Data: " + data + "\nStatus: " + status);
-         //var obj= JSON.parse(data);
-         if(status=="success"){
-            swal({
-                    type : "success",
-                    title: "Success",
-                    text: "Child account verified and activated successfully!"
-               },
-                function(){
-                       swal.close();
-                });
-             //console.log(jsonData);
-         }
-        });
-       }      
-
-
-
-    }
-    
-
 $(document).ready(function() {
 
     _initCard(1, 'jobRequests');
     _initCard(1, 'recommended');
     _initCard(1, 'jobRequests2');
+
 
 
     $("#timeselect").on("change", function(){
@@ -1971,162 +1742,6 @@ $(document).ready(function() {
       }
     })
  
-  
-$(document).on("click", ".cancelAgreement", function(e) {
-
-    //var bidamount = parseInt($("#bidamount").val());
-    var bidid = ($(this).data('bidid'));
-    var srid = ($(this).data('srid'));
-    var from = ($(this).data('from'));
-    $('#confCncModal').modal('show');
-    $('#confCncModal').find(".statusclick").attr("data-bidid", bidid);
-    $('#confCncModal').find(".statusclick").attr("data-srid", srid);
-    $('#confCncModal').find(".statusclick").attr("data-from", from);
-
-});
-
-
-$(document).on("click", ".statusclick", function(e) {
-
-    var from =($(this).data('from'));
-    var srid =($(this).data('srid'));
-    var bidid =($(this).data('bidid'));
-
-    
-    //var buttonstatus =($(this).data('status'));
-    var buttonstatus ="cancel";
-    var sr_submit = 'Are you sure?';   
-    if(from == "resubmit") 
-      var sr_submit_text = 'The Bid will be cancelled and resubmitted.';
-    else
-      var sr_submit_text = 'The Bid will be cancelled.';
-    sr_submit_success = 'Success!';
-    sr_submit_success_text = 'The Bid was cancelled.';
-
-    swal({
-      title: sr_submit,
-      text: sr_submit_text,
-      type: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#5CB85C",
-      confirmButtonText: "Yes, "+buttonstatus+" it!",
-      closeOnConfirm: false
-  },
-  function(){
-    
-    var rtrnObj=(urlCall('./bid_button_status.php?statususer=seller&penalty=yes&bidid='+bidid+'&srid='+srid+'&buttonstatus='+buttonstatus));
-  
-    if(rtrnObj=="success"){
-      if(from == "resubmit") 
-      {
-         location.href = "create_bid.php?id="+srid;
-      }
-      else
-      {
-        swal({
-            title: sr_submit_success,
-          text: sr_submit_success_text,
-            type: "success",
-            showCancelButton: false,
-            confirmButtonColor: "#5CB85C",
-            confirmButtonText: "OK",
-            closeOnConfirm: false
-          },
-          function(){
-             /*<?php if($_SESSION['id']==$bidArr['ownerId']) {?>
-            localStorage.setItem("pushfrom","sr");
-           <?php } ?>
-            location.href = "main.php";*/
-            location.reload();
-    
-          });
-      }
-    }
- 
-  });
-
-
-});
-
-
-$(document).on("click", ".cancelSR", function(e) {
-
-    //var bidamount = parseInt($("#bidamount").val());
-    var btnstatus = ($(this).data('btnstatus'));
-    var srid = ($(this).data('srid'));
-    var from = ($(this).data('from'));
-    $('#confCncModalSR').modal('show');
-    $('#confCncModalSR').find(".statusclickSR").attr("data-btnstatus", btnstatus);
-    $('#confCncModalSR').find(".statusclickSR").attr("data-srid", srid);
-    $('#confCncModalSR').find(".statusclickSR").attr("data-from", from);
-
-});
-
-$(document).on("click", ".statusclickSR", function(e) {
-
-  var srid =($(this).data('srid'));
-    var buttonstatus =($(this).data('btnstatus'));
-    var from = ($(this).data('from'));
-
-    var sr_submit = 'Are you sure?';
-    var sr_submit_text = 'The service request will be submitted.';
-    if(buttonstatus=="save")
-    var sr_submit_text = 'The service request will be saved.';
-    else if(buttonstatus=="cancel")
-    var sr_submit_text = 'The service request will be cancelled.';
-    
-    if(buttonstatus=="submit")
-    {
-    location.href='update_service_request.php?id='+srid;
-  }
-  else
-  {
-    sr_submit_success = 'Success!';
-    sr_submit_success_text = 'The service request was submitted.';
-    if(buttonstatus=="save")
-    sr_submit_success_text = 'The service request was saved.';
-    else if(buttonstatus=="cancel")
-    sr_submit_success_text = 'The service request was cancelled.';
-
-    swal({
-      title: sr_submit,
-      text: sr_submit_text,
-      type: "warning",
-      showCancelButton: true,
-      confirmButtonColor: "#5CB85C",
-      confirmButtonText: "Yes, "+buttonstatus+" it!",
-      closeOnConfirm: false
-  },
-  function(){
-    
-  
-    var rtrnObj=(urlCall('./service_request_button_status.php?srid='+srid+'&buttonstatus='+buttonstatus));
-  
- if(rtrnObj=="success"){
-    swal({
-            title: sr_submit_success,
-          text: sr_submit_success_text,
-            type: "success",
-            showCancelButton: false,
-            confirmButtonColor: "#5CB85C",
-            confirmButtonText: "OK",
-            closeOnConfirm: false
-          },
-          function(){
-            if(from == "resubmit") 
-            {
-               location.href = "create_new_service_request_new.php";
-            }else{
-            
-                location.href = "main.php";
-            }
-          });
-  }
-  
-  });
-
-}
-});
 
 $(document).on("click", ".requestpaypopup", function(e) {
 
@@ -2142,6 +1757,30 @@ $(document).on("click", ".requestpaypopup", function(e) {
 });
 
     
+$(document).on("click", ".gen_inv", function(e) {
+
+   var owner_id =($(this).data('ownerid'));
+   var sr_id =($(this).data('srid'));
+   var formData1 = {
+                'owner_id'     : owner_id,
+                'sr_id'     : sr_id
+                
+            }
+    
+      
+            var feedback1 = $.ajax({
+                type: "POST",
+                url: "gen_invoice.php",
+                data: formData1,         
+                async: false,
+                
+            }).complete(function(){
+            
+            
+            }).responseText;
+   //alert(id);
+});
+
 $(document).on("click", ".approveclick", function(e) {
     var id =($(this).data('bidid'));
     var bidamount =($(this).data('amount'));
@@ -2280,7 +1919,6 @@ $('#request_payment').formValidation({
                },
                 function(){
                        $('#modal_request_pay').modal('hide');
-                       location.reload();
                       //window.location.href="main.php";
                 }
                 );
