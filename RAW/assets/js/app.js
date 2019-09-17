@@ -1775,11 +1775,49 @@ $(document).on("click", ".gen_inv", function(e) {
                 async: false,
                 
             }).complete(function(){
-            
-            
+                        
             }).responseText;
+
+            //alert(feedback1);
+            if(feedback1 != ""){            
+              swal("Invoice generated successfully");
+
+              $("#view_inv").html('<i class="fa fa-money"></i><a href="'+feedback1+'" target="blank">View invoice</a>');
+              $("#send_inv").attr('data-invid',feedback1);
+              $("#gen_inv").css("display","none");
+              $("#view_inv").css("display","block");
+              $("#send_inv").css("display","block");
+          }
    //alert(id);
 });
+
+$(document).on("click", ".send_inv", function(e) {
+  
+  var inv =($(this).data('invid'));
+  var srid =($(this).data('srid'));
+  var userid =($(this).data('ownerid'));
+  var frmdata = {
+                'inv': inv,
+                'srid': srid,
+                'userid':userid
+                
+            };
+  var feedback2 = $.ajax({
+                type: "POST",
+                url: "inv_pusher.php",
+                data: frmdata,         
+                async: true,
+                
+            }).complete(function(){
+                        
+            }).responseText;
+  
+  //alert(feedback2);
+
+});
+
+
+
 
 $(document).on("click", ".approveclick", function(e) {
     var id =($(this).data('bidid'));
@@ -1902,7 +1940,7 @@ $('#request_payment').formValidation({
                 type: "POST",
                 url: "service_request_payment.php",
                 data: formData,         
-                async: false,
+                async: true,
                 
             }).complete(function(){
             

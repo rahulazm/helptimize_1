@@ -58,8 +58,8 @@ for($i=0;$i<count($resFee);$i++){
 }
 
 $pdf->Cell(0,10,'Invoice Total amount ---- '.$Fees,0,1);
-$filename="./pdf/invoice_".$_POST['sr_id'].".pdf";
+$filename="./invoice/invoice_".$_POST['sr_id'].".pdf";
 $pdf->Output($filename,'F');
-echo "invoice generated successfully";
+echo $filename;
 //$pdf->Output();
 ?>

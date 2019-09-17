@@ -883,6 +883,10 @@ if($_SESSION['id'] == $sr_user_id){
 
                                             <?php if($_SESSION['id']==$sr_user_id){?>
                                                 <button id="gen_inv" class="button-secondary gen_inv" data-ownerid="<?php echo $sr_user_id;?>" data-srid="<?php echo $servID;?>" ><i class="fa fa-money"></i> Generate invoice</button>
+
+                                                <button id="view_inv" style="display:none" class="button-secondary view_inv" ></button>
+
+                                                <button id="send_inv" style="display:none" class="button-secondary send_inv" data-invid="" data-ownerid="<?php echo $sr_user_id;?>" data-srid="<?php echo $servID;?>"><i class="fa fa-money"></i>Send invoice</button>
                                             <?php } ?>    
                                                 <button id="cancel_agreement" class="button-secondary cancelAgreement float-right" data-from="" data-srid="" data-bidid="" style="border:solid red 1px; color: red;margin-left:15px;"><i class="fa fa-ban" aria-hidden="true"></i>&nbsp;Cancel Agreement</button>
 
